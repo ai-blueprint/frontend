@@ -28,14 +28,15 @@ const state = reactive({
   links: [
     {
       id: generateId(),
-      from: "aa",
-      to: "ba",
+      from: "a_a",
+      to: "b_a",
       selected: false,
     },
   ], // { fromId, toId, selected }
   scale: 1, // 蓝图缩放比例
   translate: { x: 0, y: 0 }, // 蓝图偏移量
   size: { width: 0, height: 0 }, // 蓝图长宽
+  tempLink: null, // 临时连接线 { from, to, isTemp: true }
 });
 
 export const blueprintStore = {
@@ -96,6 +97,16 @@ export const blueprintStore = {
   deleteLink(id) {
     const idx = state.links.findIndex((v) => v.id === id);
     if (idx !== -1) state.links.splice(idx, 1);
+  },
+
+  // 设置临时连接线
+  setTempLink(from, to = null) {
+    state.tempLink = from ? { from, to, isTemp: true } : null;
+  },
+
+  // 清除临时连接线
+  clearTempLink() {
+    state.tempLink = null;
   },
 
   // ===== 序列化（给历史记录用）=====

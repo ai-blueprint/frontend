@@ -1,12 +1,16 @@
-// 从蓝图数据里删除节点数据
-// 从蓝图中删除节点对象
-// 删除关联连接线
-import {blueprintStore} from '../../stores/blueprintStore.js'
+import { blueprintStore } from "@/stores/blueprintStore.js";
 export function deleteNode(ID) {
-    blueprintStore.deleteNode(ID)
-    // 搜索连接线ID中包含该节点的，删除
-    const linksToDelete = blueprintStore.state.links.filter(v => v.fromId === ID || v.toId === ID)
-    linksToDelete.forEach(v => blueprintStore.deleteLink(v.id))
-    console.log("删除节点：" + ID);
-    
+  // 获取需要删除的关联连接线
+  const linksToDelete = blueprintStore.state.links.filter((link) =>
+    [link.from, link.to].some((endpoint) => endpoint.split("_")[0] === ID)
+  );
+
+  // 执行删除操作
+  blueprintStore.deleteNode(ID);
+  linksToDelete.forEach((link) => blueprintStore.deleteLink(link.id));
+
+  // 日志记录
+  console.log("删除节点：", ID);
+  linksToDelete.length &&
+    console.log(`同时删除附带连接线${linksToDelete.length}条`);
 }

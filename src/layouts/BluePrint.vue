@@ -1,15 +1,16 @@
 <template>
-  <div class="blueprint" ref="blueprint" @dragover.prevent @drop="onDrop" :style="{
+  <div id="blueprint" class="blueprint" ref="blueprint" @dragover.prevent @drop="onDrop" :style="{
     width: `${blueprintStore.state.size.width}px`,
     height: `${blueprintStore.state.size.height}px`,
     scale: blueprintStore.state.scale,
     translate: `${blueprintStore.state.translate.x}px ${blueprintStore.state.translate.y}px`,
   }">
+
     <NodeElement v-for="node in nodes" :id="node.id" :key="node.id" :node="node" :style="{
       left: `${node.position.x}px`,
       top: `${node.position.y}px`,
     }" />
-    <LinkElement v-for="link in blueprintStore.state.links" :id="link.id" :key="link.id" :link="link"></LinkElement>
+    <LinkElement :links="blueprintStore.state.links"></LinkElement>
   </div>
 </template>
 
@@ -88,6 +89,11 @@ function onDrop(e) {
 
 // 蓝图拖拽移动
 function BlueprintDrag(e) {
+  // 如果正在创建连接线，跳过蓝图拖动
+  if (blueprintStore.state.tempLink) {
+    return;
+  }
+
   // 鼠标按下，并且是按在蓝图空白位置
   if (e.buttons === 1 && blueprint.value) {
     const currentTranslate = blueprintStore.state.translate;

@@ -1,11 +1,13 @@
 <template>
-  <span class="node" draggable="true" ref="nodeElement" @dragstart="onDragStart">
+  <span class="node" draggable="true" ref="nodeElement" @dragstart="onDragStart" >
     <span class="endpoint-group in">
-      <EndPoint v-for="endpoint in node?.endpoints?.in || []" :id="node.id + endpoint" :key="endpoint" :class="endpoint"></EndPoint>
+      <EndPoint v-for="endpoint in node?.endpoints?.in || []" :id="node.id + '_' + endpoint" :key="endpoint"
+        :class="endpoint"></EndPoint>
     </span>
-    <span class="node-name">{{ node?.name || "" }}</span>
+    <span class="node-name">{{ node?.name || "未命名节点" }}</span>
     <span class="endpoint-group out">
-      <EndPoint v-for="endpoint in node?.endpoints?.out || []" :id="node.id + endpoint" :key="endpoint" :class="endpoint"></EndPoint>
+      <EndPoint v-for="endpoint in node?.endpoints?.out || []" :id="node.id + '_' + endpoint" :key="endpoint"
+        :class="endpoint"></EndPoint>
     </span>
   </span>
 </template>
@@ -58,9 +60,11 @@ function onDragStart(e) {
 .node:active {
   cursor: grabbing;
 }
+
 .blueprint .node {
   position: absolute;
 }
+
 .node-name {
   width: fit-content;
   font-size: 18px;
