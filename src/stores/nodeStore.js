@@ -22,8 +22,8 @@ const state = reactive({
       name: "+",
       opcode: "add",
       endpoints: {
-        in: ["test1", "test2"],
-        out: ["test1"],
+        in: ["test11", "test21"],
+        out: ["test111"],
       },
     },
     {

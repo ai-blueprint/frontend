@@ -47,7 +47,10 @@ function getEndpointType(endpointId) {
 }
 // 鼠标按下时开始创建连接
 function onMouseDown(e) {
-  // 先看
+  // 先看看是不是节点盒里的节点的端点，就是判断节点有没有id，也就是查询端点id_之前的时不时undefined
+  // 先split一下，看看是否有_，如果没有_，说明不是节点盒里的节点的端点
+  const endpointId = props.id.split('_')[0];
+  if (endpointId === "undefined") return;
   // 阻止事件冒泡，避免节点拖动
   e.stopPropagation();
   // 阻止默认行为，避免文本选择等

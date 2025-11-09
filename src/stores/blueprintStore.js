@@ -30,9 +30,8 @@ const state = reactive({
       id: generateId(),
       from: "a_a",
       to: "b_a",
-      selected: false,
     },
-  ], // { fromId, toId, selected }
+  ], // { fromId, toId}
   scale: 1, // 蓝图缩放比例
   translate: { x: 0, y: 0 }, // 蓝图偏移量
   size: { width: 0, height: 0 }, // 蓝图长宽
@@ -61,9 +60,8 @@ export const blueprintStore = {
     }
   },
 
-  toggleSelectNode(id) {
-    const n = state.nodes.find((v) => v.id === id);
-    if (n) n.selected = !n.selected;
+  clearSelectNode() {
+    state.nodes.forEach((v) => (v.selected = false));
   },
 
   // 删除节点
@@ -86,12 +84,7 @@ export const blueprintStore = {
 
   // ===== 连接线 =====
   addLink(from, to) {
-    state.links.push({ id: generateId(), from: from, to: to, selected: false });
-  },
-
-  toggleSelectLink(id) {
-    const l = state.links.find((v) => v.id === id);
-    if (l) l.selected = !l.selected;
+    state.links.push({ id: generateId(), from: from, to: to});
   },
   // 删除连接线数据
   deleteLink(id) {
