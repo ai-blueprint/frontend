@@ -1,5 +1,5 @@
 <template>
-  <div id="blueprint" class="blueprint" ref="blueprint" @dragover.prevent @drop="onDrop" :style="{
+  <div id="blueprint" class="blueprint" ref="blueprint" @dragover.prevent @drop="onDrop" @click="handleClick" :style="{
     width: `${blueprintStore.state.size.width}px`,
     height: `${blueprintStore.state.size.height}px`,
     scale: blueprintStore.state.scale,
@@ -51,20 +51,44 @@ import {
 const nodes = blueprintStore.state.nodes;
 const blueprint = ref(null);
 
-const handleMouseMove = () => {
+function handleMouseMove() {
   changeBlueprintSize(blueprint);
-};
+}
 
 onMounted(() => {
-  blueprint.value.addEventListener("wheel", handleWheel, { passive: false });
   window.addEventListener("mousemove", handleMouseMove);
+  window.addEventListener("keydown", handleKeyDown);
+  blueprint.value.addEventListener("wheel", handleWheel, { passive: false });
   blueprint.value.addEventListener("mousemove", BlueprintDrag);
 });
 
 onUnmounted(() => {
   window.removeEventListener("mousemove", handleMouseMove);
+  window.removeEventListener("keydown", handleKeyDown);
+  blueprint.value.removeEventListener("wheel", handleWheel);
+  blueprint.value.removeEventListener("mousemove", BlueprintDrag);
 });
+// 如果点击蓝图空白区域，并且没按下Ctrl键或command键，清空选择
+function handleClick(e) {
+  if (!(e.ctrlKey || e.metaKey)) {
+    blueprintStore.clearSelectNode();
+  }
+}
 
+function handleKeyDown(e) {
+  console.log("按下了键", e.key);
+
+  // 删除选中的节点
+  if (e.key === 'Delete') {
+    // 阻止默认行为，避免浏览器后退等
+    e.preventDefault();
+    blueprintStore.deleteSelectedNodes();
+  }
+  // Esc键清空选择
+  else if (e.key === 'Escape') {
+    blueprintStore.clearSelectNode();
+  }
+}
 function onDrop(e) {
   e.preventDefault();
   const position = JSON.parse(e.dataTransfer.getData("position"));

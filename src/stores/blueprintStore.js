@@ -60,20 +60,39 @@ export const blueprintStore = {
     }
   },
 
+  toggleSelectNode(id) {
+    const n = state.nodes.find((v) => v.id === id);
+    if (n) n.selected = !n.selected;
+  },
   clearSelectNode() {
     state.nodes.forEach((v) => (v.selected = false));
   },
-
   // 删除节点
   deleteNode(id) {
     const idx = state.nodes.findIndex((v) => v.id === id);
     if (idx !== -1) state.nodes.splice(idx, 1);
     // 同时删除与该节点相关的所有连接
     state.links = state.links.filter(
-      (link) => link.from !== id && link.to !== id
+      (link) => !link.from.includes(id) && !link.to.includes(id)
     );
   },
 
+  // 删除所有选中的节点
+  deleteSelectedNodes() {
+    // 获取所有选中的节点ID
+    const selectedNodeIds = state.nodes
+      .filter((node) => node.selected)
+      .map((node) => node.id);
+
+    // 删除每个选中的节点及其相关连接
+    selectedNodeIds.forEach((id) => {
+      this.deleteNode(id);
+    });
+  },
+  // 获取所有选中的节点
+  getSelectedNodes() {
+    return state.nodes.filter((node) => node.selected);
+  },
   // 移动节点位置
   moveNode(id, position) {
     const node = state.nodes.find((v) => v.id === id);
@@ -84,7 +103,7 @@ export const blueprintStore = {
 
   // ===== 连接线 =====
   addLink(from, to) {
-    state.links.push({ id: generateId(), from: from, to: to});
+    state.links.push({ id: generateId(), from: from, to: to });
   },
   // 删除连接线数据
   deleteLink(id) {

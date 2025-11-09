@@ -1,5 +1,5 @@
 <template>
-  <span class="node" draggable="true" ref="nodeElement" @dragstart="onDragStart" >
+    <span class="node" draggable="true" ref="nodeElement" @dragstart="onDragStart" @click="onNodeClick" :class="{ selected: node?.selected }">
     <span class="endpoint-group in">
       <EndPoint v-for="endpoint in node?.endpoints?.in || []" :id="node.id + '_' + endpoint" :key="endpoint"
         :class="endpoint"></EndPoint>
@@ -14,6 +14,7 @@
 <script setup>
 import EndPoint from "./EndPoint.vue";
 import { ref, defineProps } from "vue";
+import {blueprintStore} from "@/stores/blueprintStore.js";
 const nodeElement = ref(null);
 const props = defineProps({
   node: {
@@ -23,7 +24,19 @@ const props = defineProps({
 });
 
 import { getMouseRelativeCoordinate } from "@/tools/data/get-mouse-relative-coordinate.js";
-
+function onNodeClick(e) {
+  // 阻止事件冒泡，避免触发蓝图的点击事件
+  e.stopPropagation();
+  
+  if (e.ctrlKey || e.metaKey) {
+    // 按下Ctrl键，切换选中状态
+    blueprintStore.toggleSelectNode(props.node.id);
+  } else {
+    // 未按Ctrl键，先清空所有选择，然后选中当前节点
+    blueprintStore.clearSelectNode();
+    blueprintStore.toggleSelectNode(props.node.id);
+  }
+}
 function onDragStart(e) {
   // 获取并存储鼠标相对于节点的位置，用于节点放置时是同样的相对位置
   const position = getMouseRelativeCoordinate(nodeElement, e);
@@ -54,15 +67,22 @@ function onDragStart(e) {
   padding: 12px 10px;
   gap: 40px;
   cursor: grab;
-  transition: opacity 0.2s;
+  outline:#ffffff;
+  transition: opacity 0.2s, filter 0.2s, outline 0.2s;
 }
 
 .node:active {
   cursor: grabbing;
 }
-
+.blueprint .node:hover {
+filter: brightness(1.1);
+}
 .blueprint .node {
   position: absolute;
+}
+.blueprint .node.selected {
+  outline: 3px solid #ffffff;
+  filter: drop-shadow(0 0 3px #ffffff) drop-shadow(0 0 15px #ffffff) brightness(1.1);
 }
 
 .node-name {

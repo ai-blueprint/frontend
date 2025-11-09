@@ -1,13 +1,13 @@
 // 遍历蓝图所有节点
 // 找到包含所有节点的最小范围
 // 返回这个范围
-export function calculateBlueprintSize(blueprint_node) {
+export function calculateBlueprintSize(blueprint_node, padding) {
   //这个是JSON
   let minX = Infinity;
   let minY = Infinity;
   let maxX = -Infinity;
   let maxY = -Infinity;
-  const padding = 1000;
+
   // 不需要width和height
   function traverse(node) {
     if (node.position.x < minX) minX = node.position.x;
@@ -19,7 +19,7 @@ export function calculateBlueprintSize(blueprint_node) {
   // 安全检查，确保 blueprint_node 是数组且存在
   if (Array.isArray(blueprint_node)) {
     blueprint_node.forEach(traverse);
-    
+
     if (blueprint_node.length == 0) {
       minX = 0;
       minY = 0;
