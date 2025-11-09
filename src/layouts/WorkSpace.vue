@@ -1,5 +1,5 @@
 <template>
-  <div class="workspace">
+  <div id="workspace" class="workspace">
     <BluePrint />
     <Toolbar />
   </div>

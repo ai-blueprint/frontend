@@ -18,9 +18,9 @@
 .blueprint {
   position: absolute;
   /* 网格背景 */
-  /* background-image: linear-gradient(rgba(0, 0, 255, 0.07) 1px, transparent 1px),
+  background-image: linear-gradient(rgba(0, 0, 255, 0.07) 1px, transparent 1px),
     linear-gradient(90deg, rgba(0, 0, 255, 0.07) 1px, transparent 1px);
-  background-size: 30px 30px; */
+  background-size: 30px 30px;
   cursor: grab;
   user-select: none;
   transform-origin: 0 0;
@@ -34,25 +34,21 @@
 </style>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, watch } from "vue";
 import { changeBlueprintSize } from "@/tools/blueprint/change-blueprint-size.js";
 import NodeElement from "@/components/editor/NodeElement.vue";
 import LinkElement from "@/components/editor/LinkElement.vue";
 import { blueprintStore } from "@/stores/blueprintStore";
-import { mouseStore } from "@/stores/mouseStore";
 import { createNode } from "@/tools/blueprint/create-node.js";
 import { moveNode } from "@/tools/blueprint/move-node.js";
 import { getMouseRelativeCoordinate } from "@/tools/data/get-mouse-relative-coordinate.js";
-import {
-  applyDragConstraints,
-  applyScaleConstraints,
-} from "@/tools/data/blueprint-limit.js";
-
+import { mouseStore } from "@/stores/mouseStore";
 const nodes = blueprintStore.state.nodes;
 const blueprint = ref(null);
+// watch蓝图存储blueprintStore，当blueprintStore发生变化时，更新蓝图大小，深度监听
 
 function handleMouseMove() {
-  changeBlueprintSize(blueprint);
+  // changeBlueprintSize(blueprint);
 }
 
 onMounted(() => {
@@ -60,6 +56,13 @@ onMounted(() => {
   window.addEventListener("keydown", handleKeyDown);
   blueprint.value.addEventListener("wheel", handleWheel, { passive: false });
   blueprint.value.addEventListener("mousemove", BlueprintDrag);
+  watch(
+  () => blueprintStore.state,
+  () => {
+    changeBlueprintSize();
+  },
+  { deep: true, immediate: true }
+);
 });
 
 onUnmounted(() => {
@@ -121,17 +124,11 @@ function BlueprintDrag(e) {
   // 鼠标按下，并且是按在蓝图空白位置
   if (e.buttons === 1 && blueprint.value) {
     const currentTranslate = blueprintStore.state.translate;
-    const currentScale = blueprintStore.state.scale;
+    const offset = { x: mouseStore.state.offsetX, y: mouseStore.state.offsetY };
+    const newX = currentTranslate.x + offset.x;
+    const newY = currentTranslate.y + offset.y;
 
-    // 使用辅助函数应用拖拽限制
-    const constrained = applyDragConstraints(
-      currentTranslate,
-      { x: mouseStore.state.offsetX, y: mouseStore.state.offsetY },
-      currentScale,
-      blueprint.value
-    );
-
-    blueprintStore.updateTranslate(constrained.x, constrained.y);
+    blueprintStore.updateTranslate(newX, newY);
   }
 }
 
@@ -139,24 +136,14 @@ function BlueprintDrag(e) {
 function handleWheel(event) {
   if (!blueprint.value) return;
   event.preventDefault();
-
-  const currentScale = blueprintStore.state.scale;
-  const currentTranslate = blueprintStore.state.translate;
   const mouse = getMouseRelativeCoordinate(blueprint, event, true);
-
-  // 使用辅助函数应用缩放限制
-  const constraints = applyScaleConstraints(
-    currentScale,
-    -event.deltaY, // 反转delta值，使滚轮方向与缩放方向一致
-    mouse,
-    currentTranslate,
-    blueprint.value
-  );
-
-  blueprintStore.updateTransform(
-    constraints.scale,
-    constraints.translateX,
-    constraints.translateY
-  );
+  const currentScale = blueprintStore.state.scale;
+  let newScale = currentScale * (event.deltaY > 0 ? 0.9 : 1.1);
+  const currentTranslate = blueprintStore.state.translate;
+  const newTranslateX =
+    currentTranslate.x + mouse.x * (currentScale - newScale);
+  const newTranslateY =
+    currentTranslate.y + mouse.y * (currentScale - newScale);
+  blueprintStore.updateTransform(newScale, newTranslateX, newTranslateY);
 }
 </script>
