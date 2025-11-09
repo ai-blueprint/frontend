@@ -1,8 +1,8 @@
 <template>
   <svg class="links">
-    <path v-for="path in paths" :key="path.id || 'temp'" :d="path.d" :class="{ 
-      selected: path.selected, 
-      'temp-link': path.isTemp 
+    <path v-for="path in paths" :key="path.id || 'temp'" :d="path.d" :class="{
+      selected: path.selected,
+      'temp-link': path.isTemp
     }" />
   </svg>
 </template>
@@ -44,7 +44,7 @@ function getCenter(id) {
 // 核心算法：计算贝塞尔曲线路径
 function updatePaths() {
   const allPaths = []
-  
+
   // 添加正式连接线
   if (props.links && Array.isArray(props.links)) {
     const regularPaths = props.links.map(link => {
@@ -61,16 +61,16 @@ function updatePaths() {
         d: `M${from.x},${from.y} C${midX},${from.y} ${midX},${to.y} ${to.x},${to.y}`
       }
     }).filter(Boolean) // 过滤掉无效路径
-    
+
     allPaths.push(...regularPaths)
   }
-  
+
   // 添加临时连接线
   if (blueprintStore.state.tempLink) {
     const tempLink = blueprintStore.state.tempLink
     const from = getCenter(tempLink.from)
     let to = tempLink.to
-    
+
     if (from) {
       // 如果to是坐标对象，直接使用；否则尝试获取端点中心
       if (typeof to === 'object' && to !== null && 'x' in to && 'y' in to) {
@@ -82,9 +82,9 @@ function updatePaths() {
       } else {
         return
       }
-      
+
       const midX = (from.x + to.x) / 2
-      
+
       allPaths.push({
         id: 'temp',
         isTemp: true,
@@ -92,7 +92,7 @@ function updatePaths() {
       })
     }
   }
-  
+
   paths.value = allPaths
 }
 
@@ -122,7 +122,7 @@ onUnmounted(() => {
   width: 100%;
   height: 100%;
   pointer-events: none;
-
+  z-index: 999999999999;
 }
 
 path {
@@ -130,12 +130,11 @@ path {
   stroke: #ffffff;
   stroke-width: 4;
   stroke-linecap: round;
-  /* stroke-dasharray: 7; */
+
 }
 
 .temp-link {
   stroke: #ffffff;
   stroke-width: 4;
 }
-
 </style>
