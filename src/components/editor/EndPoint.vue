@@ -1,5 +1,5 @@
 <template>
-  <span class="endpoint" ref="endpoint" @mousedown="onMouseDown" :id="id"></span>
+  <span class="endpoint" ref="endpointRef" @mousedown="handleMouseDown" :id="id" :class="{ connected: isConnected }"></span>
 </template>
 
 <style scoped>
@@ -22,14 +22,19 @@
   background-color: #FFD700;
   transform: scale(1.4);
 }
+
+.endpoint.connected {
+  background-color: #4299e1;
+}
 </style>
 
 <script setup>
-import { ref,defineProps, onUnmounted, computed } from "vue";
+import { ref, defineProps, onUnmounted, computed } from "vue";
 import { blueprintStore } from "@/stores/blueprintStore";
 import { getScale } from "@/tools/data/get-scale";
 import { getMouseRelativeCoordinate } from "@/tools/data/get-mouse-relative-coordinate";
 
+// 定义组件属性
 const props = defineProps({
   id: {
     type: String,
@@ -37,8 +42,16 @@ const props = defineProps({
   }
 });
 
-const endpoint = ref(null);
+// 组件引用和计算属性
+const endpointRef = ref(null);
 const blueprintEl = computed(() => document.getElementById('blueprint'));
+
+// 计算端点是否已连接
+const isConnected = computed(() => {
+  return blueprintStore.state.links.some(link => 
+    link.from === props.id || link.to === props.id
+  );
+});
 
 // 端点类型映射
 const endpointTypeMap = computed(() => {
@@ -57,36 +70,51 @@ const endpointTypeMap = computed(() => {
 const getEndpointType = (endpointId) => endpointTypeMap.value.get(endpointId);
 
 // 清理事件监听和样式
-function cleanup() {
-  document.removeEventListener('mousemove', onMouseMove);
-  document.removeEventListener('mouseup', onMouseUp);
-  document.removeEventListener('mouseleave', onMouseUp);
-  document.querySelectorAll('.endpoint.snap').forEach(el => el.classList.remove('snap'));
+function cleanupEventListeners() {
+  document.removeEventListener('mousemove', handleMouseMove);
+  document.removeEventListener('mouseup', handleMouseUp);
+  document.removeEventListener('mouseleave', handleMouseUp);
+  clearSnapStyles();
 }
 
-// 鼠标事件处理
-function onMouseDown(e) {
+// 清除吸附样式
+function clearSnapStyles() {
+  document.querySelectorAll('.endpoint.snap').forEach(el => 
+    el.classList.remove('snap')
+  );
+}
+
+// 检查连接有效性
+function isValidConnectionType(fromType, toType) {
+  return (fromType === 'out' && toType === 'in') || (fromType === 'in' && toType === 'out');
+}
+
+// 处理鼠标按下事件
+function handleMouseDown(event) {
   const endpointId = props.id.split('_')[0];
   if (endpointId === "undefined") return;
 
-  e.stopPropagation();
-  e.preventDefault();
+  event.stopPropagation();
+  event.preventDefault();
   blueprintStore.setTempLink(props.id);
 
-  document.addEventListener('mousemove', onMouseMove);
-  document.addEventListener('mouseup', onMouseUp);
-  document.addEventListener('mouseleave', onMouseUp);
+  // 添加事件监听
+  document.addEventListener('mousemove', handleMouseMove);
+  document.addEventListener('mouseup', handleMouseUp);
+  document.addEventListener('mouseleave', handleMouseUp);
 }
 
-function onMouseMove(e) {
-  e.preventDefault();
+// 处理鼠标移动事件
+function handleMouseMove(event) {
+  event.preventDefault();
   if (!blueprintEl.value) return;
 
-  const position = getMouseRelativeCoordinate(blueprintEl.value, e, true);
+  const position = getMouseRelativeCoordinate(blueprintEl.value, event, true);
   const nearbyEndpoint = findNearbyEndpoint(position, 20);
 
-  document.querySelectorAll('.endpoint.snap').forEach(el => el.classList.remove('snap'));
+  clearSnapStyles();
 
+  // 处理吸附效果
   if (nearbyEndpoint && nearbyEndpoint !== blueprintStore.state.tempLink.from) {
     document.getElementById(nearbyEndpoint)?.classList.add('snap');
     blueprintStore.setTempLink(blueprintStore.state.tempLink.from, nearbyEndpoint);
@@ -95,8 +123,9 @@ function onMouseMove(e) {
   }
 }
 
-function onMouseUp(e) {
-  cleanup();
+// 处理鼠标释放事件
+function handleMouseUp(event) {
+  cleanupEventListeners();
 
   const tempLink = blueprintStore.state.tempLink;
   if (!tempLink?.from) {
@@ -104,33 +133,39 @@ function onMouseUp(e) {
     return;
   }
 
+  // 确定目标端点ID
   const targetId = typeof tempLink.to === 'string'
     ? tempLink.to
-    : findEndpointElement(e.target)?.id;
+    : findEndpointElement(event.target)?.id;
 
   if (!targetId || targetId === tempLink.from) {
     blueprintStore.clearTempLink();
     return;
   }
 
+  // 验证连接有效性
   const [fromType, toType] = [getEndpointType(tempLink.from), getEndpointType(targetId)];
-  const isValidConnection = (fromType === 'out' && toType === 'in') || (fromType === 'in' && toType === 'out');
-
-  if (!isValidConnection) {
+  if (!isValidConnectionType(fromType, toType)) {
     blueprintStore.clearTempLink();
     return;
   }
 
+  // 规范化连接方向（out -> in）
   const [finalFrom, finalTo] = fromType === 'out'
     ? [tempLink.from, targetId]
     : [targetId, tempLink.from];
 
-  const existingLink = blueprintStore.state.links.find(link => link.from === finalFrom && link.to === finalTo
+  // 检查是否已存在相同连接
+  const existingLink = blueprintStore.state.links.find(link => 
+    link.from === finalFrom && link.to === finalTo
   );
 
   if (!existingLink) {
+    // 移除目标端点的现有连接（如果有）
     const linksToRemove = blueprintStore.state.links.filter(link => link.to === finalTo);
     linksToRemove.forEach(link => blueprintStore.deleteLink(link.id));
+    
+    // 添加新连接
     blueprintStore.addLink(finalFrom, finalTo);
   }
 
@@ -148,21 +183,25 @@ function findNearbyEndpoint(position, radius) {
   return Array.from(document.querySelectorAll('.endpoint'))
     .filter(endpoint => {
       const endpointId = endpoint.id;
+      // 排除自己
       if (endpointId === blueprintStore.state.tempLink.from) return false;
 
+      // 只考虑类型不同的端点
       const toType = getEndpointType(endpointId);
       return fromType && toType && fromType !== toType;
     })
     .find(endpoint => {
+      // 计算端点中心位置
       const rect = endpoint.getBoundingClientRect();
       const endpointCenter = {
         x: (rect.left + rect.width / 2 - blueprintRect.left) / scaleValue,
         y: (rect.top + rect.height / 2 - blueprintRect.top) / scaleValue
       };
 
-      const distance = Math.sqrt(
-        Math.pow(position.x - endpointCenter.x, 2) +
-        Math.pow(position.y - endpointCenter.y, 2)
+      // 计算距离
+      const distance = Math.hypot(
+        position.x - endpointCenter.x,
+        position.y - endpointCenter.y
       );
 
       return distance <= radius;
@@ -179,5 +218,5 @@ function findEndpointElement(element) {
 }
 
 // 组件卸载时清理
-onUnmounted(cleanup);
+onUnmounted(cleanupEventListeners);
 </script>

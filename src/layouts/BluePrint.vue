@@ -1,17 +1,12 @@
 <template>
-  <div id="blueprint" class="blueprint" ref="blueprint" @dragover.prevent @drop="onDrop" @click="handleClick"
-    @mousemove="BlueprintDrag" @wheel="handleWheel" :style="{
-      width: `${blueprintStore.state.size.width}px`,
-      height: `${blueprintStore.state.size.height}px`,
-      scale: blueprintStore.state.scale,
-      translate: `${blueprintStore.state.translate.x}px ${blueprintStore.state.translate.y}px`,
-    }">
+  <div id="blueprint" class="blueprint" ref="blueprintContainer" @dragover.prevent @drop="handleNodeDrop"
+    @click="handleBlueprintClick" @mousemove="handleBlueprintDrag" @wheel="handleZoom" :style="blueprintStyle">
 
-    <NodeElement v-for="node in nodes" :id="node.id" :key="node.id" :node="node" :style="{
-      left: `${node.position.x}px`,
-      top: `${node.position.y}px`,
-    }" />
-    <LinkElement :links="blueprintStore.state.links"></LinkElement>
+    <!-- 连接线 -->
+    <LinkElement :links="blueprintStore.state.links" />
+
+    <!-- 节点 -->
+    <NodeElement v-for="node in blueprintStore.state.nodes" :key="node.id" :node="node" :style="getNodeStyle(node)" />
   </div>
 </template>
 
@@ -35,7 +30,7 @@
 </style>
 
 <script setup>
-import { ref, onMounted, onUnmounted, watch } from "vue";
+import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 import { changeBlueprintSize } from "@/tools/blueprint/change-blueprint-size.js";
 import NodeElement from "@/components/editor/NodeElement.vue";
 import LinkElement from "@/components/editor/LinkElement.vue";
@@ -44,10 +39,154 @@ import { createNode } from "@/tools/blueprint/create-node.js";
 import { moveNode } from "@/tools/blueprint/move-node.js";
 import { getMouseRelativeCoordinate } from "@/tools/data/get-mouse-relative-coordinate.js";
 import { mouseStore } from "@/stores/mouseStore";
-const nodes = blueprintStore.state.nodes;
-const blueprint = ref(null);
+
+// 组件引用
+const blueprintContainer = ref(null);
+
+// 计算蓝图样式
+const blueprintStyle = computed(() => ({
+  width: `${blueprintStore.state.size.width}px`,
+  height: `${blueprintStore.state.size.height}px`,
+  scale: blueprintStore.state.scale,
+  translate: `${blueprintStore.state.translate.x}px ${blueprintStore.state.translate.y}px`
+}));
+
+// 获取节点样式
+function getNodeStyle(node) {
+  return {
+    left: `${node.position.x}px`,
+    top: `${node.position.y}px`
+  };
+}
+
+// 更新蓝图变换
+function updateBlueprintPosition(x, y) {
+  blueprintStore.updateTranslate(x, y);
+}
+
+// 更新蓝图缩放和位置
+function updateBlueprintTransform(scale, x, y) {
+  blueprintStore.updateTransform(scale, x, y);
+}
+
+// 处理蓝图点击
+function handleBlueprintClick(event) {
+  // 只有在没有按住Ctrl/Meta键时才清空选择（允许多选）
+  if (!(event.ctrlKey || event.metaKey)) {
+    blueprintStore.clearSelectNode();
+  }
+
+  // 处理点击拖拽
+  if (event.buttons === 1) {
+    const currentTranslate = blueprintStore.state.translate;
+    const offset = {
+      x: mouseStore.state.offsetX,
+      y: mouseStore.state.offsetY
+    };
+
+    updateBlueprintPosition(
+      currentTranslate.x + offset.x,
+      currentTranslate.y + offset.y
+    );
+  }
+}
+
+// 处理键盘快捷键
+function handleKeyboardShortcuts(event) {
+  // 删除选中的节点
+  if (event.key === 'Delete' || event.key === 'Backspace') {
+    const hasSelectedNodes = blueprintStore.getSelectedNodes().length > 0;
+    if (hasSelectedNodes) {
+      blueprintStore.deleteSelectedNodes();
+    }
+    return;
+  }
+
+  // Esc键清空选择
+  if (event.key === 'Escape') {
+    blueprintStore.clearSelectNode();
+  }
+}
+
+// 处理节点拖放
+function handleNodeDrop(event) {
+  event.preventDefault();
+
+  try {
+    // 获取拖放数据
+    const position = JSON.parse(event.dataTransfer.getData("position"));
+    const nodeProps = JSON.parse(event.dataTransfer.getData("node"));
+    const isMove = event.dataTransfer.getData("isMove") === "true";
+    const originalNodeId = event.dataTransfer.getData("nodeId");
+
+    // 计算放置位置
+    const { x, y } = getMouseRelativeCoordinate(blueprintContainer, event, true);
+    const targetPosition = {
+      x: x - position.x,
+      y: y - position.y
+    };
+
+    if (isMove && originalNodeId) {
+      // 移动现有节点
+      moveNode(originalNodeId, targetPosition);
+    } else {
+      // 创建新节点
+      createNode(nodeProps.name, nodeProps.opcode, targetPosition, nodeProps);
+    }
+  } catch (error) {
+    console.error("节点放置失败:", error);
+  }
+}
+
+// 处理蓝图拖拽移动
+function handleBlueprintDrag(event) {
+  // 如果正在创建连接线，跳过蓝图拖动
+  if (blueprintStore.state.tempLink) {
+    return;
+  }
+
+  // 处理拖动时的蓝图移动
+  if (event.buttons === 1) {
+    const currentTranslate = blueprintStore.state.translate;
+    const offset = {
+      x: mouseStore.state.offset.x,
+      y: mouseStore.state.offset.y
+    };
+
+    updateBlueprintPosition(
+      currentTranslate.x + offset.x,
+      currentTranslate.y + offset.y
+    );
+  }
+}
+
+// 处理鼠标滚轮缩放
+function handleZoom(event) {
+  if (!blueprintContainer.value) return;
+
+  event.preventDefault();
+
+  // 计算缩放参数
+  const mousePos = getMouseRelativeCoordinate(blueprintContainer, event, true);
+  const currentScale = blueprintStore.state.scale;
+  const zoomFactor = event.deltaY > 0 ? 0.9 : 1.1;
+  const newScale = Math.max(0.1, Math.min(5, currentScale * zoomFactor)); // 限制缩放范围
+
+  // 计算缩放后的位置偏移（围绕鼠标位置缩放）
+  const currentTranslate = blueprintStore.state.translate;
+  const newTranslateX = currentTranslate.x + mousePos.x * (currentScale - newScale);
+  const newTranslateY = currentTranslate.y + mousePos.y * (currentScale - newScale);
+
+  // 更新蓝图变换
+  updateBlueprintTransform(newScale, newTranslateX, newTranslateY);
+}
+
+// 组件生命周期
 onMounted(() => {
-  window.addEventListener("keydown", handleKeyDown);
+  // 添加键盘事件监听
+  window.addEventListener("keydown", handleKeyboardShortcuts);
+
+  // 监听蓝图状态变化，自动调整大小
   watch(
     () => blueprintStore.state,
     () => {
@@ -58,90 +197,7 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  window.removeEventListener("keydown", handleKeyDown);
+  // 清理事件监听
+  window.removeEventListener("keydown", handleKeyboardShortcuts);
 });
-
-function handleClick(e) {
-  // 如果点击蓝图空白区域，并且没按下Ctrl键或command键，清空选择
-  if (!(e.ctrlKey || e.metaKey)) {
-    blueprintStore.clearSelectNode();
-  }
-  // 蓝图拖动实现，通过获取鼠标偏移
-  // 鼠标按下，并且是按在蓝图空白位置
-  if (e.buttons === 1) {
-    const currentTranslate = blueprintStore.state.translate;
-    const offset = { x: mouseStore.state.offsetX, y: mouseStore.state.offsetY };
-    const newX = currentTranslate.x + offset.x;
-    const newY = currentTranslate.y + offset.y;
-
-    blueprintStore.updateTranslate(newX, newY);
-  }
-
-}
-
-function handleKeyDown(e) {
-  console.log("按下了键", e.key);
-  // 删除选中的节点
-  if (e.key === 'Delete') {
-    blueprintStore.deleteSelectedNodes();
-  }
-  // Esc键清空选择
-  else if (e.key === 'Escape') {
-    blueprintStore.clearSelectNode();
-  }
-}
-function onDrop(e) {
-  e.preventDefault();
-  const position = JSON.parse(e.dataTransfer.getData("position"));
-  const nodeProps = JSON.parse(e.dataTransfer.getData("node"));
-  const name = nodeProps.name;
-  const opcode = nodeProps.opcode;
-  const { x, y } = getMouseRelativeCoordinate(blueprint, e, true);
-  const targetPosition = { x: x - position.x, y: y - position.y };
-
-  // 检查是否是蓝图内节点的移动操作
-  const isMove = e.dataTransfer.getData("isMove") === "true";
-  const originalNodeId = e.dataTransfer.getData("nodeId");
-
-  if (isMove && originalNodeId) {
-    // 直接移动节点位置，不需要删除再创建
-    moveNode(originalNodeId, targetPosition);
-  } else {
-    // 从节点盒拖入，创建新节点
-    createNode(name, opcode, targetPosition, nodeProps);
-  }
-}
-
-// 蓝图拖拽移动
-function BlueprintDrag(e) {
-  // 如果正在创建连接线，跳过蓝图拖动
-  if (blueprintStore.state.tempLink) {
-    return;
-  }
-
-  // 鼠标按下，并且是按在蓝图空白位置
-  if (e.buttons === 1 && blueprint.value) {
-    const currentTranslate = blueprintStore.state.translate;
-    const offset = { x: mouseStore.state.offsetX, y: mouseStore.state.offsetY };
-    const newX = currentTranslate.x + offset.x;
-    const newY = currentTranslate.y + offset.y;
-
-    blueprintStore.updateTranslate(newX, newY);
-  }
-}
-
-// 处理鼠标滚轮缩放
-function handleWheel(event) {
-  if (!blueprint.value) return;
-  event.preventDefault();
-  const mouse = getMouseRelativeCoordinate(blueprint, event, true);
-  const currentScale = blueprintStore.state.scale;
-  let newScale = currentScale * (event.deltaY > 0 ? 0.9 : 1.1);
-  const currentTranslate = blueprintStore.state.translate;
-  const newTranslateX =
-    currentTranslate.x + mouse.x * (currentScale - newScale);
-  const newTranslateY =
-    currentTranslate.y + mouse.y * (currentScale - newScale);
-  blueprintStore.updateTransform(newScale, newTranslateX, newTranslateY);
-}
 </script>

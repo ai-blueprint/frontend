@@ -1,21 +1,23 @@
 <template>
   <span class="node" draggable="true" ref="nodeElement" @dragstart="onDragStart" @click="onNodeClick"
-    :class="{ selected: node?.selected }">
+    :class="{ selected: isSelected }">
     <span class="endpoint-group in">
-      <EndPoint v-for="endpoint in node?.endpoints?.in || []" :id="node.id + '_' + endpoint" :key="endpoint"
+      <EndPoint v-for="endpoint in inputEndpoints" :id="`${nodeId}_${endpoint}`" :key="endpoint"
         :class="endpoint"></EndPoint>
     </span>
-    <span class="node-name">{{ node?.name || "未命名节点" }}</span>
+    <span class="node-name">{{ nodeName }}</span>
     <span class="endpoint-group out">
-      <EndPoint v-for="endpoint in node?.endpoints?.out || []" :id="node.id + '_' + endpoint" :key="endpoint"
+      <EndPoint v-for="endpoint in outputEndpoints" :id="`${nodeId}_${endpoint}`" :key="endpoint"
         :class="endpoint"></EndPoint>
     </span>
   </span>
 </template>
 <script setup>
 import EndPoint from "./EndPoint.vue";
-import { ref, defineProps } from "vue";
+import { ref, computed, defineProps } from "vue";
 import { blueprintStore } from "@/stores/blueprintStore.js";
+import { getMouseRelativeCoordinate } from "@/tools/data/get-mouse-relative-coordinate.js";
+
 const nodeElement = ref(null);
 const props = defineProps({
   node: {
@@ -24,7 +26,13 @@ const props = defineProps({
   },
 });
 
-import { getMouseRelativeCoordinate } from "@/tools/data/get-mouse-relative-coordinate.js";
+// 计算属性，提高代码可读性
+const nodeId = computed(() => props.node?.id || '');
+const nodeName = computed(() => props.node?.name || "未命名节点");
+const isSelected = computed(() => props.node?.selected || false);
+const inputEndpoints = computed(() => props.node?.endpoints?.in || []);
+const outputEndpoints = computed(() => props.node?.endpoints?.out || []);
+
 function onNodeClick(e) {
   // 阻止事件冒泡，避免触发蓝图的点击事件
   e.stopPropagation();
@@ -33,23 +41,25 @@ function onNodeClick(e) {
 
   if (e.ctrlKey || e.metaKey) {
     // 按下Ctrl键，切换选中状态
-    blueprintStore.toggleSelectNode(props.node.id);
+    blueprintStore.toggleSelectNode(nodeId.value);
   } else {
     // 未按Ctrl键，先清空所有选择，然后选中当前节点
     blueprintStore.clearSelectNode();
-    blueprintStore.toggleSelectNode(props.node.id);
+    blueprintStore.toggleSelectNode(nodeId.value);
   }
 }
+
 function onDragStart(e) {
   // 获取并存储鼠标相对于节点的位置，用于节点放置时是同样的相对位置
   const position = getMouseRelativeCoordinate(nodeElement, e);
   e.dataTransfer.setData("position", JSON.stringify(position));
   // 存储节点信息，用于放置时创建相应节点
   e.dataTransfer.setData("node", JSON.stringify(props.node));
+  
   // 如果节点有ID，那就是蓝图内节点移动，否则就是新节点创建
-  if (props.node && props.node.id) {
+  if (nodeId.value) {
     e.dataTransfer.setData("isMove", "true");
-    e.dataTransfer.setData("nodeId", props.node.id);
+    e.dataTransfer.setData("nodeId", nodeId.value);
     // 视觉反馈，移动状态
     e.dataTransfer.effectAllowed = "move";
   } else {
@@ -85,9 +95,11 @@ function onDragStart(e) {
 .blueprint .node:hover {
   filter: brightness(1.1);
 }
+
 .blueprint .node:hover:active {
-  scale:0.98;
+  scale: 0.98;
 }
+
 .blueprint .node.selected {
   outline: 3px solid #ffffff;
   filter: drop-shadow(0 0 3px #ffffff) drop-shadow(0 0 15px #ffffff) brightness(1.1);

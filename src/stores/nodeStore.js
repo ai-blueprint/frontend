@@ -31,7 +31,7 @@ const state = reactive({
       opcode: "sub",
       endpoints: {
         in: ["test1", "test2"],
-        out: ["test1"],
+        out: ["test3"],
       },
     },
     {
@@ -39,7 +39,7 @@ const state = reactive({
       opcode: "mul",
       endpoints: {
         in: ["test1", "test2"],
-        out: ["test1"],
+        out: ["test3"],
       },
     },
   ],

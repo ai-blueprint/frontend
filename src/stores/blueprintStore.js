@@ -24,104 +24,104 @@ const state = reactive({
         out: ["c"],
       },
     },
-  ], // { id, opcode, position, selected }
+  ],
   links: [
     {
       id: generateId(),
       from: "a_a",
       to: "b_a",
     },
-  ], // { fromId, toId}
-  scale: 1, // 蓝图缩放比例
-  translate: { x: 0, y: 0 }, // 蓝图偏移量
-  size: { width: 0, height: 0 }, // 蓝图长宽
-  tempLink: null, // 临时连接线 { from, to, isTemp: true }
+  ],
+  scale: 1,
+  translate: { x: 0, y: 0 },
+  size: { width: 0, height: 0 },
+  tempLink: null,
 });
+
+// 内部辅助函数：查找节点
+function findNode(id) {
+  return state.nodes.find(node => node.id === id);
+}
+
+// 内部辅助函数：查找节点索引
+function findNodeIndex(id) {
+  return state.nodes.findIndex(node => node.id === id);
+}
 
 export const blueprintStore = {
   state: readonly(state),
 
-  // ===== 节点 =====
+  // ===== 节点操作 =====
   addNode(name, opcode, position, nodeInfo, id = null) {
     state.nodes.push({
       ...nodeInfo,
       id: id || generateId(),
-      name: name,
-      opcode: opcode,
-      position: position,
+      name,
+      opcode,
+      position,
       selected: false,
     });
   },
 
-  setNodePos(id, position) {
-    const n = state.nodes.find((v) => v.id === id);
-    if (n) {
-      n.position = position;
-    }
-  },
-
-  toggleSelectNode(id) {
-    const n = state.nodes.find((v) => v.id === id);
-    if (n) n.selected = !n.selected;
-  },
-  clearSelectNode() {
-    state.nodes.forEach((v) => (v.selected = false));
-  },
-  // 删除节点
-  deleteNode(id) {
-    const idx = state.nodes.findIndex((v) => v.id === id);
-    if (idx !== -1) state.nodes.splice(idx, 1);
-    // 同时删除与该节点相关的所有连接
-    state.links = state.links.filter(
-      (link) => !link.from.includes(id) && !link.to.includes(id)
-    );
-  },
-
-  // 删除所有选中的节点
-  deleteSelectedNodes() {
-    // 获取所有选中的节点ID
-    const selectedNodeIds = state.nodes
-      .filter((node) => node.selected)
-      .map((node) => node.id);
-
-    // 删除每个选中的节点及其相关连接
-    selectedNodeIds.forEach((id) => {
-      this.deleteNode(id);
-    });
-  },
-  // 获取所有选中的节点
-  getSelectedNodes() {
-    return state.nodes.filter((node) => node.selected);
-  },
-  // 移动节点位置
-  moveNode(id, position) {
-    const node = state.nodes.find((v) => v.id === id);
+  updateNodePosition(id, position) {
+    const node = findNode(id);
     if (node) {
       node.position = position;
     }
   },
 
-  // ===== 连接线 =====
-  addLink(from, to) {
-    state.links.push({ id: generateId(), from: from, to: to });
+  toggleSelectNode(id) {
+    const node = findNode(id);
+    if (node) node.selected = !node.selected;
   },
-  // 删除连接线数据
-  deleteLink(id) {
-    const idx = state.links.findIndex((v) => v.id === id);
-    if (idx !== -1) state.links.splice(idx, 1);
+  
+  clearSelectNode() {
+    state.nodes.forEach(node => { node.selected = false; });
+  },
+  
+  deleteNode(id) {
+    const index = findNodeIndex(id);
+    if (index !== -1) state.nodes.splice(index, 1);
+    
+    // 同时删除与该节点相关的所有连接
+    state.links = state.links.filter(
+      link => !link.from.includes(id) && !link.to.includes(id)
+    );
   },
 
-  // 设置临时连接线
+  deleteSelectedNodes() {
+    // 获取所有选中的节点ID并删除
+    const selectedNodeIds = state.nodes
+      .filter(node => node.selected)
+      .map(node => node.id);
+
+    selectedNodeIds.forEach(id => this.deleteNode(id));
+  },
+  
+  getSelectedNodes() {
+    return state.nodes.filter(node => node.selected);
+  },
+
+  // ===== 连接线操作 =====
+  addLink(from, to) {
+    state.links.push({ id: generateId(), from, to });
+  },
+  
+  deleteLink(id) {
+    const index = state.links.findIndex(link => link.id === id);
+    if (index !== -1) state.links.splice(index, 1);
+  },
+
+  // ===== 临时连接线 =====
   setTempLink(from, to = null) {
     state.tempLink = from ? { from, to, isTemp: true } : null;
   },
-
-  // 清除临时连接线
+  
   clearTempLink() {
     state.tempLink = null;
   },
 
-  // ===== 序列化（给历史记录用）=====
+  // ===== 序列化与反序列化 =====
   serialize() {
     return JSON.stringify({ nodes: state.nodes, links: state.links });
   },
@@ -132,24 +132,33 @@ export const blueprintStore = {
     state.links = links;
   },
 
-  // ===== 缩放 =====
+  // ===== 视图变换 =====
   updateScale(newScale) {
     state.scale = newScale;
   },
-
-  // ===== 偏移 =====
+  
   updateTranslate(x, y) {
     state.translate.x = x;
     state.translate.y = y;
   },
-  // ===== 长宽 =====
+  
   updateSize(width, height) {
     state.size.width = width;
     state.size.height = height;
   },
+  
   updateTransform(scale, translateX, translateY) {
     state.scale = scale;
     state.translate.x = translateX;
     state.translate.y = translateY;
+  },
+  
+  // 为了向后兼容，保留旧方法名
+  moveNode: function(id, position) {
+    this.updateNodePosition(id, position);
+  },
+  
+  setNodePos: function(id, position) {
+    this.updateNodePosition(id, position);
   },
 };

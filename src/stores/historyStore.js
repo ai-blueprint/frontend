@@ -1,10 +1,14 @@
 import { reactive, readonly } from 'vue'
 import { blueprintStore } from './blueprintStore'
 
+// 历史记录配置常量
+const MAX_HISTORY_SIZE = 50
+
+// 历史记录状态
 const state = reactive({
-  stack: [],   // 快照字符串数组
-  index: -1,   // 当前位置
-  max: 50      // 最多存 50 步，防止内存爆炸
+  historyStack: [], // 历史记录栈
+  currentPosition: -1, // 当前位置索引
+  maxHistorySize: MAX_HISTORY_SIZE, // 最大历史记录数
 })
 
 export const historyStore = {
@@ -12,35 +16,61 @@ export const historyStore = {
 
   // 初始化时推一个空蓝图
   init() {
-    this.push()
+    this.recordState()
   },
 
-  // 推一条新快照（每次操作完手动调）
-  push() {
-    // 如果不在栈顶，先丢掉后面的
-    state.stack = state.stack.slice(0, state.index + 1)
-    state.stack.push(blueprintStore.serialize())
-    state.index = state.stack.length - 1
-    // 超长截断
-    if (state.stack.length > state.max) {
-      state.stack.shift()
-      state.index--
+  // 记录当前状态到历史记录
+  recordState() {
+    // 清除当前位置之后的历史（如果存在）
+    if (state.currentPosition < state.historyStack.length - 1) {
+      state.historyStack = state.historyStack.slice(0, state.currentPosition + 1)
+    }
+
+    // 序列化并保存当前蓝图状态
+    const currentState = blueprintStore.serialize()
+    state.historyStack.push(currentState)
+    state.currentPosition = state.historyStack.length - 1
+
+    // 限制历史记录大小
+    if (state.historyStack.length > state.maxHistorySize) {
+      state.historyStack.shift()
+      state.currentPosition--
     }
   },
 
-  // 撤销 / 重做
-  canUndo: () => state.index > 0,
-  canRedo: () => state.index < state.stack.length - 1,
-
-  undo() {
-    if (!this.canUndo()) return
-    state.index--
-    blueprintStore.restore(state.stack[state.index])
+  // 检查是否可以撤销
+  canUndo() {
+    return state.currentPosition > 0
   },
 
+  // 检查是否可以重做
+  canRedo() {
+    return state.currentPosition < state.historyStack.length - 1
+  },
+
+  // 撤销到上一个状态
+  undo() {
+    if (this.canUndo()) {
+      state.currentPosition--
+      blueprintStore.restore(state.historyStack[state.currentPosition])
+    }
+  },
+
+  // 重做下一个状态
   redo() {
-    if (!this.canRedo()) return
-    state.index++
-    blueprintStore.restore(state.stack[state.index])
+    if (this.canRedo()) {
+      state.currentPosition++
+      blueprintStore.restore(state.historyStack[state.currentPosition])
+    }
+  },
+  
+  // 清空历史记录
+  clearHistory() {
+    state.historyStack = []
+    state.currentPosition = -1
+    this.recordState() // 记录当前状态作为新的历史起点
   }
 }
+
+// 自动初始化历史记录
+historyStore.init()
