@@ -1,5 +1,6 @@
 <template>
-  <span class="endpoint" ref="endpointRef" @mousedown="handleMouseDown" :id="id" :class="{ connected: isConnected }"></span>
+  <span class="endpoint" ref="endpointRef" @mousedown="handleMouseDown" :id="id"
+    :class="{ connected: isConnected }"></span>
 </template>
 
 <style scoped>
@@ -23,9 +24,8 @@
   transform: scale(1.4);
 }
 
-.endpoint.connected {
-  background-color: #4299e1;
-}
+/* 没想好用什么样式 */
+/* .endpoint.connected {} */
 </style>
 
 <script setup>
@@ -48,7 +48,7 @@ const blueprintEl = computed(() => document.getElementById('blueprint'));
 
 // 计算端点是否已连接
 const isConnected = computed(() => {
-  return blueprintStore.state.links.some(link => 
+  return blueprintStore.state.links.some(link =>
     link.from === props.id || link.to === props.id
   );
 });
@@ -79,7 +79,7 @@ function cleanupEventListeners() {
 
 // 清除吸附样式
 function clearSnapStyles() {
-  document.querySelectorAll('.endpoint.snap').forEach(el => 
+  document.querySelectorAll('.endpoint.snap').forEach(el =>
     el.classList.remove('snap')
   );
 }
@@ -156,7 +156,7 @@ function handleMouseUp(event) {
     : [targetId, tempLink.from];
 
   // 检查是否已存在相同连接
-  const existingLink = blueprintStore.state.links.find(link => 
+  const existingLink = blueprintStore.state.links.find(link =>
     link.from === finalFrom && link.to === finalTo
   );
 
@@ -164,7 +164,7 @@ function handleMouseUp(event) {
     // 移除目标端点的现有连接（如果有）
     const linksToRemove = blueprintStore.state.links.filter(link => link.to === finalTo);
     linksToRemove.forEach(link => blueprintStore.deleteLink(link.id));
-    
+
     // 添加新连接
     blueprintStore.addLink(finalFrom, finalTo);
   }

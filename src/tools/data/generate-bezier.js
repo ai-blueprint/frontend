@@ -4,7 +4,7 @@
 export function generateBezier(start, end) {
   const control = {
     x: (start.x + end.x) / 2,
-    y: start.y
-  }
-  return `M${start.x},${start.y} C${control.x},${control.y} ${control.x},${control.y} ${end.x},${end.y}`
+    y: start.y,
+  };
+  return `M${start.x},${start.y} C${control.x},${control.y} ${control.x},${control.y} ${end.x},${end.y}`;
 }

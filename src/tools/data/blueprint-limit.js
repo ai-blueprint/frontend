@@ -12,7 +12,7 @@ export function limitBlueprint(childSize, parentSize, transform) {
     parentWidth / childWidth,
     parentHeight / childHeight
   ); // 求最小缩放
-  const newScale = Math.max(minScale, Math.min(3, scale));
+  const newScale = Math.max(minScale, Math.min(100, scale));
 
   // 限制平移
   // 可拖范围：左/上最多露多少（负数），右/下最多露 0
