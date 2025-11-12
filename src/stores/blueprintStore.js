@@ -1,5 +1,6 @@
 import { reactive, readonly } from "vue";
 import { generateId } from "@/tools/data/generate-id";
+import { changeBlueprintSize } from "@/tools/blueprint/change-blueprint-size.js";
 
 const state = reactive({
   nodes: [
@@ -89,6 +90,9 @@ export const blueprintStore = {
     state.links = state.links.filter(
       link => !link.from.includes(id) && !link.to.includes(id)
     );
+    
+    // 删除节点后重新计算蓝图大小并调整节点位置
+    changeBlueprintSize();
   },
 
   deleteSelectedNodes() {
@@ -97,7 +101,9 @@ export const blueprintStore = {
       .filter(node => node.selected)
       .map(node => node.id);
 
-    selectedNodeIds.forEach(id => this.deleteNode(id));
+    if (selectedNodeIds.length > 0) {
+      selectedNodeIds.forEach(id => this.deleteNode(id));
+    }
   },
   
   getSelectedNodes() {

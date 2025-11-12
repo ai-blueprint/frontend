@@ -27,10 +27,12 @@ export function changeBlueprintSize() {
       if (node.position.y < minY) minY = node.position.y;
     });
 
-    // 计算偏移量，考虑padding
-    const offsetX = Math.max(0, padding / 2 - minX);
-    const offsetY = Math.max(0, padding / 2 - minY);
-
+    // 计算偏移量，确保节点始终在蓝图可见范围内
+    // 不仅处理左侧和顶部边缘，还确保节点在删除后保持合理布局
+    const offsetX = padding / 2 - minX;
+    const offsetY = padding / 2 - minY;
+    
+    // 无论偏移量正负，都应用它，确保节点始终与蓝图边缘保持适当间距
     blueprintStore.state.nodes.forEach((node) => {
       node.position.x += offsetX;
       node.position.y += offsetY;
@@ -42,5 +44,6 @@ export function changeBlueprintSize() {
       currentTranslate.x - offsetX,
       currentTranslate.y - offsetY
     );
+
   }
 }
