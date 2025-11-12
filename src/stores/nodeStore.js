@@ -1,49 +1,71 @@
 import { reactive, readonly } from "vue";
 
-const state = reactive({
-  基础: [
-    {
-      name: "输入",
-      opcode: "input",
-      endpoints: {
-        out: ["test1"],
+const state = reactive([
+  {
+    name: "基础",
+    color: "#8B92E5",
+    nodes: [
+      {
+        name: "输入",
+        opcode: "input",
+        endpoints: {
+          out: ["out1"],
+        },
       },
-    },
-    {
-      name: "输出",
-      opcode: "output",
-      endpoints: {
-        in: ["test2"],
+      {
+        name: "输出",
+        opcode: "output",
+        endpoints: {
+          in: ["in1"],
+        },
       },
-    },
-  ],
-  数学: [
-    {
-      name: "+",
-      opcode: "add",
-      endpoints: {
-        in: ["test11", "test21"],
-        out: ["test111"],
+    ],
+  },
+  {
+    name: "数学",
+    color: "#7DC7F5",
+    nodes: [
+      {
+        name: "+",
+        opcode: "add",
+        endpoints: {
+          in: ["in1", "in2"],
+          out: ["out1"],
+        },
       },
-    },
-    {
-      name: "-",
-      opcode: "sub",
-      endpoints: {
-        in: ["test1", "test2"],
-        out: ["test3"],
+      {
+        name: "-",
+        opcode: "sub",
+        endpoints: {
+          in: ["in1", "in2"],
+          out: ["out1"],
+        },
       },
-    },
-    {
-      name: "*",
-      opcode: "mul",
-      endpoints: {
-        in: ["test1", "test2"],
-        out: ["test3"],
+    ],
+  },
+  {
+    name: "逻辑",
+    color: "#E8B495",
+    nodes: [
+      {
+        name: "与",
+        opcode: "and",
+        endpoints: {
+          in: ["in1", "in2"],
+          out: ["out1"],
+        },
       },
-    },
-  ],
-});
+      {
+        name: "或",
+        opcode: "or",
+        endpoints: {
+          in: ["in1", "in2"],
+          out: ["out1"],
+        },
+      },
+    ],
+  },
+]);
 
 export const nodeStore = {
   state: readonly(state),
@@ -72,5 +94,17 @@ export const nodeStore = {
       }
     }
     return name;
+  },
+  // 颜色
+  getNodeColor(opcode) {
+    let color = "#8B92E5";
+    state.forEach((category) => {
+      category.nodes.forEach((node) => {
+        if (node.opcode === opcode) {
+          color = category.color;
+        }
+      });
+    });
+    return color;
   },
 };

@@ -15,5 +15,4 @@ export function createNode(
     ? { ...nodeProps, id: undefined } // 清除id，让addNode生成新id
     : nodeStore.getNode(opcode);
   blueprintStore.addNode(name, opcode, position, nodeInfo,id);
-  console.log(`创建节点 ${name} ${opcode} 在 ${position.x}, ${position.y}`);
 }

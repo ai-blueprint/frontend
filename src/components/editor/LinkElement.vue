@@ -14,9 +14,9 @@
 
 <script setup>
 import { ref, defineProps, watch, onMounted, onUnmounted } from 'vue'
-import { getScale } from '@/tools/data/get-scale'
-import { blueprintStore } from '@/stores/blueprintStore'
 
+import { blueprintStore } from '@/stores/blueprintStore'
+import { getElementCenter } from '@/tools/data/get-element-center'
 // 定义组件属性
 const props = defineProps({
   links: {
@@ -28,27 +28,7 @@ const props = defineProps({
 // 响应式数据
 const paths = ref([])
 
-// 获取元素中心坐标（相对于蓝图容器）
-function getElementCenter(endpointId) {
-  const element = document.getElementById(endpointId)
-  if (!element) return null
 
-  const blueprint = document.getElementById('blueprint')
-  if (!blueprint) return null
-
-  // 获取元素和蓝图的边界矩形
-  const elementRect = element.getBoundingClientRect()
-  const blueprintRect = blueprint.getBoundingClientRect()
-
-  // 获取蓝图的缩放比例
-  const scale = getScale(blueprint)
-
-  // 计算元素中心相对于蓝图的坐标（考虑缩放）
-  return {
-    x: (elementRect.left + elementRect.width / 2 - blueprintRect.left) / scale,
-    y: (elementRect.top + elementRect.height / 2 - blueprintRect.top) / scale
-  }
-}
 
 // 计算贝塞尔曲线路径
 function createBezierPath(from, to) {

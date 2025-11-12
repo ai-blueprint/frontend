@@ -48,7 +48,7 @@ const blueprintStyle = computed(() => ({
   width: `${blueprintStore.state.size.width}px`,
   height: `${blueprintStore.state.size.height}px`,
   scale: blueprintStore.state.scale,
-  translate: `${blueprintStore.state.translate.x}px ${blueprintStore.state.translate.y}px`
+  translate: `${blueprintStore.state.translate.x}px ${blueprintStore.state.translate.y}px`,
 }));
 
 // 获取节点样式
@@ -118,7 +118,7 @@ function handleNodeDrop(event) {
     const nodeProps = JSON.parse(event.dataTransfer.getData("node"));
     const isMove = event.dataTransfer.getData("isMove") === "true";
     const originalNodeId = event.dataTransfer.getData("nodeId");
-
+    
     // 计算放置位置
     const { x, y } = getMouseRelativeCoordinate(blueprintContainer, event, true);
     const targetPosition = {

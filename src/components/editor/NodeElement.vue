@@ -1,6 +1,6 @@
 <template>
   <span class="node" draggable="true" ref="nodeElement" @dragstart="onDragStart" @click="onNodeClick"
-    :class="{ selected: isSelected }">
+    :class="{ selected: isSelected }" :style="{ backgroundColor: nodeColor }">
     <span class="endpoint-group in">
       <EndPoint v-for="endpoint in inputEndpoints" :id="`${nodeId}_${endpoint}`" :key="endpoint"
         :class="endpoint"></EndPoint>
@@ -17,17 +17,22 @@ import EndPoint from "./EndPoint.vue";
 import { ref, computed, defineProps } from "vue";
 import { blueprintStore } from "@/stores/blueprintStore.js";
 import { getMouseRelativeCoordinate } from "@/tools/data/get-mouse-relative-coordinate.js";
-
+import { nodeStore } from "@/stores/nodeStore.js";
 const nodeElement = ref(null);
 const props = defineProps({
   node: {
     type: Object,
     default: () => ({}),
   },
+  color: {
+    type: String,
+    default: "#8B92E5",
+  },
 });
 
 // 计算属性，提高代码可读性
 const nodeId = computed(() => props.node?.id || '');
+const nodeColor = computed(() => nodeStore.getNodeColor(props.node?.opcode || "") || props.color);
 const nodeName = computed(() => props.node?.name || "未命名节点");
 const isSelected = computed(() => props.node?.selected || false);
 const inputEndpoints = computed(() => props.node?.endpoints?.in || []);

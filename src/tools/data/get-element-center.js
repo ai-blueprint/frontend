@@ -1,5 +1,5 @@
 import { getScale } from '@/tools/data/get-scale'
-export function getCenter(id,relativeId='blueprint') {
+export function getElementCenter(id,relativeId='blueprint') {
   // 这里采用获取相对位置，相对于relativeId元素的位置
   const element = document.getElementById(id)
   if (!element) return null

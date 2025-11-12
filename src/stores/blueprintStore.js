@@ -61,6 +61,7 @@ export const blueprintStore = {
       position,
       selected: false,
     });
+    console.log(`新增节点 “${name}”（${opcode}） 在 ${position.x}, ${position.y}`);
   },
 
   updateNodePosition(id, position) {
@@ -68,6 +69,7 @@ export const blueprintStore = {
     if (node) {
       node.position = position;
     }
+    console.log(`更新节点 “${node.name}”（${node.opcode}） 位置到 ${position.x}, ${position.y}`); 
   },
 
   toggleSelectNode(id) {
@@ -105,6 +107,8 @@ export const blueprintStore = {
   // ===== 连接线操作 =====
   addLink(from, to) {
     state.links.push({ id: generateId(), from, to });
+    console.log(`新增连接: ${from} -> ${to}`);
+    
   },
   
   deleteLink(id) {
@@ -151,14 +155,5 @@ export const blueprintStore = {
     state.scale = scale;
     state.translate.x = translateX;
     state.translate.y = translateY;
-  },
-  
-  // 为了向后兼容，保留旧方法名
-  moveNode: function(id, position) {
-    this.updateNodePosition(id, position);
-  },
-  
-  setNodePos: function(id, position) {
-    this.updateNodePosition(id, position);
   },
 };

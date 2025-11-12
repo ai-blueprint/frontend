@@ -2,14 +2,15 @@
   <div class="nodes-box" @dragover.prevent @drop="onNodeDrop" @dragenter="onDragEnter" @dragleave="onDragLeave">
     <div
       class="nodes-group"
-      v-for="(items, category) in nodeStore.state"
-      :key="category"
+      v-for="category in nodeStore.state"
+      :key="category.name"
     >
-      <h3 class="group-name">{{ category }}</h3>
+      <h3 class="group-name">{{ category.name }}</h3>
       <NodeElement
-        v-for="node in items"
+        v-for="node in category.nodes"
         :key="node.opcode"
         :node="node"
+        :color="category.color"
       ></NodeElement>
     </div>
   </div>
