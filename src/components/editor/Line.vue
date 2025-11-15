@@ -15,7 +15,7 @@
 <script setup>
 import { ref, defineProps, watch, onMounted, onUnmounted } from 'vue'
 
-import { blueprintStore } from '@/stores/blueprintStore'
+import { blueprintStore } from '@/stores/blueprint'
 import { getElementCenter } from '@/tools/data/get-element-center'
 // 定义组件属性
 const props = defineProps({

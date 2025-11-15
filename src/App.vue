@@ -22,7 +22,7 @@ import "./style.css";
 import { onMounted, onUnmounted } from "vue";
 
 // 持续监测鼠标位置并全局共享
-import { mouseStore } from "@/stores/mouseStore";
+import { mouseStore } from "@/stores/mouse";
 function handleMove(e) {
   mouseStore.move(e);
 }

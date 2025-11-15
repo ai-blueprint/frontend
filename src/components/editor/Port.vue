@@ -1,5 +1,5 @@
 <template>
-  <span class="endpoint" ref="endpointRef" @mousedown="handleMouseDown" :id="id"
+  <span class="endpoint" ref="portRef" @mousedown="handleMouseDown" :id="id"
     :class="{ connected: isConnected }"></span>
 </template>
 
@@ -30,7 +30,7 @@
 
 <script setup>
 import { ref, defineProps, onUnmounted, computed } from "vue";
-import { blueprintStore } from "@/stores/blueprintStore";
+import { blueprintStore } from "@/stores/blueprint";
 import { getScale } from "@/tools/data/get-scale";
 import { getMouseRelativeCoordinate } from "@/tools/data/get-mouse-relative-coordinate";
 
@@ -43,7 +43,7 @@ const props = defineProps({
 });
 
 // 组件引用和计算属性
-const endpointRef = ref(null);
+const portRef = ref(null);
 const blueprintEl = computed(() => document.getElementById('blueprint'));
 
 // 计算端点是否已连接
@@ -54,7 +54,7 @@ const isConnected = computed(() => {
 });
 
 // 端点类型映射
-const endpointTypeMap = computed(() => {
+const typeMap = computed(() => {
   const map = new Map();
   blueprintStore.state.nodes.forEach(node => {
     ['in', 'out'].forEach(type => {
@@ -67,7 +67,7 @@ const endpointTypeMap = computed(() => {
 });
 
 // 获取端点类型
-const getEndpointType = (endpointId) => endpointTypeMap.value.get(endpointId);
+const getType = (endpointId) => typeMap.value.get(endpointId);
 
 // 清理事件监听和样式
 function cleanupEventListeners() {
@@ -144,7 +144,7 @@ function handleMouseUp(event) {
   }
 
   // 验证连接有效性
-  const [fromType, toType] = [getEndpointType(tempLink.from), getEndpointType(targetId)];
+  const [fromType, toType] = [getType(tempLink.from), getType(targetId)];
   if (!isValidConnectionType(fromType, toType)) {
     blueprintStore.clearTempLink();
     return;
@@ -176,10 +176,9 @@ function handleMouseUp(event) {
 function findNearbyEndpoint(position, radius) {
   if (!blueprintEl.value) return null;
 
-  const scaleValue = getScale(blueprintEl.value);
+ const scaleValue = getScale(blueprintEl.value);
   const blueprintRect = blueprintEl.value.getBoundingClientRect();
-  const fromType = getEndpointType(blueprintStore.state.tempLink.from);
-
+  const fromType = getType(blueprintStore.state.tempLink.from);
   return Array.from(document.querySelectorAll('.endpoint'))
     .filter(endpoint => {
       const endpointId = endpoint.id;
@@ -187,21 +186,21 @@ function findNearbyEndpoint(position, radius) {
       if (endpointId === blueprintStore.state.tempLink.from) return false;
 
       // 只考虑类型不同的端点
-      const toType = getEndpointType(endpointId);
+      const toType = getType(endpointId);
       return fromType && toType && fromType !== toType;
     })
     .find(endpoint => {
       // 计算端点中心位置
       const rect = endpoint.getBoundingClientRect();
-      const endpointCenter = {
+      const center = {
         x: (rect.left + rect.width / 2 - blueprintRect.left) / scaleValue,
         y: (rect.top + rect.height / 2 - blueprintRect.top) / scaleValue
       };
 
       // 计算距离
       const distance = Math.hypot(
-        position.x - endpointCenter.x,
-        position.y - endpointCenter.y
+        position.x - center.x,
+        position.y - center.y
       );
 
       return distance <= radius;

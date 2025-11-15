@@ -1,5 +1,5 @@
 import { reactive, readonly } from 'vue'
-import { blueprintStore } from './blueprintStore'
+import { blueprintStore } from './blueprint'
 
 // 历史记录配置常量
 const MAX_HISTORY_SIZE = 50

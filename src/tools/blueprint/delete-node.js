@@ -1,4 +1,4 @@
-import { blueprintStore } from "@/stores/blueprintStore.js";
+import { blueprintStore } from "@/stores/blueprint.js";
 export function deleteNode(ID) {
   // 获取需要删除的关联连接线
   const linksToDelete = blueprintStore.state.links.filter((link) =>
@@ -12,5 +12,5 @@ export function deleteNode(ID) {
   // 日志记录
   console.log("删除节点：", ID);
   linksToDelete.length &&
-    console.log(`同时删除附带连接线${linksToDelete.length}条`);
+    console.log(`同时删除附带 ${linksToDelete.length} 条连接线`);
 }

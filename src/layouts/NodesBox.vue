@@ -6,19 +6,19 @@
       :key="category.name"
     >
       <h3 class="group-name">{{ category.name }}</h3>
-      <NodeElement
+      <Node
         v-for="node in category.nodes"
         :key="node.opcode"
         :node="node"
         :color="category.color"
-      ></NodeElement>
+      ></Node>
     </div>
   </div>
 </template>
 
 <script setup>
-import NodeElement from "../components/editor/NodeElement.vue";
-import { nodeStore } from "@/stores/nodeStore";
+import Node from "../components/editor/Node.vue";
+import { nodeStore } from "@/stores/nodes";
 import { deleteNode } from "@/tools/blueprint/delete-node.js";
 
 // 添加拖拽进入和离开事件处理，用于视觉反馈

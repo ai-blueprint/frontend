@@ -1,4 +1,4 @@
-import { blueprintStore } from "@/stores/blueprintStore";
+import { blueprintStore } from "@/stores/blueprint";
 export function limitBlueprint(childSize, parentSize, transform) {
   const { width: childWidth, height: childHeight } = childSize;
   const { width: parentWidth, height: parentHeight } = parentSize;

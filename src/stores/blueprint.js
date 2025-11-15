@@ -62,7 +62,7 @@ export const blueprintStore = {
       position,
       selected: false,
     });
-    console.log(`新增节点 “${name}”（${opcode}） 在 ${position.x}, ${position.y}`);
+    console.log(`新增节点 “${name}”（${opcode}）\n在 ${Math.floor(position.x)}, ${Math.floor(position.y)}`);
   },
 
   updateNodePosition(id, position) {
@@ -70,7 +70,7 @@ export const blueprintStore = {
     if (node) {
       node.position = position;
     }
-    console.log(`更新节点 “${node.name}”（${node.opcode}） 位置到 ${position.x}, ${position.y}`); 
+    console.log(`更新节点 “${node.name}”（${node.opcode}） 位置\n到 ${Math.floor(position.x)}, ${Math.floor(position.y)}`); 
   },
 
   toggleSelectNode(id) {

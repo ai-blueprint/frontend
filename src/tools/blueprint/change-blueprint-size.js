@@ -2,7 +2,7 @@
 // 更新蓝图长宽
 // 遍历所有节点进行偏移
 import { calculateBlueprintSize } from "@/tools/data/calculate-blueprint-size.js";
-import { blueprintStore } from "@/stores/blueprintStore.js";
+import { blueprintStore } from "@/stores/blueprint.js";
 import { limitBlueprint } from "../data/blueprint-limit";
 export function changeBlueprintSize() {
   const padding = 1000;

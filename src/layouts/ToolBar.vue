@@ -37,8 +37,8 @@
 
 <script setup>
 import { computed } from 'vue';
-import { historyStore } from '@/stores/historyStore';
-import { blueprintStore } from '@/stores/blueprintStore';
+import { historyStore } from '@/stores/history';
+import { blueprintStore } from '@/stores/blueprint';
 
 // 计算属性
 const canUndo = computed(() => historyStore.canUndo());

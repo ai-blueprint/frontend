@@ -1,8 +1,8 @@
 // 获取对应ID的蓝图节点数据
 // 克隆节点数据并修改ID
 // 在鼠标位置创建新节点
-import { blueprintStore } from "../../stores/blueprintStore.js";
-import { mouseStore } from "../../stores/mouseStore.js";
+import { blueprintStore } from "../../stores/blueprint.js";
+import { mouseStore } from "../../stores/mouse.js";
 import { createNode } from "../../tools/blueprint/create-node.js";
 
 export function cloneNode(ID) {

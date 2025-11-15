@@ -60,8 +60,8 @@ const state = reactive({
 
 项目采用清晰的组件化设计，主要包含以下组件：
 
-- **布局组件**：HeaderBar, CategoryBar, NodesBox, WorkSpace, BluePrint, ToolBar
-- **编辑器组件**：NodeElement, LinkElement, EndPoint
+- **布局组件**：HeaderBar, CategoryBar, NodesBox, WorkSpace, Blueprint, ToolBar
+- **编辑器组件**：Node, Line, Port
 
 **组件关系**：App.vue 作为根组件，集成所有子组件，形成完整的编辑器界面。
 

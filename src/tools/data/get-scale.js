@@ -9,7 +9,7 @@ export function getScale(element) {
     const scaleValue = scaleMatch[1].split(",")[0];
     return parseFloat(scaleValue);
   } catch (error) {
-    console.log(`警告，获取元素scale失败：${error}\n将使用默认值：1`);
+    console.warn(`警告，获取元素scale失败：${error}\n将使用默认值：1`);
     return 1;
   }
 }

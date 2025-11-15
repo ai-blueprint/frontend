@@ -3,10 +3,10 @@
     @click="handleBlueprintClick" @mousemove="handleBlueprintDrag" @wheel="handleZoom" :style="blueprintStyle">
 
     <!-- 连接线 -->
-    <LinkElement :links="blueprintStore.state.links" />
+    <Line :links="blueprintStore.state.links" />
 
     <!-- 节点 -->
-    <NodeElement v-for="node in blueprintStore.state.nodes" :key="node.id" :node="node" :style="getNodeStyle(node)" />
+    <Node v-for="node in blueprintStore.state.nodes" :key="node.id" :node="node" :style="getNodeStyle(node)" />
   </div>
 </template>
 
@@ -32,13 +32,13 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 import { changeBlueprintSize } from "@/tools/blueprint/change-blueprint-size.js";
-import NodeElement from "@/components/editor/NodeElement.vue";
-import LinkElement from "@/components/editor/LinkElement.vue";
-import { blueprintStore } from "@/stores/blueprintStore";
+import Node from "@/components/editor/Node.vue";
+import Line from "@/components/editor/Line.vue";
+import { blueprintStore } from "@/stores/blueprint";
 import { createNode } from "@/tools/blueprint/create-node.js";
 import { moveNode } from "@/tools/blueprint/move-node.js";
 import { getMouseRelativeCoordinate } from "@/tools/data/get-mouse-relative-coordinate.js";
-import { mouseStore } from "@/stores/mouseStore";
+import { mouseStore } from "@/stores/mouse";
 
 // 组件引用
 const blueprintContainer = ref(null);

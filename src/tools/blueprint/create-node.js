@@ -1,5 +1,5 @@
-import { blueprintStore } from "@/stores/blueprintStore";
-import { nodeStore } from "@/stores/nodeStore";
+import { blueprintStore } from "@/stores/blueprint";
+import { nodeStore } from "@/stores/nodes";
 // 添加节点到蓝图数据
 // 在蓝图对应位置创建节点
 export function createNode(

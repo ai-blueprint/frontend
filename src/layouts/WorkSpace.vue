@@ -1,12 +1,12 @@
 <template>
   <div id="workspace" class="workspace">
-    <BluePrint />
+    <Blueprint />
     <Toolbar />
   </div>
 </template>
 
 <script setup>
-import BluePrint from "./BluePrint.vue";
+import Blueprint from "./Blueprint.vue";
 import Toolbar from "./ToolBar.vue";
 </script>
 

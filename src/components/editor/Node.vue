@@ -1,23 +1,23 @@
 <template>
   <span class="node" draggable="true" ref="nodeElement" @dragstart="onDragStart" @click="onNodeClick"
-    :class="{ selected: isSelected }" :style="{ backgroundColor: nodeColor }">
+    :class="{ selected: isSelected }" :style="{ backgroundColor: color }">
     <span class="endpoint-group in">
-      <EndPoint v-for="endpoint in inputEndpoints" :id="`${nodeId}_${endpoint}`" :key="endpoint"
-        :class="endpoint"></EndPoint>
+      <Port v-for="endpoint in inputs" :id="`${id}_${endpoint}`" :key="endpoint"
+        :class="endpoint"></Port>
     </span>
-    <span class="node-name">{{ nodeName }}</span>
+    <span class="node-name">{{ name }}</span>
     <span class="endpoint-group out">
-      <EndPoint v-for="endpoint in outputEndpoints" :id="`${nodeId}_${endpoint}`" :key="endpoint"
-        :class="endpoint"></EndPoint>
+      <Port v-for="endpoint in outputs" :id="`${id}_${endpoint}`" :key="endpoint"
+        :class="endpoint"></Port>
     </span>
   </span>
 </template>
 <script setup>
-import EndPoint from "./EndPoint.vue";
+import Port from "./Port.vue";
 import { ref, computed, defineProps } from "vue";
-import { blueprintStore } from "@/stores/blueprintStore.js";
+import { blueprintStore } from "@/stores/blueprint.js";
 import { getMouseRelativeCoordinate } from "@/tools/data/get-mouse-relative-coordinate.js";
-import { nodeStore } from "@/stores/nodeStore.js";
+import { nodeStore } from "@/stores/nodes.js";
 const nodeElement = ref(null);
 const props = defineProps({
   node: {
@@ -31,12 +31,12 @@ const props = defineProps({
 });
 
 // 计算属性，提高代码可读性
-const nodeId = computed(() => props.node?.id || '');
-const nodeColor = computed(() => nodeStore.getNodeColor(props.node?.opcode || "") || props.color);
-const nodeName = computed(() => props.node?.name || "未命名节点");
+const id = computed(() => props.node?.id || '');
+const color = computed(() => nodeStore.getNodeColor(props.node?.opcode || "") || props.color);
+const name = computed(() => props.node?.name || "未命名节点");
 const isSelected = computed(() => props.node?.selected || false);
-const inputEndpoints = computed(() => props.node?.endpoints?.in || []);
-const outputEndpoints = computed(() => props.node?.endpoints?.out || []);
+const inputs = computed(() => props.node?.endpoints?.in || []);
+const outputs = computed(() => props.node?.endpoints?.out || []);
 
 function onNodeClick(e) {
   // 阻止事件冒泡，避免触发蓝图的点击事件
@@ -46,11 +46,11 @@ function onNodeClick(e) {
 
   if (e.ctrlKey || e.metaKey) {
     // 按下Ctrl键，切换选中状态
-    blueprintStore.toggleSelectNode(nodeId.value);
+    blueprintStore.toggleSelectNode(id.value);
   } else {
     // 未按Ctrl键，先清空所有选择，然后选中当前节点
     blueprintStore.clearSelectNode();
-    blueprintStore.toggleSelectNode(nodeId.value);
+    blueprintStore.toggleSelectNode(id.value);
   }
 }
 
@@ -62,9 +62,9 @@ function onDragStart(e) {
   e.dataTransfer.setData("node", JSON.stringify(props.node));
   
   // 如果节点有ID，那就是蓝图内节点移动，否则就是新节点创建
-  if (nodeId.value) {
+  if (id.value) {
     e.dataTransfer.setData("isMove", "true");
-    e.dataTransfer.setData("nodeId", nodeId.value);
+    e.dataTransfer.setData("nodeId", id.value);
     // 视觉反馈，移动状态
     e.dataTransfer.effectAllowed = "move";
   } else {
