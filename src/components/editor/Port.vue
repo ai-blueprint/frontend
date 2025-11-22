@@ -1,9 +1,9 @@
 <template>
-  <span class="endpoint" ref="portRef" @mousedown="handleMouseDown" :id="id" :class="{ connected: isConnected }"></span>
+  <span class="port" ref="portRef" @mousedown="handleMouseDown" :id="id" :class="{ connected: isConnected }"></span>
 </template>
 
 <style scoped>
-.endpoint {
+.port {
   display: flex;
   width: 8px;
   height: 8px;
@@ -13,18 +13,18 @@
   transition: 0.1s ease-in-out;
 }
 
-.endpoint:hover {
+.port:hover {
   transform: scale(1.2);
   background-color: #8cff00;
 }
 
-.endpoint.snap {
+.port.snap {
   background-color: #FFD700;
   transform: scale(1.4);
 }
 
 /* 没想好用什么样式 */
-/* .endpoint.connected {} */
+/* .port.connected {} */
 </style>
 
 <script setup>
@@ -57,7 +57,7 @@ const typeMap = computed(() => {
   const map = new Map();
   blueprintStore.state.nodes.forEach(node => {
     ['in', 'out'].forEach(type => {
-      node.endpoints[type]?.forEach(e => {
+      node.ports[type]?.forEach(e => {
         map.set(`${node.id}_${e}`, type);
       });
     });
@@ -66,7 +66,7 @@ const typeMap = computed(() => {
 });
 
 // 获取端点类型
-const getType = (endpointId) => typeMap.value.get(endpointId);
+const getType = (portId) => typeMap.value.get(portId);
 
 // 清理事件监听和样式
 function cleanupEventListeners() {
@@ -78,7 +78,7 @@ function cleanupEventListeners() {
 
 // 清除吸附样式
 function clearSnapStyles() {
-  document.querySelectorAll('.endpoint.snap').forEach(el =>
+  document.querySelectorAll('.port.snap').forEach(el =>
     el.classList.remove('snap')
   );
 }
@@ -93,19 +93,19 @@ function handleMouseDown(event) {
   const nodeId = props.id.split('_')[0];
   // 如果节点id是空的或者是undefined，那么就直接返回
   if (nodeId === "undefined" || nodeId === "") return;
-  const endpointId = props.id;
+  const portId = props.id;
 
   event.stopPropagation();
   event.preventDefault();
   // 如果端点是输入端点，并且已经连接，则断开连接并溯源至原本的输出端点来创建新的连接，如果没有连接那就正常拉出连接
-  if (getType(endpointId) === 'in' && isConnected.value) {
+  if (getType(portId) === 'in' && isConnected.value) {
     const link = blueprintStore.state.links.find(link => link.to === props.id);
     if (link) {
       blueprintStore.deleteLink(link.id);
       blueprintStore.setTempLink(link.from);
     }
   } else {
-    blueprintStore.setTempLink(endpointId);
+    blueprintStore.setTempLink(portId);
   }
 
 
@@ -122,14 +122,14 @@ function handleMouseMove(event) {
 
   const position = getMouseRelativeCoordinate(blueprintEl.value, event, true);
   const blueprintScale = blueprintStore.state.scale;
-  const nearbyEndpoint = findNearbyEndpoint(position, 20 / blueprintScale);
+  const nearbyPort = findNearbyPort(position, 20 / blueprintScale);
 
   clearSnapStyles();
 
   // 处理吸附效果
-  if (nearbyEndpoint && nearbyEndpoint !== blueprintStore.state.tempLink.from) {
-    document.getElementById(nearbyEndpoint)?.classList.add('snap');
-    blueprintStore.setTempLink(blueprintStore.state.tempLink.from, nearbyEndpoint);
+  if (nearbyPort && nearbyPort !== blueprintStore.state.tempLink.from) {
+    document.getElementById(nearbyPort)?.classList.add('snap');
+    blueprintStore.setTempLink(blueprintStore.state.tempLink.from, nearbyPort);
   } else {
     blueprintStore.setTempLink(blueprintStore.state.tempLink.from, { x: position.x, y: position.y });
   }
@@ -148,7 +148,7 @@ function handleMouseUp(event) {
   // 确定目标端点ID
   const targetId = typeof tempLink.to === 'string'
     ? tempLink.to
-    : findEndpointElement(event.target)?.id;
+    : findPortElement(event.target)?.id;
 
   if (!targetId || targetId === tempLink.from) {
     blueprintStore.clearTempLink();
@@ -185,29 +185,29 @@ function handleMouseUp(event) {
 }
 
 // 查找附近的端点
-function findNearbyEndpoint(position, radius) {
+function findNearbyPort(position, radius) {
   if (!blueprintEl.value) return null;
 
   const scaleValue = getScale(blueprintEl.value);
   const blueprintRect = blueprintEl.value.getBoundingClientRect();
   const fromType = getType(blueprintStore.state.tempLink.from);
-  return Array.from(document.querySelectorAll('.endpoint'))
-    .filter(endpoint => {
-      const endpointId = endpoint.id;
+  return Array.from(document.querySelectorAll('.port'))
+    .filter(port => {
+      const portId = port.id;
       // 排除自己
-      if (endpointId === blueprintStore.state.tempLink.from) return false;
+      if (portId === blueprintStore.state.tempLink.from) return false;
       // 排除该端点所在节点的其他端点
-      const nodeId = endpointId.split('_')[0];
+      const nodeId = portId.split('_')[0];
       if (nodeId === blueprintStore.state.tempLink.from.split('_')[0]) return false;
 
 
       // 只考虑类型不同的端点
-      const toType = getType(endpointId);
+      const toType = getType(portId);
       return fromType && toType && fromType !== toType;
     })
-    .find(endpoint => {
+    .find(port => {
       // 计算端点中心位置
-      const rect = endpoint.getBoundingClientRect();
+      const rect = port.getBoundingClientRect();
       const center = {
         x: (rect.left + rect.width / 2 - blueprintRect.left) / scaleValue,
         y: (rect.top + rect.height / 2 - blueprintRect.top) / scaleValue
@@ -224,9 +224,9 @@ function findNearbyEndpoint(position, radius) {
 }
 
 // 查找端点元素
-function findEndpointElement(element) {
+function findPortElement(element) {
   while (element?.nodeType === 1) {
-    if (element.classList.contains('endpoint')) return element;
+    if (element.classList.contains('port')) return element;
     element = element.parentNode;
   }
   return null;

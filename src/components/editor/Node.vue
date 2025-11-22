@@ -1,12 +1,12 @@
 <template>
   <span class="node" draggable="true" ref="nodeElement" @dragstart="onDragStart" @click="onNodeClick"
     :class="{ selected: isSelected }" :style="{ backgroundColor: color, zIndex: layer }">
-    <span class="endpoint-group in">
-      <Port v-for="endpoint in inputs" :id="`${id}_${endpoint}`" :key="endpoint" :class="endpoint"></Port>
+    <span class="port-group in">
+      <Port v-for="port in inputs" :id="`${id}_${port}`" :key="port" :class="port"></Port>
     </span>
     <span class="node-name">{{ name }}</span>
-    <span class="endpoint-group out">
-      <Port v-for="endpoint in outputs" :id="`${id}_${endpoint}`" :key="endpoint" :class="endpoint"></Port>
+    <span class="port-group out">
+      <Port v-for="port in outputs" :id="`${id}_${port}`" :key="port" :class="port"></Port>
     </span>
   </span>
 </template>
@@ -33,8 +33,8 @@ const id = computed(() => props.node?.id || '');
 const color = computed(() => nodeStore.getNodeColor(props.node?.opcode || "") || props.color);
 const name = computed(() => props.node?.name || "未命名节点");
 const isSelected = computed(() => props.node?.selected || false);
-const inputs = computed(() => props.node?.endpoints?.in || []);
-const outputs = computed(() => props.node?.endpoints?.out || []);
+const inputs = computed(() => props.node?.ports?.in || []);
+const outputs = computed(() => props.node?.ports?.out || []);
 const layer = computed(() => props.node?.layer || 0);
 
 function onNodeClick(e) {
@@ -108,7 +108,7 @@ function onDragStart(e) {
   word-break: keep-all;
 }
 
-.endpoint-group {
+.port-group {
   display: flex;
   flex-direction: column;
   align-items: center;

@@ -86,8 +86,8 @@ function updatePaths() {
 ```javascript
 // 计算鼠标与端点距离的核心代码
 const distance = Math.sqrt(
-  Math.pow(position.x - endpointCenter.x, 2) +
-  Math.pow(position.y - endpointCenter.y, 2)
+  Math.pow(position.x - portCenter.x, 2) +
+  Math.pow(position.y - portCenter.y, 2)
 );
 return distance <= radius;  // radius 是吸附半径
 ```

@@ -8,14 +8,14 @@ const state = reactive([
       {
         name: "输入",
         opcode: "input",
-        endpoints: {
+        ports: {
           out: ["out1"],
         },
       },
       {
         name: "输出",
         opcode: "output",
-        endpoints: {
+        ports: {
           in: ["in1"],
         },
       },
@@ -28,7 +28,7 @@ const state = reactive([
       {
         name: "+",
         opcode: "add",
-        endpoints: {
+        ports: {
           in: ["in1", "in2"],
           out: ["out1"],
         },
@@ -36,7 +36,7 @@ const state = reactive([
       {
         name: "-",
         opcode: "sub",
-        endpoints: {
+        ports: {
           in: ["in1", "in2"],
           out: ["out1"],
         },
@@ -50,7 +50,7 @@ const state = reactive([
       {
         name: "与",
         opcode: "and",
-        endpoints: {
+        ports: {
           in: ["in1", "in2"],
           out: ["out1"],
         },
@@ -58,7 +58,7 @@ const state = reactive([
       {
         name: "或",
         opcode: "or",
-        endpoints: {
+        ports: {
           in: ["in1", "in2"],
           out: ["out1"],
         },

@@ -11,7 +11,7 @@ const state = reactive({
       position: { x: 100, y: 100 },
       selected: false,
       layer: 0,
-      endpoints: {
+      ports: {
         out: ["a"],
       },
     },
@@ -22,7 +22,7 @@ const state = reactive({
       position: { x: 400, y: 100 },
       selected: false,
       layer: 1,
-      endpoints: {
+      ports: {
         in: ["a", "b"],
         out: ["c"],
       },
@@ -117,7 +117,7 @@ export const blueprintStore = {
     const index = findNodeIndex(id);
     if (index !== -1) state.nodes.splice(index, 1);
     const linksToDelete = blueprintStore.state.links.filter((link) =>
-      [link.from, link.to].some((endpoint) => endpoint.split("_")[0] === id)
+      [link.from, link.to].some((port) => port.split("_")[0] === id)
     );
     linksToDelete.forEach((link) => this.deleteLink(link.id));
 
