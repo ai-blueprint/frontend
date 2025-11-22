@@ -10,6 +10,7 @@ const state = reactive({
       opcode: "input",
       position: { x: 100, y: 100 },
       selected: false,
+      layer: 0,
       endpoints: {
         out: ["a"],
       },
@@ -20,6 +21,7 @@ const state = reactive({
       opcode: "add",
       position: { x: 400, y: 100 },
       selected: false,
+      layer: 1,
       endpoints: {
         in: ["a", "b"],
         out: ["c"],
@@ -57,6 +59,11 @@ export const blueprintStore = {
     const nodeInfo = nodeProps
       ? { ...nodeProps, id: undefined }
       : nodeStore.getNode(opcode);
+    //找到最大层级
+    const maxLayer = state.nodes.reduce(
+      (max, node) => Math.max(max, node.layer),
+      0
+    );
     state.nodes.push({
       ...nodeInfo,
       id: id || generateId(),
@@ -64,6 +71,7 @@ export const blueprintStore = {
       opcode,
       position,
       selected: false,
+      layer: maxLayer + 1,
     });
     console.log(
       `新增节点 “${name}”（${opcode}）\n在 ${Math.floor(
@@ -80,6 +88,7 @@ export const blueprintStore = {
     const node = findNode(id);
     if (node) {
       node.position = position;
+      this.nodeToFront(id);
     }
     console.log(
       `更新节点 “${node.name}”（${node.opcode}） 位置\n到 ${Math.floor(
@@ -90,7 +99,10 @@ export const blueprintStore = {
 
   toggleSelectNode(id) {
     const node = findNode(id);
-    if (node) node.selected = !node.selected;
+    if (node) {
+      node.selected = !node.selected;
+      this.nodeToFront(id);
+    }
     console.log(`切换节点 “${node.name}”（${node.opcode}） 选中状态`);
   },
 
@@ -129,7 +141,22 @@ export const blueprintStore = {
   getSelectedNodes() {
     return state.nodes.filter((node) => node.selected);
   },
-
+  // 置顶节点
+  nodeToFront(id) {
+    // 先获取最大层级，然后设为最大层级+1，最后规范化层级，保持连续性
+    const maxLayer = state.nodes.reduce(
+      (max, node) => Math.max(max, node.layer),
+      0
+    );
+    const node = findNode(id);
+    if (node) {
+      node.layer = maxLayer + 1;
+      // 规范化层级，保持连续性
+      state.nodes.forEach((n) => {
+        if (n.layer > node.layer) n.layer--;
+      });
+    }
+  },
   // ===== 连接线操作 =====
   addLink(from, to) {
     state.links.push({ id: generateId(), from, to });

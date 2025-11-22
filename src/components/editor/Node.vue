@@ -1,6 +1,6 @@
 <template>
   <span class="node" draggable="true" ref="nodeElement" @dragstart="onDragStart" @click="onNodeClick"
-    :class="{ selected: isSelected }" :style="{ backgroundColor: color }">
+    :class="{ selected: isSelected }" :style="{ backgroundColor: color, zIndex: layer }">
     <span class="endpoint-group in">
       <Port v-for="endpoint in inputs" :id="`${id}_${endpoint}`" :key="endpoint" :class="endpoint"></Port>
     </span>
@@ -35,6 +35,7 @@ const name = computed(() => props.node?.name || "未命名节点");
 const isSelected = computed(() => props.node?.selected || false);
 const inputs = computed(() => props.node?.endpoints?.in || []);
 const outputs = computed(() => props.node?.endpoints?.out || []);
+const layer = computed(() => props.node?.layer || 0);
 
 function onNodeClick(e) {
   // 阻止事件冒泡，避免触发蓝图的点击事件
