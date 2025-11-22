@@ -1,11 +1,7 @@
 <template>
   <div id="blueprint" class="blueprint" ref="blueprintContainer" @dragover.prevent @drop="handleNodeDrop"
     @click="handleBlueprintClick" @mousemove="handleBlueprintDrag" @wheel="handleZoom" :style="blueprintStyle">
-
-    <!-- 连接线 -->
     <Line :links="blueprintStore.state.links" />
-
-    <!-- 节点 -->
     <Node v-for="node in blueprintStore.state.nodes" :key="node.id" :node="node" :style="getNodeStyle(node)" />
   </div>
 </template>

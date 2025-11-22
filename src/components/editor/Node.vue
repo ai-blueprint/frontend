@@ -2,13 +2,11 @@
   <span class="node" draggable="true" ref="nodeElement" @dragstart="onDragStart" @click="onNodeClick"
     :class="{ selected: isSelected }" :style="{ backgroundColor: color }">
     <span class="endpoint-group in">
-      <Port v-for="endpoint in inputs" :id="`${id}_${endpoint}`" :key="endpoint"
-        :class="endpoint"></Port>
+      <Port v-for="endpoint in inputs" :id="`${id}_${endpoint}`" :key="endpoint" :class="endpoint"></Port>
     </span>
     <span class="node-name">{{ name }}</span>
     <span class="endpoint-group out">
-      <Port v-for="endpoint in outputs" :id="`${id}_${endpoint}`" :key="endpoint"
-        :class="endpoint"></Port>
+      <Port v-for="endpoint in outputs" :id="`${id}_${endpoint}`" :key="endpoint" :class="endpoint"></Port>
     </span>
   </span>
 </template>
@@ -41,17 +39,9 @@ const outputs = computed(() => props.node?.endpoints?.out || []);
 function onNodeClick(e) {
   // 阻止事件冒泡，避免触发蓝图的点击事件
   e.stopPropagation();
-  // 提升图层
-  nodeElement.value.style.zIndex = 1000;
-
-  if (e.ctrlKey || e.metaKey) {
-    // 按下Ctrl键，切换选中状态
-    blueprintStore.toggleSelectNode(id.value);
-  } else {
-    // 未按Ctrl键，先清空所有选择，然后选中当前节点
-    blueprintStore.clearSelectNode();
-    blueprintStore.toggleSelectNode(id.value);
-  }
+  nodeElement.value.style.zIndex = 1000;// 提升图层
+  if (!e.ctrlKey && !e.metaKey) blueprintStore.clearSelectNode();
+  blueprintStore.toggleSelectNode(id.value);
 }
 
 function onDragStart(e) {
@@ -60,7 +50,7 @@ function onDragStart(e) {
   e.dataTransfer.setData("position", JSON.stringify(position));
   // 存储节点信息，用于放置时创建相应节点
   e.dataTransfer.setData("node", JSON.stringify(props.node));
-  
+
   // 如果节点有ID，那就是蓝图内节点移动，否则就是新节点创建
   if (id.value) {
     e.dataTransfer.setData("isMove", "true");

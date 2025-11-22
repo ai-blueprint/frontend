@@ -122,7 +122,8 @@ function handleMouseMove(event) {
   if (!blueprintEl.value) return;
 
   const position = getMouseRelativeCoordinate(blueprintEl.value, event, true);
-  const nearbyEndpoint = findNearbyEndpoint(position, 20);
+  const blueprintScale = blueprintStore.state.scale;
+  const nearbyEndpoint = findNearbyEndpoint(position, 20/blueprintScale);
 
   clearSnapStyles();
 

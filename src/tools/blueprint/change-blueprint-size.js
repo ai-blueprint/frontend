@@ -38,11 +38,11 @@ export function changeBlueprintSize() {
       node.position.y += offsetY;
     });
 
-    // 以定位节点的偏移量为基准，反向偏移蓝图
+    // 以定位节点的偏移量为基准，反向偏移蓝图，考虑缩放影响
     const currentTranslate = blueprintStore.state.translate;
     blueprintStore.updateTranslate(
-      currentTranslate.x - offsetX,
-      currentTranslate.y - offsetY
+      currentTranslate.x - offsetX * blueprintStore.state.scale,
+      currentTranslate.y - offsetY * blueprintStore.state.scale
     );
 
   }
