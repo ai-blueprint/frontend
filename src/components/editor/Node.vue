@@ -42,7 +42,8 @@ function onNodeClick(e) {
   e.stopPropagation();
   nodeElement.value.style.zIndex = 1000;// 提升图层
   if (!e.ctrlKey && !e.metaKey) blueprintStore.clearSelectNode();
-  blueprintStore.toggleSelectNode(id.value);
+  if (id.value) blueprintStore.toggleSelectNode(id.value);
+  
 }
 
 function onDragStart(e) {

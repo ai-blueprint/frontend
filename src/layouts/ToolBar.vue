@@ -3,33 +3,33 @@
     <!-- 撤销/重做按钮组 -->
     <div class="toolbar-group">
       <button class="toolbar-button" :disabled="!canUndo" @click="handleUndo" title="撤销 (Ctrl+Z)">
-        <img src="../assets/撤销.svg" alt="撤销" class="toolbar-icon" />
+        <img src="@/assets/ToolBar/撤销.svg" alt="撤销" class="toolbar-icon" />
       </button>
       <button class="toolbar-button" :disabled="!canRedo" @click="handleRedo" title="重做 (Ctrl+Shift+Z)">
-        <img src="../assets/反撤销.svg" alt="重做" class="toolbar-icon" />
+        <img src="@/assets/ToolBar/反撤销.svg" alt="重做" class="toolbar-icon" />
       </button>
     </div>
 
     <!-- 缩放控制按钮组 -->
     <div class="toolbar-group">
       <button class="toolbar-button" @click="handleZoomOut" title="缩小">
-        <img src="../assets/减少.svg" alt="缩小" class="toolbar-icon" />
+        <img src="@/assets/ToolBar/减少.svg" alt="缩小" class="toolbar-icon" />
       </button>
       <button class="toolbar-button scale-display" @click="handleResetZoom" title="重置缩放">
         {{ Math.round(currentScale * 100) }}%
       </button>
       <button class="toolbar-button" @click="handleZoomIn" title="放大">
-        <img src="../assets/增加.svg" alt="放大" class="toolbar-icon" />
+        <img src="@/assets/ToolBar/增加.svg" alt="放大" class="toolbar-icon" />
       </button>
     </div>
 
     <!-- 辅助工具按钮组 -->
     <div class="toolbar-group">
       <button class="toolbar-button" @click="handleArrangeNodes" title="排列节点">
-        <img src="../assets/排列.svg" alt="排列" class="toolbar-icon" />
+        <img src="@/assets/ToolBar/排列.svg" alt="排列" class="toolbar-icon" />
       </button>
       <button class="toolbar-button" @click="handleSearch" title="搜索">
-        <img src="../assets/搜索.svg" alt="搜索" class="toolbar-icon" />
+        <img src="@/assets/ToolBar/搜索.svg" alt="搜索" class="toolbar-icon" />
       </button>
     </div>
   </div>
