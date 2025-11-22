@@ -95,7 +95,7 @@ function handleMouseDown(event) {
   if (nodeId === "undefined" || nodeId === "") return;
   const endpointId = props.id;
   console.log(props.id);
-  
+
   event.stopPropagation();
   event.preventDefault();
   // 如果端点是输入端点，并且已经连接，则断开连接并溯源至原本的输出端点来创建新的连接，如果没有连接那就正常拉出连接
@@ -157,7 +157,7 @@ function handleMouseUp(event) {
 
   // 验证连接有效性
   const [fromType, toType] = [getType(tempLink.from), getType(targetId)];
-  if (!isValidConnectionType(fromType, toType)) {
+  if (!isValidConnectionType(fromType, toType) || tempLink.from.split('_')[0] === targetId.split('_')[0]) {
     blueprintStore.clearTempLink();
     return;
   }
@@ -196,6 +196,10 @@ function findNearbyEndpoint(position, radius) {
       const endpointId = endpoint.id;
       // 排除自己
       if (endpointId === blueprintStore.state.tempLink.from) return false;
+      // 排除该端点所在节点的其他端点
+      const nodeId = endpointId.split('_')[0];
+      if (nodeId === blueprintStore.state.tempLink.from.split('_')[0]) return false;
+
 
       // 只考虑类型不同的端点
       const toType = getType(endpointId);
