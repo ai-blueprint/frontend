@@ -1,6 +1,5 @@
 <template>
-  <span class="endpoint" ref="portRef" @mousedown="handleMouseDown" :id="id"
-    :class="{ connected: isConnected }"></span>
+  <span class="endpoint" ref="portRef" @mousedown="handleMouseDown" :id="id" :class="{ connected: isConnected }"></span>
 </template>
 
 <style scoped>
@@ -91,12 +90,22 @@ function isValidConnectionType(fromType, toType) {
 
 // 处理鼠标按下事件
 function handleMouseDown(event) {
-  const endpointId = props.id.split('_')[0];
+  let endpointId = props.id.split('_')[0];
   if (endpointId === "undefined") return;
-
+  endpointId = props.id;
   event.stopPropagation();
   event.preventDefault();
-  blueprintStore.setTempLink(props.id);
+  // 如果端点是输入端点，并且已经连接，则断开连接并溯源至原本的输出端点来创建新的连接，如果没有连接那就正常拉出连接
+  if (getType(endpointId) === 'in' && isConnected.value) {
+    const link = blueprintStore.state.links.find(link => link.to === props.id);
+    if (link) {
+      blueprintStore.deleteLink(link.id);
+      blueprintStore.setTempLink(link.from);
+    }
+  } else {
+    blueprintStore.setTempLink(endpointId);
+  }
+
 
   // 添加事件监听
   document.addEventListener('mousemove', handleMouseMove);
@@ -176,7 +185,7 @@ function handleMouseUp(event) {
 function findNearbyEndpoint(position, radius) {
   if (!blueprintEl.value) return null;
 
- const scaleValue = getScale(blueprintEl.value);
+  const scaleValue = getScale(blueprintEl.value);
   const blueprintRect = blueprintEl.value.getBoundingClientRect();
   const fromType = getType(blueprintStore.state.tempLink.from);
   return Array.from(document.querySelectorAll('.endpoint'))
