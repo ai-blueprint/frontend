@@ -2,7 +2,7 @@
   <header class="header">
     <!-- 左侧区域 -->
     <div class="left-area">
-      <h1 class="logo">炼丹蓝图</h1>
+        <img src="@/assets/logo.svg" alt="logo" class="logo" />
     </div>
 
     <!-- 中部区域 -->
@@ -57,6 +57,7 @@
 
 .middle-area {
   max-width: 170px;
+  margin: 0 10px;
 }
 
 .architecture-name-input {
@@ -65,6 +66,7 @@
   border: 0px;
   border-radius: 999px;
   font-size: 14px;
+  font-weight: 500;
   text-align: center;
   background-color: #7f60e5;
   color: #fff;
