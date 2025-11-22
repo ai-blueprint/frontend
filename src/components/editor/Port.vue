@@ -94,7 +94,6 @@ function handleMouseDown(event) {
   // 如果节点id是空的或者是undefined，那么就直接返回
   if (nodeId === "undefined" || nodeId === "") return;
   const endpointId = props.id;
-  console.log(props.id);
 
   event.stopPropagation();
   event.preventDefault();
@@ -123,7 +122,7 @@ function handleMouseMove(event) {
 
   const position = getMouseRelativeCoordinate(blueprintEl.value, event, true);
   const blueprintScale = blueprintStore.state.scale;
-  const nearbyEndpoint = findNearbyEndpoint(position, 20/blueprintScale);
+  const nearbyEndpoint = findNearbyEndpoint(position, 20 / blueprintScale);
 
   clearSnapStyles();
 

@@ -19,7 +19,7 @@
 <script setup>
 import Node from "../components/editor/Node.vue";
 import { nodeStore } from "@/stores/nodes";
-import { deleteNode } from "@/tools/blueprint/delete-node.js";
+import { blueprintStore } from "@/stores/blueprint.js";
 
 // 添加拖拽进入和离开事件处理，用于视觉反馈
 function onDragEnter(e) {
@@ -50,7 +50,7 @@ function onNodeDrop(e) {
   
   // 如果是蓝图内节点，直接删除它
   if (isMove && originalNodeId) {
-    deleteNode(originalNodeId);
+    blueprintStore.deleteNode(originalNodeId);
     // 可以添加视觉反馈，比如删除动画等
   }
 }

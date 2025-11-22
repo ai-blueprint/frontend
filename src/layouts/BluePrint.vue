@@ -31,8 +31,6 @@ import { changeBlueprintSize } from "@/tools/blueprint/change-blueprint-size.js"
 import Node from "@/components/editor/Node.vue";
 import Line from "@/components/editor/Line.vue";
 import { blueprintStore } from "@/stores/blueprint";
-import { createNode } from "@/tools/blueprint/create-node.js";
-import { moveNode } from "@/tools/blueprint/move-node.js";
 import { getMouseRelativeCoordinate } from "@/tools/data/get-mouse-relative-coordinate.js";
 import { mouseStore } from "@/stores/mouse";
 
@@ -124,10 +122,10 @@ function handleNodeDrop(event) {
 
     if (isMove && originalNodeId) {
       // 移动现有节点
-      moveNode(originalNodeId, targetPosition);
+      blueprintStore.updateNodePosition(originalNodeId, targetPosition);
     } else {
       // 创建新节点
-      createNode(nodeProps.name, nodeProps.opcode, targetPosition, nodeProps);
+      blueprintStore.addNode(nodeProps.name, nodeProps.opcode, targetPosition, nodeProps);
     }
   } catch (error) {
     console.error("节点放置失败:", error);
