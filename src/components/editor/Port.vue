@@ -90,9 +90,12 @@ function isValidConnectionType(fromType, toType) {
 
 // 处理鼠标按下事件
 function handleMouseDown(event) {
-  let endpointId = props.id.split('_')[0];
-  if (endpointId === "undefined") return;
-  endpointId = props.id;
+  const nodeId = props.id.split('_')[0];
+  // 如果节点id是空的或者是undefined，那么就直接返回
+  if (nodeId === "undefined" || nodeId === "") return;
+  const endpointId = props.id;
+  console.log(props.id);
+  
   event.stopPropagation();
   event.preventDefault();
   // 如果端点是输入端点，并且已经连接，则断开连接并溯源至原本的输出端点来创建新的连接，如果没有连接那就正常拉出连接
