@@ -10,9 +10,9 @@
 .blueprint {
   position: absolute;
   /* 网格背景 */
-  background-image: linear-gradient(rgba(0, 0, 255, 0.07) 1px, transparent 1px),
+  /* background-image: linear-gradient(rgba(0, 0, 255, 0.07) 1px, transparent 1px),
     linear-gradient(90deg, rgba(0, 0, 255, 0.07) 1px, transparent 1px);
-  background-size: 30px 30px;
+  background-size: 30px 30px; */
   cursor: grab;
   user-select: none;
   transform-origin: 0 0;

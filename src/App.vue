@@ -5,6 +5,7 @@
       <CategoryBar />
       <NodesBox />
       <WorkSpace />
+      <Panel />
     </main>
   </div>
 </template>
@@ -16,6 +17,7 @@ import HeaderBar from "./layouts/HeaderBar.vue";
 import CategoryBar from "./layouts/CategoryBar.vue";
 import NodesBox from "./layouts/NodesBox.vue";
 import WorkSpace from "./layouts/WorkSpace.vue";
+import Panel from "./layouts/Panel.vue";
 
 import "./style.css";
 

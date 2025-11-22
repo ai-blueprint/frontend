@@ -11,6 +11,18 @@ const state = reactive([
         ports: {
           out: ["out1"],
         },
+        params: [
+          {
+            label: "输入维度",
+            type: "number",
+            default: "1",
+          },
+          {
+            label: "输入类型",
+            type: "string",
+            default: "float32",
+          },
+        ],
       },
       {
         name: "输出",

@@ -109,7 +109,7 @@ function handleSearch() {
 
 <style scoped>
 .toolbar {
-  position: fixed;
+  position: absolute;
   bottom: 10px;
   right: 10px;
   border-radius: 12px;

@@ -14,6 +14,18 @@ const state = reactive({
       ports: {
         out: ["a"],
       },
+      params: [
+        {
+          label: "输入维度",
+          type: "number",
+          default: "1",
+        },
+        {
+          label: "输入类型",
+          type: "string",
+          default: "float32",
+        },
+      ],
     },
     {
       id: "b",
@@ -26,6 +38,13 @@ const state = reactive({
         in: ["a", "b"],
         out: ["c"],
       },
+      params: [
+        {
+          label: "输出维度",
+          type: "number",
+          default: "1",
+        },
+      ],
     },
   ],
   links: [
