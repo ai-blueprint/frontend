@@ -8,9 +8,39 @@
     <title><%= htmlWebpackPlugin.options.title %></title>
   </head>
   <body>
-    <noscript>
-      <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
-    </noscript>
+      <noscript>
+    <div
+      style="display: flex; justify-content: center; align-items: center; min-height: 100vh; background: linear-gradient(135deg, #fff5f5 0%, #ffe0e0 100%);">
+      <div
+        style="text-align: center; padding: 40px; background: rgba(255, 255, 255, 0.9); border-radius: 20px; box-shadow: 0 8px 32px rgba(255, 182, 193, 0.4);">
+        <p
+          style="color: #ff4757; font-size: 32px; font-weight: bold; margin: 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.1);">
+          <span style="font-size: 48px; color: #ff6348; animation: pulse 1s infinite;">⚠️</span>
+          <br><br>
+          <span
+            style="background: linear-gradient(45deg, #ff6b6b, #ff8787); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+            真是的！炼丹蓝图
+          </span>
+          <br>
+          <span style="font-size: 36px; color: #ff4757; animation: shake 0.5s infinite;">
+            没有JavaScript就完全动不了啦！
+          </span>
+          <br><br>
+          <span style="font-size: 28px; color: #ff6348;">
+            你这家伙快点把JavaScript打开啊！
+          </span>
+          <br>
+          <span style="font-size: 32px; color: #ff4757; font-weight: 900;">
+            再不开人家就要、就要...总之快点啦！
+          </span>
+          <br>
+          <span style="font-size: 40px; color: #ff6348; animation: bounce 1s infinite;">
+            笨蛋！
+          </span>
+        </p>
+      </div>
+    </div>
+  </noscript>
     <div id="app"></div>
     <!-- built files will be auto injected -->
   </body>
