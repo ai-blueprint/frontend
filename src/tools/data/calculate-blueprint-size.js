@@ -8,12 +8,14 @@ export function calculateBlueprintSize(nodes, padding) {
   let maxX = -Infinity;
   let maxY = -Infinity;
 
-  // 不需要width和height
+  // 加上节点的width和height，
+  const nodeWidth = 200;
+  const nodeHeight = 50;
   function traverse(node) {
     if (node.position.x < minX) minX = node.position.x;
     if (node.position.y < minY) minY = node.position.y;
-    if (node.position.x > maxX) maxX = node.position.x;
-    if (node.position.y > maxY) maxY = node.position.y;
+    if (node.position.x + nodeWidth > maxX) maxX = node.position.x + nodeWidth;
+    if (node.position.y + nodeHeight > maxY) maxY = node.position.y + nodeHeight;
   }
 
   // 安全检查，确保 nodes 是数组且存在

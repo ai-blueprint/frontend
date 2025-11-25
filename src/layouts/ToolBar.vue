@@ -97,7 +97,8 @@ function updateZoom(newScale) {
 // 排列节点（预留功能）
 function handleArrangeNodes() {
   // 这里可以实现节点自动排列的逻辑
-  console.log('排列节点功能待实现');
+  // console.log('排列节点功能待实现');
+  blueprintStore.arrangeBlueprint();
 }
 
 // 搜索功能（预留）

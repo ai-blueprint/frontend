@@ -2,6 +2,7 @@ import { reactive, readonly } from "vue";
 import { generateId } from "@/tools/data/generate-id";
 import { changeBlueprintSize } from "@/tools/blueprint/change-blueprint-size.js";
 import { nodeStore } from "@/stores/nodes";
+import {arrangeBlueprint} from "@/tools/blueprint/arrange-blueprint.js";
 const state = reactive({
   nodes: [
     {
@@ -227,5 +228,9 @@ export const blueprintStore = {
     state.scale = scale;
     state.translate.x = translateX;
     state.translate.y = translateY;
+  },
+
+  arrangeBlueprint() {
+    arrangeBlueprint(state);
   },
 };
