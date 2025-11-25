@@ -1,47 +1,163 @@
 <!DOCTYPE html>
-<html lang="">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <link rel="icon" href="<%= BASE_URL %>favicon.svg">
-    <title>炼丹蓝图·编辑器</title>
-  </head>
-  <body>
-      <noscript>
-    <div
-      style="display: flex; justify-content: center; align-items: center; min-height: 100vh; background: linear-gradient(135deg, #fff5f5 0%, #ffe0e0 100%);">
-      <div
-        style="text-align: center; padding: 40px; background: rgba(255, 255, 255, 0.9); border-radius: 20px; box-shadow: 0 8px 32px rgba(255, 182, 193, 0.4);">
-        <p
-          style="color: #ff4757; font-size: 32px; font-weight: bold; margin: 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.1);">
-          <span style="font-size: 48px; color: #ff6348; animation: pulse 1s infinite;">⚠️</span>
-          <br><br>
-          <span
-            style="background: linear-gradient(45deg, #ff6b6b, #ff8787); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-            真是的！炼丹蓝图
-          </span>
-          <br>
-          <span style="font-size: 36px; color: #ff4757; animation: shake 0.5s infinite;">
-            没有JavaScript就完全动不了啦！
-          </span>
-          <br><br>
-          <span style="font-size: 28px; color: #ff6348;">
-            你这家伙快点把JavaScript打开啊！
-          </span>
-          <br>
-          <span style="font-size: 32px; color: #ff4757; font-weight: 900;">
-            再不开人家就要、就要...总之快点啦！
-          </span>
-          <br>
-          <span style="font-size: 40px; color: #ff6348; animation: bounce 1s infinite;">
-            笨蛋！
-          </span>
-        </p>
-      </div>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <link rel="icon" href="<%= BASE_URL %>favicon.svg">
+  <title>炼丹蓝图·编辑器</title>
+</head>
+
+<body>
+  <noscript>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .noscript-message {
+        text-align: center;
+        padding: 40px;
+        background: linear-gradient(135deg, #fff5f5 0%, #ffe0e0 100%);
+        border-radius: 20px;
+        box-shadow: 0 8px 32px rgba(255, 182, 193, 0.4);
+        max-width: 700px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      .noscript-message .warning-icon {
+        font-size: 48px;
+        color: #ff6348;
+        animation: pulse 1s infinite;
+      }
+
+      .noscript-message .gradient-text {
+        background: linear-gradient(45deg, #ff6b6b, #ff8787);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-size: 36px;
+        font-weight: bold;
+        display: inline-block;
+      }
+
+      .noscript-message .shaking-text {
+        font-size: 36px;
+        color: #ff4757;
+        animation: shake 0.5s infinite;
+        display: inline-block;
+      }
+
+      .noscript-message .bouncing-text {
+        font-size: 40px;
+        color: #ff6348;
+        animation: shake 1s infinite;
+        display: inline-block;
+      }
+
+      .noscript-message .normal-text {
+        font-size: 28px;
+        color: #ff6348;
+      }
+
+      .noscript-message .emphasized-text {
+        font-size: 32px;
+        color: #ff4757;
+        font-weight: 900;
+      }
+
+      @keyframes pulse {
+
+        0%,
+        100% {
+          transform: scale(1);
+        }
+
+        50% {
+          transform: scale(1.1);
+        }
+      }
+
+      @keyframes shake {
+
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+
+        25% {
+          transform: translateX(-5px);
+        }
+
+        75% {
+          transform: translateX(5px);
+        }
+      }
+
+      @keyframes bounce {
+
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+
+        50% {
+          transform: translateY(-20px);
+        }
+      }
+
+      @media (max-width: 600px) {
+        .noscript-message {
+          padding: 20px;
+        }
+
+        .noscript-message .gradient-text {
+          font-size: 24px;
+        }
+
+        .noscript-message .shaking-text {
+          font-size: 28px;
+        }
+
+        .noscript-message .bouncing-text {
+          font-size: 32px;
+        }
+
+        .noscript-message .normal-text {
+          font-size: 20px;
+        }
+
+        .noscript-message .emphasized-text {
+          font-size: 24px;
+        }
+      }
+    </style>
+    <div class="noscript-message">
+      <span class="warning-icon">⚠️</span>
+      <br><br>
+      <span class="gradient-text">真是的！炼丹蓝图</span>
+      <br>
+      <span class="shaking-text">没有JavaScript就完全动不了啦！</span>
+      <br><br>
+      <span class="normal-text">你这家伙快点把JavaScript打开啊！</span>
+      <br>
+      <span class="emphasized-text">再不开人家就要、就要...总之快点啦！</span>
+      <br>
+      <span class="bouncing-text">笨蛋！</span>
     </div>
   </noscript>
-    <div id="app"></div>
-    <!-- built files will be auto injected -->
-  </body>
+
+  <div id="app"></div>
+  <!-- built files will be auto injected -->
+</body>
+
 </html>
