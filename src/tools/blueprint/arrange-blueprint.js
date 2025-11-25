@@ -12,10 +12,14 @@ export function arrangeBlueprint(state, options = {}) {
   // 设置图布局选项
   g.setGraph({
     rankdir: 'LR', // 布局方向：LR（左右）、TB（上下）、RL、BT
-    nodesep: 100,  // 节点间距
-    ranksep: 150,  // 层级间距
-    marginx: 50,   // 边距
-    marginy: 50,
+    nodesep: 50,  // 节点间距
+    ranksep: 50,  // 层级间距
+    marginx: 400,   // 边距
+    marginy: 400,
+    edgesep: 50,  // 边间距
+    align: 'UL', // 节点对齐方式，可选：'UL' | 'UR' | 'DL' | 'DR' | undefined
+    acyclicer: 'network-simplex', // 循环检测算法，可选：'greedy' | 'opt2' | undefined
+    ranker: 'network-simplex', // 层级排序算法，可选：'network-simplex' | 'tight-tree' | 'longest-path' | undefined
     ...options     // 合并自定义选项
   })
   
@@ -45,8 +49,8 @@ export function arrangeBlueprint(state, options = {}) {
   state.nodes.forEach(node => {
     const nodeWithPosition = g.node(node.id)
     node.position = {
-      x: nodeWithPosition.x - 100,  // 减去节点宽度的一半
-      y: nodeWithPosition.y - 25    // 减去节点高度的一半
+      x: nodeWithPosition.x,
+      y: nodeWithPosition.y
     }
   })
   
