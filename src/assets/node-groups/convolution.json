@@ -1,0 +1,221 @@
+{
+  "name": "卷积层",
+  "color": "#FF6961",
+  "nodes": [
+    {
+      "name": "Conv1d",
+      "opcode": "conv1d",
+      "ports": {
+        "in": ["in1"],
+        "out": ["out1"]
+      },
+      "params": [
+        {
+          "label": "输入通道数",
+          "type": "number",
+          "default": "1"
+        },
+        {
+          "label": "输出通道数",
+          "type": "number",
+          "default": "32"
+        },
+        {
+          "label": "卷积核大小",
+          "type": "number",
+          "default": "3"
+        },
+        {
+          "label": "步长",
+          "type": "number",
+          "default": "1"
+        },
+        {
+          "label": "填充",
+          "type": "number",
+          "default": "1"
+        },
+        {
+          "label": "dilation",
+          "type": "number",
+          "default": "1"
+        },
+        {
+          "label": "分组数",
+          "type": "number",
+          "default": "1"
+        },
+        {
+          "label": "是否使用偏置",
+          "type": "string",
+          "default": "true"
+        },
+        {
+          "label": "权重初始化方式",
+          "type": "string",
+          "default": "kaiming_uniform"
+        }
+      ]
+    },
+    {
+      "name": "Conv2d",
+      "opcode": "conv2d",
+      "ports": {
+        "in": ["in1"],
+        "out": ["out1"]
+      },
+      "params": [
+        {
+          "label": "输入通道数",
+          "type": "number",
+          "default": "3"
+        },
+        {
+          "label": "输出通道数",
+          "type": "number",
+          "default": "64"
+        },
+        {
+          "label": "卷积核大小",
+          "type": "string",
+          "default": "3,3"
+        },
+        {
+          "label": "步长",
+          "type": "string",
+          "default": "1,1"
+        },
+        {
+          "label": "填充",
+          "type": "string",
+          "default": "1,1"
+        },
+        {
+          "label": "dilation",
+          "type": "string",
+          "default": "1,1"
+        },
+        {
+          "label": "分组数",
+          "type": "number",
+          "default": "1"
+        },
+        {
+          "label": "是否使用偏置",
+          "type": "string",
+          "default": "true"
+        },
+        {
+          "label": "权重初始化方式",
+          "type": "string",
+          "default": "kaiming_uniform"
+        }
+      ]
+    },
+    {
+      "name": "Conv3d",
+      "opcode": "conv3d",
+      "ports": {
+        "in": ["in1"],
+        "out": ["out1"]
+      },
+      "params": [
+        {
+          "label": "输入通道数",
+          "type": "number",
+          "default": "1"
+        },
+        {
+          "label": "输出通道数",
+          "type": "number",
+          "default": "32"
+        },
+        {
+          "label": "卷积核大小",
+          "type": "string",
+          "default": "3,3,3"
+        },
+        {
+          "label": "步长",
+          "type": "string",
+          "default": "1,1,1"
+        },
+        {
+          "label": "填充",
+          "type": "string",
+          "default": "1,1,1"
+        },
+        {
+          "label": "dilation",
+          "type": "string",
+          "default": "1,1,1"
+        },
+        {
+          "label": "分组数",
+          "type": "number",
+          "default": "1"
+        },
+        {
+          "label": "是否使用偏置",
+          "type": "string",
+          "default": "true"
+        }
+      ]
+    },
+    {
+      "name": "ConvTranspose2d",
+      "opcode": "conv_transpose2d",
+      "ports": {
+        "in": ["in1"],
+        "out": ["out1"]
+      },
+      "params": [
+        {
+          "label": "输入通道数",
+          "type": "number",
+          "default": "64"
+        },
+        {
+          "label": "输出通道数",
+          "type": "number",
+          "default": "32"
+        },
+        {
+          "label": "卷积核大小",
+          "type": "string",
+          "default": "3,3"
+        },
+        {
+          "label": "步长",
+          "type": "string",
+          "default": "2,2"
+        },
+        {
+          "label": "填充",
+          "type": "string",
+          "default": "1,1"
+        },
+        {
+          "label": "输出padding",
+          "type": "string",
+          "default": "1,1"
+        },
+        {
+          "label": "dilation",
+          "type": "string",
+          "default": "1,1"
+        },
+        {
+          "label": "分组数",
+          "type": "number",
+          "default": "1"
+        },
+        {
+          "label": "是否使用偏置",
+          "type": "string",
+          "default": "true"
+        }
+      ]
+    }
+  ]
+}

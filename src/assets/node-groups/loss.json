@@ -1,0 +1,181 @@
+{
+  "name": "损失函数",
+  "color": "#AEC6CF",
+  "nodes": [
+    {
+      "name": "MSELoss",
+      "opcode": "mse_loss",
+      "ports": {
+        "in": ["input", "target"],
+        "out": ["loss"]
+      },
+      "params": [
+        {
+          "label": "reduction方式",
+          "type": "string",
+          "default": "mean"
+        },
+        {
+          "label": "是否使用size_average",
+          "type": "string",
+          "default": "null"
+        },
+        {
+          "label": "是否使用reduce",
+          "type": "string",
+          "default": "null"
+        }
+      ]
+    },
+    {
+      "name": "CrossEntropyLoss",
+      "opcode": "cross_entropy_loss",
+      "ports": {
+        "in": ["input", "target"],
+        "out": ["loss"]
+      },
+      "params": [
+        {
+          "label": "权重",
+          "type": "string",
+          "default": "null"
+        },
+        {
+          "label": "reduction方式",
+          "type": "string",
+          "default": "mean"
+        },
+        {
+          "label": "ignore_index",
+          "type": "number",
+          "default": "-100"
+        },
+        {
+          "label": "label_smoothing",
+          "type": "number",
+          "default": "0.0"
+        }
+      ]
+    },
+    {
+      "name": "BCELoss",
+      "opcode": "bce_loss",
+      "ports": {
+        "in": ["input", "target"],
+        "out": ["loss"]
+      },
+      "params": [
+        {
+          "label": "权重",
+          "type": "string",
+          "default": "null"
+        },
+        {
+          "label": "reduction方式",
+          "type": "string",
+          "default": "mean"
+        },
+        {
+          "label": "是否使用size_average",
+          "type": "string",
+          "default": "null"
+        },
+        {
+          "label": "是否使用reduce",
+          "type": "string",
+          "default": "null"
+        }
+      ]
+    },
+    {
+      "name": "L1Loss",
+      "opcode": "l1_loss",
+      "ports": {
+        "in": ["input", "target"],
+        "out": ["loss"]
+      },
+      "params": [
+        {
+          "label": "reduction方式",
+          "type": "string",
+          "default": "mean"
+        },
+        {
+          "label": "是否使用size_average",
+          "type": "string",
+          "default": "null"
+        },
+        {
+          "label": "是否使用reduce",
+          "type": "string",
+          "default": "null"
+        }
+      ]
+    },
+    {
+      "name": "SmoothL1Loss",
+      "opcode": "smooth_l1_loss",
+      "ports": {
+        "in": ["input", "target"],
+        "out": ["loss"]
+      },
+      "params": [
+        {
+          "label": "beta值",
+          "type": "number",
+          "default": "1.0"
+        },
+        {
+          "label": "reduction方式",
+          "type": "string",
+          "default": "mean"
+        },
+        {
+          "label": "是否使用size_average",
+          "type": "string",
+          "default": "null"
+        },
+        {
+          "label": "是否使用reduce",
+          "type": "string",
+          "default": "null"
+        }
+      ]
+    },
+    {
+      "name": "NLLLoss",
+      "opcode": "nll_loss",
+      "ports": {
+        "in": ["input", "target"],
+        "out": ["loss"]
+      },
+      "params": [
+        {
+          "label": "权重",
+          "type": "string",
+          "default": "null"
+        },
+        {
+          "label": "reduction方式",
+          "type": "string",
+          "default": "mean"
+        },
+        {
+          "label": "ignore_index",
+          "type": "number",
+          "default": "-100"
+        },
+        {
+          "label": "是否使用size_average",
+          "type": "string",
+          "default": "null"
+        },
+        {
+          "label": "是否使用reduce",
+          "type": "string",
+          "default": "null"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "name": "基础",
+  "color": "#8B92E5",
+  "nodes": [
+    {
+      "name": "输入",
+      "opcode": "input",
+      "ports": {
+        "out": ["out1"]
+      },
+      "params": [
+        {
+          "label": "输入维度",
+          "type": "number",
+          "default": "1"
+        },
+        {
+          "label": "输入类型",
+          "type": "string",
+          "default": "float32"
+        }
+      ]
+    },
+    {
+      "name": "输出",
+      "opcode": "output",
+      "ports": {
+        "in": ["in1"]
+      },
+      "params": [
+        {
+          "label": "输出维度",
+          "type": "number",
+          "default": "1"
+        },
+        {
+          "label": "输出类型",
+          "type": "string",
+          "default": "float32"
+        }
+      ]
+    }
+  ]
+}

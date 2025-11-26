@@ -1,0 +1,46 @@
+{
+  "name": "数学",
+  "color": "#7DC7F5",
+  "nodes": [
+    {
+      "name": "+",
+      "opcode": "add",
+      "ports": {
+        "in": ["in1", "in2"],
+        "out": ["out1"]
+      },
+      "params": [
+        {
+          "label": "运算精度",
+          "type": "string",
+          "default": "float32"
+        },
+        {
+          "label": "是否使用广播",
+          "type": "boolean",
+          "default": true
+        }
+      ]
+    },
+    {
+      "name": "-",
+      "opcode": "sub",
+      "ports": {
+        "in": ["in1", "in2"],
+        "out": ["out1"]
+      },
+      "params": [
+        {
+          "label": "运算精度",
+          "type": "string",
+          "default": "float32"
+        },
+        {
+          "label": "是否使用广播",
+          "type": "boolean",
+          "default": true
+        }
+      ]
+    }
+  ]
+}

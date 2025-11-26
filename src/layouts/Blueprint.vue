@@ -89,7 +89,7 @@ function handleBlueprintClick(event) {
 // 处理键盘快捷键
 function handleKeyboardShortcuts(event) {
   // 删除选中的节点
-  if (event.key === 'Delete' || event.key === 'Backspace') {
+  if (event.key === 'Delete') {
     const hasSelectedNodes = blueprintStore.getSelectedNodes().length > 0;
     if (hasSelectedNodes) {
       blueprintStore.deleteSelectedNodes();

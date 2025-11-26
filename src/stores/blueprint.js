@@ -41,6 +41,11 @@ const state = reactive({
       },
       params: [
         {
+          label: "输入维度",
+          type: "number",
+          default: "2",
+        },
+        {
           label: "输出维度",
           type: "number",
           default: "1",

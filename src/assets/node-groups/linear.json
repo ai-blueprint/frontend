@@ -1,0 +1,86 @@
+{
+  "name": "线性层",
+  "color": "#77DD77",
+  "nodes": [
+    {
+      "name": "Linear",
+      "opcode": "linear",
+      "ports": {
+        "in": ["in1"],
+        "out": ["out1"]
+      },
+      "params": [
+        {
+          "label": "输入特征数",
+          "type": "number",
+          "default": "100"
+        },
+        {
+          "label": "输出特征数",
+          "type": "number",
+          "default": "10"
+        },
+        {
+          "label": "是否使用偏置",
+          "type": "boolean",
+          "default": true
+        },
+        {
+          "label": "权重初始化方式",
+          "type": "string",
+          "default": "kaiming_uniform"
+        }
+      ]
+    },
+    {
+      "name": "Bilinear",
+      "opcode": "bilinear",
+      "ports": {
+        "in": ["in1", "in2"],
+        "out": ["out1"]
+      },
+      "params": [
+        {
+          "label": "输入1特征数",
+          "type": "number",
+          "default": "100"
+        },
+        {
+          "label": "输入2特征数",
+          "type": "number",
+          "default": "100"
+        },
+        {
+          "label": "输出特征数",
+          "type": "number",
+          "default": "10"
+        },
+        {
+          "label": "是否使用偏置",
+          "type": "boolean",
+          "default": true
+        }
+      ]
+    },
+    {
+      "name": "Identity",
+      "opcode": "identity",
+      "ports": {
+        "in": ["in1"],
+        "out": ["out1"]
+      },
+      "params": [
+        {
+          "label": "输出特征数",
+          "type": "number",
+          "default": "0"
+        },
+        {
+          "label": "是否使用inplace操作",
+          "type": "boolean",
+          "default": false
+        }
+      ]
+    }
+  ]
+}

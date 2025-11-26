@@ -1,10 +1,4 @@
 import dagre from '@dagrejs/dagre'
-
-/**
- * 整理蓝图布局
- * @param {Object} state - 蓝图状态对象
- * @param {Object} options - 布局配置选项
- */
 export function arrangeBlueprint(state, options = {}) {
   // 创建新的有向图
   const g = new dagre.graphlib.Graph()

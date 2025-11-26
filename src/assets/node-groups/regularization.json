@@ -1,0 +1,231 @@
+{
+  "name": "正则化层",
+  "color": "#B39EB5",
+  "nodes": [
+    {
+      "name": "Dropout",
+      "opcode": "dropout",
+      "ports": {
+        "in": ["in1"],
+        "out": ["out1"]
+      },
+      "params": [
+        {
+          "label": "dropout概率",
+          "type": "number",
+          "default": "0.5"
+        },
+        {
+          "label": "是否使用inplace操作",
+          "type": "string",
+          "default": "false"
+        }
+      ]
+    },
+    {
+      "name": "Dropout1d",
+      "opcode": "dropout1d",
+      "ports": {
+        "in": ["in1"],
+        "out": ["out1"]
+      },
+      "params": [
+        {
+          "label": "dropout概率",
+          "type": "number",
+          "default": "0.5"
+        },
+        {
+          "label": "是否使用inplace操作",
+          "type": "string",
+          "default": "false"
+        }
+      ]
+    },
+    {
+      "name": "Dropout2d",
+      "opcode": "dropout2d",
+      "ports": {
+        "in": ["in1"],
+        "out": ["out1"]
+      },
+      "params": [
+        {
+          "label": "dropout概率",
+          "type": "number",
+          "default": "0.5"
+        },
+        {
+          "label": "是否使用inplace操作",
+          "type": "string",
+          "default": "false"
+        }
+      ]
+    },
+    {
+      "name": "BatchNorm1d",
+      "opcode": "batch_norm1d",
+      "ports": {
+        "in": ["in1"],
+        "out": ["out1"]
+      },
+      "params": [
+        {
+          "label": "特征数",
+          "type": "number",
+          "default": "64"
+        },
+        {
+          "label": "eps",
+          "type": "number",
+          "default": "1e-5"
+        },
+        {
+          "label": "动量",
+          "type": "number",
+          "default": "0.1"
+        },
+        {
+          "label": "是否使用偏置",
+          "type": "string",
+          "default": "true"
+        },
+        {
+          "label": "是否使用权重",
+          "type": "string",
+          "default": "true"
+        },
+        {
+          "label": "是否使用affine",
+          "type": "string",
+          "default": "true"
+        },
+        {
+          "label": "track_running_stats",
+          "type": "string",
+          "default": "true"
+        }
+      ]
+    },
+    {
+      "name": "BatchNorm2d",
+      "opcode": "batch_norm2d",
+      "ports": {
+        "in": ["in1"],
+        "out": ["out1"]
+      },
+      "params": [
+        {
+          "label": "特征数",
+          "type": "number",
+          "default": "64"
+        },
+        {
+          "label": "eps",
+          "type": "number",
+          "default": "1e-5"
+        },
+        {
+          "label": "动量",
+          "type": "number",
+          "default": "0.1"
+        },
+        {
+          "label": "是否使用偏置",
+          "type": "string",
+          "default": "true"
+        },
+        {
+          "label": "是否使用权重",
+          "type": "string",
+          "default": "true"
+        },
+        {
+          "label": "是否使用affine",
+          "type": "string",
+          "default": "true"
+        },
+        {
+          "label": "track_running_stats",
+          "type": "string",
+          "default": "true"
+        }
+      ]
+    },
+    {
+      "name": "LayerNorm",
+      "opcode": "layer_norm",
+      "ports": {
+        "in": ["in1"],
+        "out": ["out1"]
+      },
+      "params": [
+        {
+          "label": "normalized_shape",
+          "type": "string",
+          "default": "64"
+        },
+        {
+          "label": "eps",
+          "type": "number",
+          "default": "1e-5"
+        },
+        {
+          "label": "是否使用偏置",
+          "type": "string",
+          "default": "true"
+        },
+        {
+          "label": "是否使用权重",
+          "type": "string",
+          "default": "true"
+        },
+        {
+          "label": "是否使用elementwise_affine",
+          "type": "string",
+          "default": "true"
+        }
+      ]
+    },
+    {
+      "name": "GroupNorm",
+      "opcode": "group_norm",
+      "ports": {
+        "in": ["in1"],
+        "out": ["out1"]
+      },
+      "params": [
+        {
+          "label": "分组数",
+          "type": "number",
+          "default": "32"
+        },
+        {
+          "label": "通道数",
+          "type": "number",
+          "default": "64"
+        },
+        {
+          "label": "eps",
+          "type": "number",
+          "default": "1e-5"
+        },
+        {
+          "label": "是否使用偏置",
+          "type": "string",
+          "default": "true"
+        },
+        {
+          "label": "是否使用权重",
+          "type": "string",
+          "default": "true"
+        },
+        {
+          "label": "是否使用affine",
+          "type": "string",
+          "default": "true"
+        }
+      ]
+    }
+  ]
+}
