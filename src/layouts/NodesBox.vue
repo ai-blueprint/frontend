@@ -1,17 +1,8 @@
 <template>
   <div class="nodes-box" @dragover.prevent @drop="onNodeDrop" @dragenter="onDragEnter" @dragleave="onDragLeave">
-    <div
-      class="nodes-group"
-      v-for="category in nodeStore.state"
-      :key="category.name"
-    >
+    <div class="nodes-group" v-for="category in nodeStore.state" :key="category.name">
       <h3 class="group-name">{{ category.name }}</h3>
-      <Node
-        v-for="node in category.nodes"
-        :key="node.opcode"
-        :node="node"
-        :color="category.color"
-      ></Node>
+      <Node v-for="node in category.nodes" :key="node.opcode" :node="node" :color="category.color"></Node>
     </div>
   </div>
 </template>
@@ -43,11 +34,11 @@ function onNodeDrop(e) {
   e.preventDefault();
   // 移除拖拽样式
   e.currentTarget.classList.remove("drag-over");
-  
+
   // 检查是否是蓝图内节点的移动操作
   const isMove = e.dataTransfer.getData("isMove") === "true";
   const originalNodeId = e.dataTransfer.getData("nodeId");
-  
+
   // 如果是蓝图内节点，直接删除它
   if (isMove && originalNodeId) {
     blueprintStore.deleteNode(originalNodeId);
@@ -57,33 +48,49 @@ function onNodeDrop(e) {
 </script>
 
 <style scoped>
-/* 需要添加一个全局样式来处理拖拽时的hover效果 */
-:global(.nodes-box.drag-over) {
-  background-color: #f5f0fc !important;
-}
 .nodes-box {
   width: 30%;
   min-width: 180px;
   max-width: 200px;
   background-color: #eaeffc;
   overflow-y: auto;
-  padding: 20px;
+  overflow-x: hidden;
+  padding: 10px;
   height: 100%;
-  /* 添加拖拽接收时的视觉效果 */
-  &:hover.drag-over {
-    background-color: #f5f0fc;
-  }
+
+  direction: rtl;
 }
+
 
 .nodes-group {
   display: flex;
   flex-direction: column;
   margin-bottom: 30px;
   gap: 18px;
+
+  direction: ltr;
 }
 
 .group-name {
   font-size: 16px;
   font-weight: 600;
 }
+
+/* 滚动条 */
+.nodes-box::-webkit-scrollbar {
+  width: 6px;
+}
+
+.nodes-box::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0);
+}
+
+.nodes-box::-webkit-scrollbar-thumb {
+  background: #aaa;
+}
+
+.nodes-box::-webkit-scrollbar-thumb:hover {
+  background: #8992EB;
+}
+
 </style>

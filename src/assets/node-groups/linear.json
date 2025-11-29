@@ -76,7 +76,7 @@
           "default": "0"
         },
         {
-          "label": "是否使用inplace操作",
+          "label": "inplace",
           "type": "boolean",
           "default": false
         }
