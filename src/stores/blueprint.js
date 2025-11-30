@@ -2,6 +2,7 @@ import { reactive, readonly } from "vue";
 import { generateId } from "@/tools/data/generate-id";
 import { changeBlueprintSize } from "@/tools/blueprint/change-blueprint-size.js";
 import { nodeStore } from "@/stores/nodes";
+import { historyStore } from "@/stores/history";
 import { arrangeBlueprint as arrangeBlueprintNodes } from "@/tools/blueprint/arrange-blueprint.js";
 
 /**
@@ -138,6 +139,7 @@ export const blueprintStore = {
     
     state.nodes.push(newNode);
     debugLog(`新增节点 “${name}”（${opcode}）在 ${Math.floor(position.x)}, ${Math.floor(position.y)}`);
+    historyStore.recordState();
   },
   
   /**
@@ -171,6 +173,7 @@ export const blueprintStore = {
     node.position = position;
     this.nodeToFront(id); // 更新位置后将节点置顶
     debugLog(`更新节点 “${node.name}”（${node.opcode}）位置到 ${Math.floor(position.x)}, ${Math.floor(position.y)}`);
+    historyStore.recordState();
   },
 
   /**
@@ -223,6 +226,7 @@ export const blueprintStore = {
     // 删除节点后重新计算蓝图大小
     changeBlueprintSize();
     debugLog(`成功删除节点“${id}”及其所有连接`);
+    historyStore.recordState();
   },
 
   /**
@@ -235,8 +239,26 @@ export const blueprintStore = {
       .map(node => node.id);
 
     if (selectedNodeIds.length > 0) {
-      selectedNodeIds.forEach(id => this.deleteNode(id));
+      // 查找并删除与这些节点相关的所有连接
+      const linksToDelete = state.links.filter(link => 
+        [link.from, link.to].some(port => selectedNodeIds.includes(port.split("_")[0]))
+      );
+      
+      linksToDelete.forEach(link => {
+        const index = state.links.findIndex(l => l.id === link.id);
+        if (index !== -1) {
+          state.links.splice(index, 1);
+        }
+      });
+      
+      // 移除所有选中的节点
+      state.nodes = state.nodes.filter(node => !selectedNodeIds.includes(node.id));
+      
+      // 删除节点后重新计算蓝图大小
+      changeBlueprintSize();
+      
       debugLog(`删除选中节点: ${selectedNodeIds.join(", ")}`);
+      historyStore.recordState();
     }
   },
 
@@ -282,6 +304,7 @@ export const blueprintStore = {
     const newLink = { id: generateId(), from, to };
     state.links.push(newLink);
     debugLog(`新增连接: ${from} -> ${to}`);
+    historyStore.recordState();
   },
 
   /**
@@ -297,6 +320,7 @@ export const blueprintStore = {
     
     state.links.splice(index, 1);
     debugLog(`删除连接: ${id}`);
+    historyStore.recordState();
   },
 
   /**

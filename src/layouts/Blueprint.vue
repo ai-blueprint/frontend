@@ -30,6 +30,7 @@ import Line from "@/components/Line.vue";
 // 导入状态管理
 import { blueprintStore } from "@/stores/blueprint";
 import { mouseStore } from "@/stores/mouse";
+import { historyStore } from "@/stores/history";
 
 // 调试日志开关
 const DEBUG = false;
@@ -127,6 +128,22 @@ function handleKeyboardShortcuts(event) {
       blueprintStore.deleteSelectedNodes();
       debugLog('删除选中节点');
     }
+    return;
+  }
+
+  // 撤销操作 (Ctrl+Z)
+  if ((event.ctrlKey || event.metaKey) && event.key === 'z') {
+    event.preventDefault();
+    historyStore.undo();
+    debugLog('执行撤销操作');
+    return;
+  }
+
+  // 重做操作 (Ctrl+Shift+Z 或 Ctrl+Y)
+  if ((event.ctrlKey || event.metaKey) && (event.shiftKey && event.key === 'z' || event.key === 'y')) {
+    event.preventDefault();
+    historyStore.redo();
+    debugLog('执行重做操作');
     return;
   }
 

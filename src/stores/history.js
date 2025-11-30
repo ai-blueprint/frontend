@@ -158,5 +158,5 @@ export const historyStore = {
   }
 };
 
-// 自动初始化历史记录
-historyStore.init();
+// 注释掉自动初始化，改为在 main.js 中手动初始化
+// historyStore.init();
