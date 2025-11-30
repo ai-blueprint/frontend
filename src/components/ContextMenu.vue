@@ -1,21 +1,21 @@
 <template>
     <div id="context-menu">
         <!-- 复制并粘贴 -->
-        <span class="context-menu-item">
+        <span class="context-menu-item" @click="$emit('menu-click', 'clone')">
             <span class="icon-container">
                 <img src="@/assets/ContextMenu/复制并粘贴.svg" alt="复制并粘贴" class="icon">
             </span>
             复制并粘贴
         </span>
         <!-- 重命名 -->
-        <span class="context-menu-item">
+        <span class="context-menu-item" @click="$emit('menu-click', 'rename')">
             <span class="icon-container">
                 <img src="@/assets/ContextMenu/重命名.svg" alt="重命名" class="icon">
             </span>
             重命名
         </span>
         <!-- 删除节点 -->
-        <span class="context-menu-item">
+        <span class="context-menu-item" @click="$emit('menu-click', 'delete')">
             <span class="icon-container">
                 <img src="@/assets/ContextMenu/删除节点.svg" alt="删除节点" class="icon">
             </span>
@@ -24,9 +24,15 @@
     </div>
 </template>
 
+<script setup>
+import { defineEmits } from 'vue';
+
+defineEmits(['menu-click']);
+</script>
+
 <style scoped>
 #context-menu {
-    position: absolute;
+    position: fixed;
     z-index: 1000;
     border-radius: 14px;
 

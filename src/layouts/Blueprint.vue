@@ -1,12 +1,14 @@
 <template>
   <!-- 蓝图编辑区域 - 包含节点和连接线，支持拖拽、缩放和交互 -->
   <div id="blueprint" class="blueprint" ref="blueprintContainer" @dragover.prevent @drop="handleNodeDrop"
-    @click="handleBlueprintClick" @mousemove="handleBlueprintDrag" @wheel="handleZoom" :style="blueprintStyle">
+    @click="handleBlueprintClick" @mousedown="handleBlueprintMousedown" @mousemove="handleBlueprintDrag" @wheel="handleZoom" :style="blueprintStyle">
     <!-- 渲染连接线 -->
     <Line :links="blueprintStore.state.links" />
     <!-- 渲染所有节点 -->
-    <Node v-for="node in blueprintStore.state.nodes" :key="node.id" :node="node" :style="getNodeStyle(node)" />
+    <Node v-for="node in blueprintStore.state.nodes" :key="node.id" :node="node" :style="getNodeStyle(node)" @contextmenu="handleNodeContextMenu" />
   </div>
+  <!-- 右键菜单 -->
+  <ContextMenu ref="contextMenu" @menu-click="handleMenuClick" />
 </template>
 
 <script setup>
@@ -26,6 +28,7 @@ import { getMouseRelativeCoordinate } from "@/tools/data/get-mouse-relative-coor
 // 导入组件
 import Node from "@/components/Node.vue";
 import Line from "@/components/Line.vue";
+import ContextMenu from "@/components/ContextMenu.vue";
 
 // 导入状态管理
 import { blueprintStore } from "@/stores/blueprint";
@@ -40,6 +43,14 @@ const debugLog = (...args) => {
 
 // 组件引用
 const blueprintContainer = ref(null);
+const contextMenu = ref(null);
+
+// 右键菜单状态
+const menuState = ref({
+  visible: false,
+  position: { x: 0, y: 0 },
+  targetNode: null
+});
 
 /**
  * 计算蓝图样式
@@ -87,12 +98,104 @@ function updateBlueprintTransform(scale, x, y) {
 }
 
 /**
+ * 处理节点右键点击事件
+ * @param {Object} eventData - 包含节点信息和位置的事件数据
+ */
+function handleNodeContextMenu(eventData) {
+  const { node, nodeRect } = eventData;
+  
+  // 保存目标节点
+  menuState.value.targetNode = node;
+  
+  // 计算菜单位置
+  const menuElement = document.getElementById('context-menu');
+  if (!menuElement) return;
+  
+  // 获取菜单尺寸
+  menuElement.style.display = 'flex'; // 临时显示以获取尺寸
+  const menuRect = menuElement.getBoundingClientRect();
+  menuElement.style.display = 'none'; // 隐藏菜单
+  
+  // 计算菜单位置：节点在窗口中的位置如果在中下部分，显示在上方，否则显示在下方
+  const windowHeight = window.innerHeight;
+  const windowWidth = window.innerWidth;
+  const nodeCenterY = nodeRect.top + nodeRect.height / 2;
+  const nodeCenterX = nodeRect.left + nodeRect.width / 2;
+  
+  // 计算菜单X坐标，使菜单中心对齐节点中心
+  let menuX = nodeCenterX - menuRect.width / 2;
+  // 确保菜单在窗口内
+  menuX = Math.max(0, Math.min(menuX, windowWidth - menuRect.width));
+  
+  let menuY;
+  if (nodeCenterY > windowHeight / 2) {
+    // 节点在中下部分，菜单显示在节点上方
+    menuY = nodeRect.top - menuRect.height - 10; // 10px间距
+  } else {
+    // 节点在上半部分，菜单显示在节点下方
+    menuY = nodeRect.bottom + 10; // 10px间距
+  }
+  
+  // 确保菜单在窗口内
+  menuY = Math.max(0, Math.min(menuY, windowHeight - menuRect.height));
+  
+  // 设置菜单位置
+  menuState.value.position = {
+    x: menuX,
+    y: menuY
+  };
+  
+  // 显示菜单
+  showContextMenu();
+}
+
+/**
+ * 显示右键菜单
+ */
+function showContextMenu() {
+  const menuElement = document.getElementById('context-menu');
+  if (!menuElement) return;
+  
+  // 设置菜单位置
+  menuElement.style.left = `${menuState.value.position.x}px`;
+  menuElement.style.top = `${menuState.value.position.y}px`;
+  menuElement.style.display = 'flex';
+  
+  menuState.value.visible = true;
+}
+
+/**
+ * 隐藏右键菜单
+ */
+function hideContextMenu() {
+  const menuElement = document.getElementById('context-menu');
+  if (menuElement) {
+    menuElement.style.display = 'none';
+  }
+  
+  menuState.value.visible = false;
+  menuState.value.targetNode = null;
+}
+
+/**
+ * 处理蓝图鼠标按下事件
+ * 鼠标按下时立即隐藏右键菜单
+ */
+function handleBlueprintMousedown() {
+  // 立即隐藏右键菜单
+  hideContextMenu();
+}
+
+/**
  * 处理蓝图点击事件
  * 1. 处理节点选择
  * 2. 处理蓝图拖拽
  * @param {MouseEvent} event - 鼠标事件对象
  */
 function handleBlueprintClick(event) {
+  // 隐藏右键菜单
+  hideContextMenu();
+  
   // 只有在没有按住Ctrl/Meta键时才清空选择（允许多选）
   if (!(event.ctrlKey || event.metaKey)) {
     blueprintStore.clearSelectNode();
@@ -252,6 +355,8 @@ onMounted(() => {
 
   // 添加键盘事件监听
   window.addEventListener("keydown", handleKeyboardShortcuts);
+  // 添加点击事件监听，点击页面其他地方隐藏右键菜单
+  window.addEventListener("click", handleWindowClick);
 
   // 监听蓝图状态变化，自动调整大小
   watch(
@@ -263,11 +368,71 @@ onMounted(() => {
   );
 });
 
+/**
+ * 处理右键菜单点击事件
+ * @param {string} action - 菜单动作类型：clone, rename, delete
+ */
+function handleMenuClick(action) {
+  // 隐藏菜单
+  hideContextMenu();
+  
+  // 获取目标节点
+  const targetNode = menuState.value.targetNode;
+  if (!targetNode) return;
+  
+  switch (action) {
+    case 'clone': {
+      // 复制并粘贴节点
+      blueprintStore.cloneNode(targetNode.id);
+      debugLog(`复制节点: ${targetNode.id}`);
+      break;
+    }
+    case 'rename': {
+      // 重命名节点
+      const newName = prompt('请输入新的节点名称:', targetNode.name);
+      if (newName && newName.trim() !== '') {
+        // 更新节点名称
+        const node = blueprintStore.state.nodes.find(n => n.id === targetNode.id);
+        if (node) {
+          node.name = newName.trim();
+          historyStore.recordState();
+          debugLog(`重命名节点 ${targetNode.id} 为: ${newName.trim()}`);
+        }
+      }
+      break;
+    }
+    case 'delete': {
+      // 删除节点
+      blueprintStore.deleteNode(targetNode.id);
+      debugLog(`删除节点: ${targetNode.id}`);
+      break;
+    }
+    default:
+      break;
+  }
+}
+
+/**
+ * 处理窗口点击事件，点击页面其他地方隐藏右键菜单
+ * @param {MouseEvent} event - 鼠标事件对象
+ */
+function handleWindowClick(event) {
+  // 只有当菜单可见时才处理
+  if (!menuState.value.visible) return;
+  
+  // 检查点击是否在菜单内部
+  const menuElement = document.getElementById('context-menu');
+  if (menuElement && !menuElement.contains(event.target)) {
+    hideContextMenu();
+  }
+}
+
 onUnmounted(() => {
   debugLog('Blueprint组件卸载');
 
   // 清理事件监听
   window.removeEventListener("keydown", handleKeyboardShortcuts);
+  window.removeEventListener("click", handleWindowClick);
 });
 </script>
 

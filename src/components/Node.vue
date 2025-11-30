@@ -1,5 +1,5 @@
 <template>
-  <span class="node" draggable="true" ref="nodeElement" @dragstart="onDragStart" @click="onNodeClick"
+  <span class="node" draggable="true" ref="nodeElement" @dragstart="onDragStart" @click="onNodeClick" @contextmenu="onContextMenu"
     :class="{ selected: isSelected }" :style="{ backgroundColor: color, zIndex: layer }">
     <span class="port-group in">
       <Port v-for="port in inputs" :id="`${id}_${port}`" :key="port" :class="port"></Port>
@@ -12,11 +12,12 @@
 </template>
 <script setup>
 import Port from "./Port.vue";
-import { ref, computed, defineProps } from "vue";
+import { ref, computed, defineProps, defineEmits } from "vue";
 import { blueprintStore } from "@/stores/blueprint.js";
 import { getMouseRelativeCoordinate } from "@/tools/data/get-mouse-relative-coordinate.js";
 import { nodeStore } from "@/stores/nodes.js";
 const nodeElement = ref(null);
+const emit = defineEmits(['contextmenu']);
 const props = defineProps({
   node: {
     type: Object,
@@ -64,7 +65,28 @@ function onDragStart(e) {
   }
 }
 
-// TODO:当节点被右键，如果是蓝图里的节点，检测位置，传递信息，显示右键菜单
+function onContextMenu(e) {
+  // 阻止默认右键菜单
+  e.preventDefault();
+  e.stopPropagation();
+  
+  // 选择当前节点
+  if (!e.ctrlKey && !e.metaKey) blueprintStore.clearSelectNode();
+  if (id.value) blueprintStore.toggleSelectNode(id.value);
+  
+  // 获取节点在窗口中的位置
+  const rect = nodeElement.value.getBoundingClientRect();
+  
+  // 向父组件发送右键点击事件，传递节点信息和位置
+  emit('contextmenu', {
+    node: props.node,
+    position: {
+      x: e.clientX,
+      y: e.clientY
+    },
+    nodeRect: rect
+  });
+}
 </script>
 <style scoped>
 .node {
