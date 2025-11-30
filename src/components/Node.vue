@@ -1,5 +1,5 @@
 <template>
-  <span class="node" draggable="true" ref="nodeElement" @dragstart="onDragStart" @click="onNodeClick" @contextmenu="onContextMenu"
+  <span class="node" draggable="true" ref="nodeElement" @dragstart="onDragStart" @click="onNodeClick" @contextmenu="onContextMenu" @dblclick="onDoubleClick"
     :class="{ selected: isSelected }" :style="{ backgroundColor: color, zIndex: layer }">
     <span class="port-group in">
       <Port v-for="port in inputs" :id="`${id}_${port}`" :key="port" :class="port"></Port>
@@ -17,7 +17,7 @@ import { blueprintStore } from "@/stores/blueprint.js";
 import { getMouseRelativeCoordinate } from "@/tools/data/get-mouse-relative-coordinate.js";
 import { nodeStore } from "@/stores/nodes.js";
 const nodeElement = ref(null);
-const emit = defineEmits(['contextmenu']);
+const emit = defineEmits(['contextmenu', 'dblclick']);
 const props = defineProps({
   node: {
     type: Object,
@@ -85,6 +85,20 @@ function onContextMenu(e) {
       y: e.clientY
     },
     nodeRect: rect
+  });
+}
+
+function onDoubleClick(e) {
+  // 阻止事件冒泡
+  e.stopPropagation();
+  
+  // 选择当前节点
+  if (!e.ctrlKey && !e.metaKey) blueprintStore.clearSelectNode();
+  if (id.value) blueprintStore.toggleSelectNode(id.value);
+  
+  // 向父组件发送双击事件，传递节点信息
+  emit('dblclick', {
+    node: props.node
   });
 }
 </script>

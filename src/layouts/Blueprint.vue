@@ -5,10 +5,17 @@
     <!-- 渲染连接线 -->
     <Line :links="blueprintStore.state.links" />
     <!-- 渲染所有节点 -->
-    <Node v-for="node in blueprintStore.state.nodes" :key="node.id" :node="node" :style="getNodeStyle(node)" @contextmenu="handleNodeContextMenu" />
+    <Node v-for="node in blueprintStore.state.nodes" :key="node.id" :node="node" :style="getNodeStyle(node)" @contextmenu="handleNodeContextMenu" @dblclick="handleNodeDoubleClick" />
   </div>
   <!-- 右键菜单 -->
   <ContextMenu ref="contextMenu" @menu-click="handleMenuClick" />
+  <!-- 重命名弹窗 -->
+  <RenameDialog
+    :visible="renameDialogVisible"
+    :default-name="currentEditingNode?.name || ''"
+    @confirm="handleRenameConfirm"
+    @cancel="handleRenameCancel"
+  />
 </template>
 
 <script setup>
@@ -29,6 +36,7 @@ import { getMouseRelativeCoordinate } from "@/tools/data/get-mouse-relative-coor
 import Node from "@/components/Node.vue";
 import Line from "@/components/Line.vue";
 import ContextMenu from "@/components/ContextMenu.vue";
+import RenameDialog from "@/components/RenameDialog.vue";
 
 // 导入状态管理
 import { blueprintStore } from "@/stores/blueprint";
@@ -51,6 +59,10 @@ const menuState = ref({
   position: { x: 0, y: 0 },
   targetNode: null
 });
+
+// 重命名弹窗状态
+const renameDialogVisible = ref(false);
+const currentEditingNode = ref(null);
 
 /**
  * 计算蓝图样式
@@ -95,6 +107,18 @@ function updateBlueprintPosition(x, y) {
  */
 function updateBlueprintTransform(scale, x, y) {
   blueprintStore.updateTransform(scale, x, y);
+}
+
+/**
+ * 处理节点双击事件
+ * @param {Object} eventData - 包含节点信息的事件数据
+ */
+function handleNodeDoubleClick(eventData) {
+  const { node } = eventData;
+  if (node) {
+    currentEditingNode.value = node;
+    renameDialogVisible.value = true;
+  }
 }
 
 /**
@@ -388,17 +412,9 @@ function handleMenuClick(action) {
       break;
     }
     case 'rename': {
-      // 重命名节点
-      const newName = prompt('请输入新的节点名称:', targetNode.name);
-      if (newName && newName.trim() !== '') {
-        // 更新节点名称
-        const node = blueprintStore.state.nodes.find(n => n.id === targetNode.id);
-        if (node) {
-          node.name = newName.trim();
-          historyStore.recordState();
-          debugLog(`重命名节点 ${targetNode.id} 为: ${newName.trim()}`);
-        }
-      }
+      // 打开重命名弹窗
+      currentEditingNode.value = targetNode;
+      renameDialogVisible.value = true;
       break;
     }
     case 'delete': {
@@ -410,6 +426,34 @@ function handleMenuClick(action) {
     default:
       break;
   }
+}
+
+/**
+ * 处理重命名确认
+ * @param {string} newName - 新的节点名称
+ */
+function handleRenameConfirm(newName) {
+  if (currentEditingNode.value && newName.trim()) {
+    // 更新节点名称
+    const node = blueprintStore.state.nodes.find(n => n.id === currentEditingNode.value.id);
+    if (node) {
+      node.name = newName.trim();
+      historyStore.recordState();
+      debugLog(`重命名节点 ${currentEditingNode.value.id} 为: ${newName.trim()}`);
+    }
+  }
+  // 关闭弹窗
+  renameDialogVisible.value = false;
+  currentEditingNode.value = null;
+}
+
+/**
+ * 处理重命名取消
+ */
+function handleRenameCancel() {
+  // 关闭弹窗
+  renameDialogVisible.value = false;
+  currentEditingNode.value = null;
 }
 
 /**
