@@ -63,6 +63,8 @@ function onDragStart(e) {
     e.dataTransfer.effectAllowed = "copy";
   }
 }
+
+// TODO:当节点被右键，如果是蓝图里的节点，检测位置，传递信息，显示右键菜单
 </script>
 <style scoped>
 .node {

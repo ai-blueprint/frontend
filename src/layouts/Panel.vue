@@ -17,7 +17,10 @@
 
         <!-- 只有选择单个节点时显示节点名称 -->
         <!-- <h3 v-if="selectedNodes.length === 1" class="node-name">{{ selectedNodes[0].name }}</h3> -->
-
+        <!-- 如果选择的所有节点都没有属性就提示没有属性 -->
+        <div v-if="mergedParams.length === 0" class="no-params">
+          <p>该节点没有属性</p>
+        </div>
         <!-- 使用Ant Design的ConfigProvider应用主题 -->
         <a-config-provider :theme="themeConfig">
           <!-- 遍历合并后的参数列表 -->
@@ -37,7 +40,8 @@
 
               <!-- 字符串类型使用文本输入框 -->
               <a-input v-else-if="param.type === 'string'" :value="param.default"
-                @change="e => handleParamChange(param, e.target.value)" :class="{ 'multi-value': param.isMultiValue }" />
+                @change="e => handleParamChange(param, e.target.value)"
+                :class="{ 'multi-value': param.isMultiValue }" />
 
               <!-- 未知类型使用文本输入框 -->
               <a-input v-else :value="param.default" @change="e => handleParamChange(param, e.target.value)"
@@ -351,10 +355,11 @@ const handleParamChange = (param, newValue) => {
   display: flex;
   align-items: center;
 }
-.ant-input, 
+
+.ant-input,
 .ant-input-number,
 .ant-input-number-input,
-.ant-input-number-input-wrap{
+.ant-input-number-input-wrap {
   width: auto;
   field-sizing: content;
   min-width: 50px;
@@ -362,6 +367,7 @@ const handleParamChange = (param, newValue) => {
   background-color: #EAEFFC;
   font-weight: 600;
 }
+
 .ant-input-number .ant-input-number-input {
   width: 20px;
 }

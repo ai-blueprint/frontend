@@ -5,6 +5,8 @@
     <Blueprint />
     <!-- 工具栏 - 提供缩放、撤销、重做等操作 -->
     <ToolBar />
+    <!-- 上下文菜单 - 提供节点操作选项 -->
+    <ContextMenu />
   </div>
 </template>
 
@@ -18,6 +20,7 @@
 // 导入子组件
 import Blueprint from "./Blueprint.vue";
 import ToolBar from "./ToolBar.vue";
+import ContextMenu from "@/components/ContextMenu.vue";
 </script>
 
 <style scoped>
