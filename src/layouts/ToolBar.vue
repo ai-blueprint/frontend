@@ -28,9 +28,9 @@
       <button class="toolbar-button" @click="handleArrangeNodes" title="排列节点">
         <img src="@/assets/ToolBar/排列.svg" alt="排列" class="toolbar-icon" />
       </button>
-      <button class="toolbar-button" @click="handleSearch" title="搜索">
+      <!-- <button class="toolbar-button" @click="handleSearch" title="搜索">
         <img src="@/assets/ToolBar/搜索.svg" alt="搜索" class="toolbar-icon" />
-      </button>
+      </button> -->
     </div>
   </div>
 </template>
@@ -94,18 +94,16 @@ function updateZoom(newScale) {
   blueprintStore.updateTransform(newScale, newTranslateX, newTranslateY);
 }
 
-// 排列节点（预留功能）
+// 排列节点
 function handleArrangeNodes() {
-  // 这里可以实现节点自动排列的逻辑
-  // console.log('排列节点功能待实现');
   blueprintStore.arrangeBlueprint();
 }
 
 // 搜索功能（预留）
-function handleSearch() {
+/* function handleSearch() {
   // 这里可以实现搜索节点的功能
   console.log('搜索功能待实现');
-}
+} */
 </script>
 
 <style scoped>

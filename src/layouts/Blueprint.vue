@@ -24,8 +24,8 @@ import { changeBlueprintSize } from "@/tools/blueprint/change-blueprint-size.js"
 import { getMouseRelativeCoordinate } from "@/tools/data/get-mouse-relative-coordinate.js";
 
 // 导入组件
-import Node from "@/components/editor/Node.vue";
-import Line from "@/components/editor/Line.vue";
+import Node from "@/components/Node.vue";
+import Line from "@/components/Line.vue";
 
 // 导入状态管理
 import { blueprintStore } from "@/stores/blueprint";

@@ -1,6 +1,7 @@
 {
   "name": "数学",
-  "color": "#7DC7F5",
+  "color": "#F2B190",
+  "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBmaWxsPSJub25lIiB2ZXJzaW9uPSIxLjEiIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCI+PGRlZnM+PGNsaXBQYXRoIGlkPSJtYXN0ZXJfc3ZnMF82XzA1ODQiPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiByeD0iMCIvPjwvY2xpcFBhdGg+PC9kZWZzPjxnIGNsaXAtcGF0aD0idXJsKCNtYXN0ZXJfc3ZnMF82XzA1ODQpIj48Zz48cGF0aCBkPSJNNjQuNDY0MDAxLDcwLjYzOTk5OVE2MC4wNDgsNzAuNjM5OTk5LDU3LjQ1NjAwMSw2OC4yMDhRNTQuODY0MDAyLDY1Ljc3NjAwMTAwMDAwMDAxLDU0Ljg2NDAwMiw2MC40MDAwMDJMNTQuODY0MDAyLDQyLjIyMzk5OUw0NC4zMDQwMDEsNDIuMjIzOTk5TDQ0LjMwNDAwMSw3MEwzNC43NjgwMDA2LDcwTDM0Ljc2ODAwMDYsNDIuMjIzOTk5TDI3LjQ3MjAwMDEsNDIuMjIzOTk5TDI3LjQ3MjAwMDEsMzUuMDU2TDcxLjc2MDAwMiwzNS4wNTZMNzEuNzYwMDAyLDQyLjIyMzk5OUw2NC40MDAwMDIsNDIuMjIzOTk5TDY0LjQwMDAwMiw2MC4wMTU5OTlRNjQuNDAwMDAyLDYxLjYxNTk5Nyw2NS4yNjQwMDQsNjIuMzgzOTk5UTY2LjEyODAwMjAwMDAwMDAxLDYzLjE1Miw2Ny4zNDQwMDIsNjMuMTUyUTY4LjQzMjAwMzAwMDAwMDAxLDYzLjE1Miw2OS40NTYwMDEsNjIuODMyMDAxUTcwLjQ4MDAwMzAwMDAwMDAxLDYyLjUxMjAwMSw3MS4zNzYwMDMsNjIuMDYzOTk5TDcxLjM3NjAwMyw2OC45MTE5OTkwMDAwMDAwMVE3MC4yODgwMDIsNjkuNTUxOTk4LDY4LjM2ODAwNCw3MC4wOTYwMDFRNjYuNDQ4MDAyLDcwLjYzOTk5OSw2NC40NjQwMDEsNzAuNjM5OTk5WiIgZmlsbD0iI0YyQjE5MCIgZmlsbC1vcGFjaXR5PSIxIi8+PC9nPjwvZz48L3N2Zz4=",
   "nodes": [
     {
       "name": "+",
@@ -8,19 +9,7 @@
       "ports": {
         "in": ["in1", "in2"],
         "out": ["out1"]
-      },
-      "params": [
-        {
-          "label": "运算精度",
-          "type": "string",
-          "default": "float32"
-        },
-        {
-          "label": "是否使用广播",
-          "type": "boolean",
-          "default": true
-        }
-      ]
+      }
     },
     {
       "name": "-",
@@ -28,19 +17,129 @@
       "ports": {
         "in": ["in1", "in2"],
         "out": ["out1"]
+      }
+    },
+    {
+      "name": "×",
+      "opcode": "mul",
+      "ports": {
+        "in": ["in1", "in2"],
+        "out": ["out1"]
+      }
+    },
+    {
+      "name": "/",
+      "opcode": "div",
+      "ports": {
+        "in": ["in1", "in2"],
+        "out": ["out1"]
+      }
+    },
+    {
+      "name": "ReLU",
+      "opcode": "relu",
+      "ports": {
+        "in": ["in1"],
+        "out": ["out1"]
       },
       "params": [
         {
-          "label": "运算精度",
-          "type": "string",
-          "default": "float32"
+          "label": "负斜率",
+          "type": "number",
+          "default": "0"
         },
         {
-          "label": "是否使用广播",
+          "label": "inplace",
           "type": "boolean",
-          "default": true
+          "default": false
+        }
+      ]
+    },
+    {
+      "name": "Sigmoid",
+      "opcode": "sigmoid",
+      "ports": {
+        "in": ["in1"],
+        "out": ["out1"]
+      },
+      "params": [
+        {
+          "label": "inplace",
+          "type": "boolean",
+          "default": false
+        }
+      ]
+    },
+    {
+      "name": "Tanh",
+      "opcode": "tanh",
+      "ports": {
+        "in": ["in1"],
+        "out": ["out1"]
+      },
+      "params": [
+        {
+          "label": "inplace",
+          "type": "boolean",
+          "default": false
+        }
+      ]
+    },
+    {
+      "name": "LeakyReLU",
+      "opcode": "leaky_relu",
+      "ports": {
+        "in": ["in1"],
+        "out": ["out1"]
+      },
+      "params": [
+        {
+          "label": "负斜率",
+          "type": "number",
+          "default": "0.01"
+        },
+        {
+          "label": "inplace",
+          "type": "boolean",
+          "default": false
+        }
+      ]
+    },
+    {
+      "name": "ELU",
+      "opcode": "elu",
+      "ports": {
+        "in": ["in1"],
+        "out": ["out1"]
+      },
+      "params": [
+        {
+          "label": "alpha值",
+          "type": "number",
+          "default": "1.0"
+        },
+        {
+          "label": "inplace",
+          "type": "boolean",
+          "default": false
+        }
+      ]
+    },
+    {
+      "name": "GELU",
+      "opcode": "gelu",
+      "ports": {
+        "in": ["in1"],
+        "out": ["out1"]
+      },
+      "params": [
+        {
+          "label": "近似方法",
+          "type": "string",
+          "default": "tanh"
         }
       ]
     }
+  
   ]
 }

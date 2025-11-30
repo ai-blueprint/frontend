@@ -1,6 +1,6 @@
 {
   "name": "正则化层",
-  "color": "#B39EB5",
+  "color": "#F1AF54",
   "nodes": [
     {
       "name": "Dropout",

@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-import Node from "../components/editor/Node.vue";
+import Node from "../components/Node.vue";
 import { nodeStore } from "@/stores/nodes";
 import { blueprintStore } from "@/stores/blueprint.js";
 

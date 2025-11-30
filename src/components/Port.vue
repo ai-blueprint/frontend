@@ -22,9 +22,6 @@
   background-color: #FFD700;
   transform: scale(1.4);
 }
-
-/* 没想好用什么样式 */
-/* .port.connected {} */
 </style>
 
 <script setup>
