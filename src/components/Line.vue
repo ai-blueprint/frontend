@@ -13,10 +13,10 @@
 </template>
 
 <script setup>
-import { ref, defineProps, watch, onMounted, onUnmounted } from 'vue'
+import { ref, defineProps, watch, onMounted, onUnmounted, nextTick } from 'vue'
 
 import { blueprintStore } from '@/stores/blueprint'
-import { getElementCenter } from '@/tools/data/get-element-center'
+import { updatePaths } from '@/tools/line/update-line-paths'
 // 定义组件属性
 const props = defineProps({
   links: {
@@ -28,70 +28,18 @@ const props = defineProps({
 // 响应式数据
 const paths = ref([])
 
-
-
-// 计算贝塞尔曲线路径
-function createBezierPath(from, to) {
-  const midX = (from.x + to.x) / 2
-  return `M${from.x},${from.y} C${midX},${from.y} ${midX},${to.y} ${to.x},${to.y}`
-}
-
-// 更新所有连接线
-function updatePaths() {
-  const allPaths = []
-
-  // 1. 添加正式连接线
-  if (Array.isArray(props.links)) {
-    for (const link of props.links) {
-      const fromCenter = getElementCenter(link.from)
-      const toCenter = getElementCenter(link.to)
-
-      if (fromCenter && toCenter) {
-        allPaths.push({
-          id: link.id,
-          selected: link.selected,
-          d: createBezierPath(fromCenter, toCenter)
-        })
-      }
-    }
-  }
-
-  // 2. 添加临时连接线
-  const tempLink = blueprintStore.state.tempLink
-  if (tempLink) {
-    const fromCenter = getElementCenter(tempLink.from)
-    if (fromCenter) {
-      let toPoint = tempLink.to
-
-      // 处理目标点：可能是坐标对象或端点ID
-      if (typeof toPoint === 'string') {
-        toPoint = getElementCenter(toPoint)
-        if (!toPoint) return
-      }
-
-      if (toPoint && typeof toPoint === 'object' && 'x' in toPoint && 'y' in toPoint) {
-        allPaths.push({
-          id: 'temp',
-          isTemp: true,
-          d: createBezierPath(fromCenter, toPoint)
-        })
-      }
-    }
-  }
-
-  paths.value = allPaths
-}
-
 // 优化的鼠标移动事件处理函数
 function handleMouseMove() {
-  updatePaths()
+  paths.value = updatePaths(props.links, blueprintStore.state.nodes, blueprintStore.state.tempLink)
 }
 
 // 监听相关状态变化，更新连接线
 watch(
   () => [props.links, blueprintStore.state.nodes, blueprintStore.state.tempLink],
-  () => {
-    updatePaths()
+  async () => {
+    // 使用 nextTick 确保 DOM 已经更新，节点元素已经被重新渲染
+    await nextTick()
+    paths.value = updatePaths(props.links, blueprintStore.state.nodes, blueprintStore.state.tempLink)
   },
   { deep: true, immediate: true }
 )
