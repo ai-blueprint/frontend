@@ -24,8 +24,7 @@
 </template>
 
 <script setup>
-/* eslint-disable no-undef */
-import { ref, watch, nextTick } from 'vue';
+import { ref, watch, nextTick,defineProps,defineEmits } from 'vue';
 
 const props = defineProps({
   visible: {
