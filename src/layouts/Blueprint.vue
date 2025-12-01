@@ -434,13 +434,8 @@ function handleMenuClick(action) {
  */
 function handleRenameConfirm(newName) {
   if (currentEditingNode.value && newName.trim()) {
-    // 更新节点名称
-    const node = blueprintStore.state.nodes.find(n => n.id === currentEditingNode.value.id);
-    if (node) {
-      node.name = newName.trim();
-      historyStore.recordState();
-      debugLog(`重命名节点 ${currentEditingNode.value.id} 为: ${newName.trim()}`);
-    }
+    // 调用blueprintStore的renameNode方法更新节点名称
+    blueprintStore.renameNode(currentEditingNode.value.id, newName);
   }
   // 关闭弹窗
   renameDialogVisible.value = false;

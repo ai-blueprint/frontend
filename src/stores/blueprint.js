@@ -4,6 +4,9 @@ import { changeBlueprintSize } from "@/tools/blueprint/change-blueprint-size.js"
 import { nodeStore } from "@/stores/nodes";
 import { historyStore } from "@/stores/history";
 import { arrangeBlueprint as arrangeBlueprintNodes } from "@/tools/blueprint/arrange-blueprint.js";
+import { cloneNode as cloneNodeTool } from "@/tools/node/clone-node.js";
+import { deleteNode as deleteNodeTool } from "@/tools/node/delete-node.js";
+import { renameNode as renameNodeTool } from "@/tools/node/rename-node.js";
 
 /**
  * Blueprint Store
@@ -74,14 +77,7 @@ function findNode(id) {
   return state.nodes.find(node => node.id === id);
 }
 
-/**
- * 内部辅助函数：查找节点索引
- * @param {string} id - 节点ID
- * @returns {number} - 节点在数组中的索引，未找到返回-1
- */
-function findNodeIndex(id) {
-  return state.nodes.findIndex(node => node.id === id);
-}
+
 
 /**
  * 内部辅助函数：获取当前最大层级
@@ -147,15 +143,7 @@ export const blueprintStore = {
    * @param {string} id - 要克隆的节点ID
    */
   cloneNode(id) {
-    const node = findNode(id);
-    if (!node) {
-      debugLog(`未找到要克隆的节点: ${id}`);
-      return;
-    }
-    
-    // 创建新节点，复制原节点的所有属性并生成新ID
-    const newNode = { ...node, id: generateId() };
-    this.addNode(newNode.name, newNode.opcode, newNode.position, newNode);
+    cloneNodeTool(id, state);
   },
   
   /**
@@ -207,26 +195,7 @@ export const blueprintStore = {
    * @param {string} id - 要删除的节点ID
    */
   deleteNode(id) {
-    const index = findNodeIndex(id);
-    if (index === -1) {
-      debugLog(`未找到要删除的节点: ${id}`);
-      return;
-    }
-    
-    // 移除节点
-    state.nodes.splice(index, 1);
-    
-    // 查找并删除与该节点相关的所有连接
-    const linksToDelete = state.links.filter(link => 
-      [link.from, link.to].some(port => port.split("_")[0] === id)
-    );
-    
-    linksToDelete.forEach(link => this.deleteLink(link.id));
-    
-    // 删除节点后重新计算蓝图大小
-    changeBlueprintSize();
-    debugLog(`成功删除节点“${id}”及其所有连接`);
-    historyStore.recordState();
+    deleteNodeTool(id, state);
   },
 
   /**
@@ -268,6 +237,15 @@ export const blueprintStore = {
    */
   getSelectedNodes() {
     return state.nodes.filter(node => node.selected);
+  },
+  
+  /**
+   * 重命名节点
+   * @param {string} id - 要重命名的节点ID
+   * @param {string} newName - 新的节点名称
+   */
+  renameNode(id, newName) {
+    renameNodeTool(id, newName, state);
   },
   
   /**
