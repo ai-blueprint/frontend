@@ -7,6 +7,8 @@
     <ToolBar />
     <!-- 上下文菜单 - 提供节点操作选项 -->
     <ContextMenu />
+    <!-- 重命名弹窗 -->
+    <RenameDialog />
   </div>
 </template>
 
@@ -21,6 +23,7 @@
 import Blueprint from "./Blueprint.vue";
 import ToolBar from "./ToolBar.vue";
 import ContextMenu from "@/components/ContextMenu.vue";
+import RenameDialog from "@/components/RenameDialog.vue";
 </script>
 
 <style scoped>

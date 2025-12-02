@@ -1,19 +1,13 @@
 <template>
-  <div v-if="visible" class="rename-dialog-overlay" @click="handleOverlayClick">
+  <div v-if="editorStore.state.renameDialogVisible" class="rename-dialog-overlay" @click="handleOverlayClick">
     <div class="rename-dialog" @click.stop>
       <div class="rename-dialog-header">
-        <h3>{{ title }}</h3>
+        <h3>{{ selectedNodes.length === 1 ? '重命名节点' : '重命名多个节点' }}</h3>
       </div>
       <div class="rename-dialog-body">
-        <input
-          ref="nameInput"
-          type="text"
-          v-model="inputValue"
-          class="rename-input"
-          placeholder="请输入节点名称"
-          @keyup.enter="handleConfirm"
-          @keyup.esc="handleCancel"
-        />
+        <input ref="nameInput" type="text" v-model="inputValue" class="rename-input" :placeholder="selectedNodes.length === 1 ? inputValue : '多个节点重命名'"
+
+          @keyup.enter="handleConfirm" @keyup.esc="handleCancel" />
       </div>
       <div class="rename-dialog-footer">
         <button class="cancel-btn" @click="handleCancel">取消</button>
@@ -24,56 +18,50 @@
 </template>
 
 <script setup>
-import { ref, watch, nextTick,defineProps,defineEmits } from 'vue';
-
-const props = defineProps({
-  visible: {
-    type: Boolean,
-    default: false
-  },
-  title: {
-    type: String,
-    default: '重命名节点'
-  },
-  defaultName: {
-    type: String,
-    default: ''
-  }
-});
-
-const emit = defineEmits(['confirm', 'cancel']);
+import { ref, watch, nextTick } from 'vue';
+import { blueprintStore } from '@/stores/blueprint';
+import { editorStore } from '@/stores/editor';
 
 const nameInput = ref(null);
-const inputValue = ref(props.defaultName);
+const inputValue = ref('');
+const selectedNodes = ref([]);
 
-// 监听弹窗可见性变化，自动聚焦输入框
-watch(() => props.visible, (newVal) => {
+
+// 监听弹窗可见性变化，自动获取内容并聚焦输入框
+watch(() => editorStore.state.renameDialogVisible, (newVal) => {
   if (newVal) {
-    inputValue.value = props.defaultName;
+    // 默认空值
+    inputValue.value = '';
     nextTick(() => {
+      // 首先获取所有选中的节点
+      selectedNodes.value = blueprintStore.getSelectedNodes();
+      // 如果只有一个，输入框里就显示这个节点的名称
+      if (selectedNodes.value.length === 1) inputValue.value = selectedNodes.value[0].name;
       nameInput.value?.focus();
       nameInput.value?.select();
     });
   }
 });
 
-// 确认重命名
-const handleConfirm = () => {
-  const newName = inputValue.value.trim();
-  if (newName) {
-    emit('confirm', newName);
-  }
-};
 
-// 取消重命名
-const handleCancel = () => {
-  emit('cancel');
-};
+// 确认重命名
+function handleConfirm() {
+  const newName = inputValue.value.trim();
+  // 如果输入框为空，不执行重命名
+  if (!newName) return;
+  blueprintStore.renameSelectedNodes(newName);
+  editorStore.closeRenameDialog();
+}
+
+// 取消重命名，关闭弹窗
+function handleCancel() {
+  editorStore.closeRenameDialog();
+}
 
 // 点击遮罩层关闭弹窗
-const handleOverlayClick = () => {
+function handleOverlayClick() {
   handleCancel();
-};
+}
 </script>
 
 <style scoped>
@@ -143,7 +131,8 @@ const handleOverlayClick = () => {
   background-color: #F6F9FE;
 }
 
-.cancel-btn, .confirm-btn {
+.cancel-btn,
+.confirm-btn {
   padding: 8px 20px;
   border: none;
   border-radius: 8px;

@@ -2,34 +2,13 @@
   <span class="port" ref="portRef" @mousedown="handleMouseDown" :id="id" :class="{ connected: isConnected }"></span>
 </template>
 
-<style scoped>
-.port {
-  display: flex;
-  width: 8px;
-  height: 8px;
-  background-color: #fff;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: 0.1s ease-in-out;
-}
 
-.port:hover {
-  transform: scale(1.2);
-  background-color: #8cff00;
-}
-
-.port.snap {
-  background-color: #FFD700;
-  transform: scale(1.4);
-}
-</style>
 
 <script setup>
 import { ref, defineProps, onUnmounted, computed } from "vue";
 import { blueprintStore } from "@/stores/blueprint";
-import { getScale } from "@/tools/data/get-scale";
 import { getMouseRelativeCoordinate } from "@/tools/data/get-mouse-relative-coordinate";
-
+import { getElementCenter } from "@/tools/data/get-element-center";
 // 定义组件属性
 const props = defineProps({
   id: {
@@ -85,6 +64,47 @@ function isValidConnectionType(fromType, toType) {
   return (fromType === 'out' && toType === 'in') || (fromType === 'in' && toType === 'out');
 }
 
+
+
+// 查找附近的端点
+function findNearbyPort(position, radius) {
+  if (!blueprintEl.value) return null;
+  const fromType = getType(blueprintStore.state.tempLink.from);
+  return Array.from(document.querySelectorAll('.port'))
+    .filter(port => {
+      const portId = port.id;
+      // 排除自己
+      if (portId === blueprintStore.state.tempLink.from) return false;
+      // 排除该端点所在节点的其他端点
+      const nodeId = portId.split('_')[0];
+      if (nodeId === blueprintStore.state.tempLink.from.split('_')[0]) return false;
+
+      // 只考虑类型不同的端点
+      const toType = getType(portId);
+      return fromType && toType && fromType !== toType;
+    })
+    .find(port => {
+      // 获取端点中心位置
+      const center = getElementCenter(port.id);
+
+      // 计算距离
+      const distance = Math.hypot(
+        position.x - center.x,
+        position.y - center.y
+      );
+
+      return distance <= radius;
+    })?.id || null;
+}
+
+// 查找端点元素
+function findPortElement(element) {
+  while (element?.nodeType === 1) {
+    if (element.classList.contains('port')) return element;
+    element = element.parentNode;
+  }
+  return null;
+}
 // 处理鼠标按下事件
 function handleMouseDown(event) {
   const nodeId = props.id.split('_')[0];
@@ -117,9 +137,10 @@ function handleMouseMove(event) {
   event.preventDefault();
   if (!blueprintEl.value) return;
 
+  // 连接线吸附效果实现
   const position = getMouseRelativeCoordinate(blueprintEl.value, event, true);
   const blueprintScale = blueprintStore.state.scale;
-  const nearbyPort = findNearbyPort(position, 20 / blueprintScale);
+  const nearbyPort = findNearbyPort(position, 30 / blueprintScale);
 
   clearSnapStyles();
 
@@ -180,55 +201,29 @@ function handleMouseUp(event) {
 
   blueprintStore.clearTempLink();
 }
-
-// 查找附近的端点
-function findNearbyPort(position, radius) {
-  if (!blueprintEl.value) return null;
-
-  const scaleValue = getScale(blueprintEl.value);
-  const blueprintRect = blueprintEl.value.getBoundingClientRect();
-  const fromType = getType(blueprintStore.state.tempLink.from);
-  return Array.from(document.querySelectorAll('.port'))
-    .filter(port => {
-      const portId = port.id;
-      // 排除自己
-      if (portId === blueprintStore.state.tempLink.from) return false;
-      // 排除该端点所在节点的其他端点
-      const nodeId = portId.split('_')[0];
-      if (nodeId === blueprintStore.state.tempLink.from.split('_')[0]) return false;
-
-
-      // 只考虑类型不同的端点
-      const toType = getType(portId);
-      return fromType && toType && fromType !== toType;
-    })
-    .find(port => {
-      // 计算端点中心位置
-      const rect = port.getBoundingClientRect();
-      const center = {
-        x: (rect.left + rect.width / 2 - blueprintRect.left) / scaleValue,
-        y: (rect.top + rect.height / 2 - blueprintRect.top) / scaleValue
-      };
-
-      // 计算距离
-      const distance = Math.hypot(
-        position.x - center.x,
-        position.y - center.y
-      );
-
-      return distance <= radius;
-    })?.id || null;
-}
-
-// 查找端点元素
-function findPortElement(element) {
-  while (element?.nodeType === 1) {
-    if (element.classList.contains('port')) return element;
-    element = element.parentNode;
-  }
-  return null;
-}
-
 // 组件卸载时清理
 onUnmounted(cleanupEventListeners);
 </script>
+
+
+<style scoped>
+.port {
+  display: flex;
+  width: 8px;
+  height: 8px;
+  background-color: #fff;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: 0.1s ease-in-out;
+}
+
+.port:hover {
+  transform: scale(1.2);
+  background-color: #8cff00;
+}
+
+.port.snap {
+  background-color: #FFD700;
+  transform: scale(1.4);
+}
+</style>

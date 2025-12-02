@@ -1,33 +1,62 @@
 <template>
-    <div id="context-menu">
+    <div id="context-menu" :style="menuStyle">
         <!-- 复制并粘贴 -->
-        <span class="context-menu-item" @click="$emit('menu-click', 'clone')">
+        <span class="context-menu-item" @click="handleClone">
             <span class="icon-container">
                 <img src="@/assets/ContextMenu/复制并粘贴.svg" alt="复制并粘贴" class="icon">
             </span>
             复制并粘贴
         </span>
         <!-- 重命名 -->
-        <span class="context-menu-item" @click="$emit('menu-click', 'rename')">
+        <span class="context-menu-item" @click="handleRename">
             <span class="icon-container">
                 <img src="@/assets/ContextMenu/重命名.svg" alt="重命名" class="icon">
             </span>
             重命名
         </span>
         <!-- 删除节点 -->
-        <span class="context-menu-item" @click="$emit('menu-click', 'delete')">
+        <span class="context-menu-item" @click="handleDelete">
             <span class="icon-container">
                 <img src="@/assets/ContextMenu/删除节点.svg" alt="删除节点" class="icon">
             </span>
             删除节点
         </span>
     </div>
+
 </template>
 
 <script setup>
-import { defineEmits } from 'vue';
+import { computed } from 'vue';
+import { blueprintStore } from '@/stores/blueprint';
+import { editorStore } from '@/stores/editor';
 
-defineEmits(['menu-click']);
+
+
+// 计算菜单样式
+const menuStyle = computed(() => ({
+    display: editorStore.state.nodeContextMenuVisible ? 'flex' : 'none',
+    left: `${editorStore.state.nodeContextMenuPosition.x}px`,
+    top: `${editorStore.state.nodeContextMenuPosition.y}px`
+}));
+
+
+// 处理复制操作
+function handleClone() {
+    blueprintStore.cloneSelectedNodes();
+    editorStore.hideNodeContextMenu();
+}
+
+// 处理重命名操作
+function handleRename() {
+    editorStore.openRenameDialog();
+    editorStore.hideNodeContextMenu();
+}
+
+// 处理删除操作
+function handleDelete() {
+    blueprintStore.deleteSelectedNodes();
+    editorStore.hideNodeContextMenu();
+}
 </script>
 
 <style scoped>
@@ -41,14 +70,14 @@ defineEmits(['menu-click']);
     padding: 12px;
     gap: 12px;
     background: #F6F9FE;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.16);
+    box-shadow: 0px 2px 20px rgba(111, 125, 176, 0.1);
 
     font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.5px;
     /* 文本超出不换行 */
     white-space: nowrap;
-    color: #6F7DB0;
+    color: rgb(111, 125, 176);
 
     /* 先隐藏，之后用到再显示 */
     display: none;

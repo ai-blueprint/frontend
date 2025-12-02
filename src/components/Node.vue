@@ -12,12 +12,12 @@
 </template>
 <script setup>
 import Port from "./Port.vue";
-import { ref, computed, defineProps, defineEmits } from "vue";
+import { ref, computed, defineProps } from "vue";
 import { blueprintStore } from "@/stores/blueprint.js";
 import { getMouseRelativeCoordinate } from "@/tools/data/get-mouse-relative-coordinate.js";
 import { nodeStore } from "@/stores/nodes.js";
+import { editorStore } from "@/stores/editor";
 const nodeElement = ref(null);
-const emit = defineEmits(['contextmenu', 'dblclick']);
 const props = defineProps({
   node: {
     type: Object,
@@ -41,7 +41,6 @@ const layer = computed(() => props.node?.layer || 0);
 function onNodeClick(e) {
   // 阻止事件冒泡，避免触发蓝图的点击事件
   e.stopPropagation();
-  nodeElement.value.style.zIndex = 1000;// 提升图层
   if (!e.ctrlKey && !e.metaKey) blueprintStore.clearSelectNode();
   if (id.value) blueprintStore.toggleSelectNode(id.value);
 }
@@ -71,21 +70,12 @@ function onContextMenu(e) {
   e.stopPropagation();
   
   // 选择当前节点
-  if (!e.ctrlKey && !e.metaKey) blueprintStore.clearSelectNode();
+  blueprintStore.clearSelectNode();
   if (id.value) blueprintStore.toggleSelectNode(id.value);
   
-  // 获取节点在窗口中的位置
-  const rect = nodeElement.value.getBoundingClientRect();
-  
-  // 向父组件发送右键点击事件，传递节点信息和位置
-  emit('contextmenu', {
-    node: props.node,
-    position: {
-      x: e.clientX,
-      y: e.clientY
-    },
-    nodeRect: rect
-  });
+  // 显示右键菜单
+  const nodeRect = nodeElement.value.getBoundingClientRect();
+  editorStore.showNodeContextMenu(nodeRect);
 }
 
 function onDoubleClick(e) {
@@ -96,10 +86,8 @@ function onDoubleClick(e) {
   if (!e.ctrlKey && !e.metaKey) blueprintStore.clearSelectNode();
   if (id.value) blueprintStore.toggleSelectNode(id.value);
   
-  // 向父组件发送双击事件，传递节点信息
-  emit('dblclick', {
-    node: props.node
-  });
+  // 打开重命名弹窗
+  editorStore.openRenameDialog();
 }
 </script>
 <style scoped>

@@ -1,4 +1,11 @@
 import { blueprintStore } from "@/stores/blueprint";
+/**
+ * 限制蓝图在父容器内的显示范围
+ * @param {object} childSize - 子元素尺寸 {width, height}
+ * @param {object} parentSize - 父元素尺寸 {width, height}
+ * @param {object} transform - 当前变换参数 {scale, translate: {x, y}}
+ * @returns {object} - 新的变换参数 {newScale, newTranslateX, newTranslateY}
+ */
 export function limitBlueprint(childSize, parentSize, transform) {
   const { width: childWidth, height: childHeight } = childSize;
   const { width: parentWidth, height: parentHeight } = parentSize;
