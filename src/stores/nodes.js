@@ -1,28 +1,6 @@
 import { reactive, readonly } from "vue";
-
-/**
- * Nodes Store
- * 管理节点组的动态加载、注册和查询
- */
-
-// 调试日志开关
-const DEBUG = false;
-const debugLog = (...args) => {
-  if (DEBUG) console.log(...args);
-};
-
-/**
- * 节点组状态数组
- * 存储所有注册的节点组
- */
 const state = reactive([]);
-
-/**
- * 节点组加载状态
- * 标记是否已完成初始化加载
- */
 const isLoaded = reactive({ value: false });
-
 /**
  * 注册节点组
  * @param {Object} nodeGroup - 节点组对象，包含name、nodes、color等属性
@@ -39,11 +17,12 @@ const registerNodeGroup = (nodeGroup) => {
   if (existingIndex >= 0) {
     // 更新已存在的节点组
     state[existingIndex] = nodeGroup;
-    debugLog(`更新节点组: ${nodeGroup.name}`);
+    console.log(`更新节点组: ${nodeGroup.name}`);
+    (`更新节点组: ${nodeGroup.name}`);
   } else {
     // 添加新的节点组
     state.push(nodeGroup);
-    debugLog(`新增节点组: ${nodeGroup.name}，包含 ${nodeGroup.nodes?.length || 0} 个节点`);
+    console.log(`新增节点组: ${nodeGroup.name}，包含 ${nodeGroup.nodes?.length || 0} 个节点`);
   }
 };
 
@@ -71,7 +50,7 @@ const loadNodeGroups = () => {
     });
     
     isLoaded.value = true;
-    debugLog(`节点组加载完成，共加载 ${state.length} 个节点组`);
+    console.log(`节点组加载完成，共加载 ${state.length} 个节点组`);
   } catch (error) {
     console.error('加载节点组目录失败:', error);
   }

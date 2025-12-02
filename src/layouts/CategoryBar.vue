@@ -1,24 +1,23 @@
 <template>
   <div class="category-bar">
-    <!-- 分类导航图标 -->
-    <div class="category-item active">
-      <img src="../assets/category/基础.svg" alt="基础" class="icon" />
-    </div>
-    <div class="category-item">
-      <img src="../assets/category/函数.svg" alt="函数" class="icon" />
-    </div>
-    <div class="category-item">
-      <img src="../assets/category/数学.svg" alt="数学" class="icon" />
-    </div>
-    <div class="category-item">
-      <img src="../assets/category/网络.svg" alt="网络" class="icon" />
+    <div v-for="(category, index) in nodeStore.state" :key="category.id" class="category-item"
+      :class="{ active: index === activeCategoryIndex }" :style="{ '--category-color': category.color }"
+      @click="setActiveCategoryId(index)">
+      <img :src="category.icon || require('@/assets/警告.svg')" :alt="category.name" class="icon" />
     </div>
 
   </div>
 </template>
 
 <script setup>
-
+import { nodeStore } from '@/stores/nodes';
+import { ref } from 'vue';
+// 当节点组加载完成时，设置默认激活分类
+const activeCategoryIndex = ref(0);
+// 设置激活分类，并且节点盒中的节点会根据分类进行过滤
+const setActiveCategoryId = (index) => {
+  activeCategoryIndex.value = index;
+};
 </script>
 
 <style scoped>
@@ -47,20 +46,25 @@
   background-color: rgba(0, 0, 0, 0.1);
   scale: 1.1;
 }
+
 .category-item:active {
   scale: 0.9;
 }
+
 .category-item.active {
-  background-color: #6a8ee7;
+  background-color: var(--category-color);
   color: white;
+
   /* 图标颜色变为白色 */
   .icon {
     filter: brightness(10);
   }
 }
+
 .category-item.active:hover {
   scale: 1;
 }
+
 .icon {
   width: 100%;
   /* 禁止拖拽 */
