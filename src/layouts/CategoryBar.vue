@@ -1,7 +1,7 @@
 <template>
   <div class="category-bar">
     <div v-for="(category, index) in nodeStore.state" :key="category.id" class="category-item"
-      :class="{ active: index === activeCategoryIndex }" :style="{ '--category-color': category.color }"
+      :class="{ active: index === editorStore.state.activeCategoryIndex }" :style="{ '--category-color': category.color }"
       @click="setActiveCategoryId(index)">
       <img :src="category.icon || require('@/assets/警告.svg')" :alt="category.name" class="icon" />
     </div>
@@ -11,12 +11,10 @@
 
 <script setup>
 import { nodeStore } from '@/stores/nodes';
-import { ref } from 'vue';
-// 当节点组加载完成时，设置默认激活分类
-const activeCategoryIndex = ref(0);
+import { editorStore } from '@/stores/editor';
 // 设置激活分类，并且节点盒中的节点会根据分类进行过滤
 const setActiveCategoryId = (index) => {
-  activeCategoryIndex.value = index;
+  editorStore.setActiveCategoryIndex(index);
 };
 </script>
 

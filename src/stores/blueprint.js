@@ -6,37 +6,10 @@ import { arrangeBlueprint as arrangeBlueprintNodes } from "@/tools/blueprint/arr
 
 const state = reactive({
   // 节点列表
-  nodes: [
-    {
-      id: "a",
-      name: "节点1",
-      opcode: "input",
-      position: { x: 100, y: 100 },
-      selected: false,
-      layer: 0,
-      ports: { out: ["a"] },
-      params: [
-        { label: "输入维度", type: "number", default: "1" },
-        { label: "输入类型", type: "string", default: "float32" },
-      ],
-    },
-    {
-      id: "b",
-      name: "节点2",
-      opcode: "add",
-      position: { x: 400, y: 100 },
-      selected: false,
-      layer: 1,
-      ports: { in: ["a", "b"], out: ["c"] },
-      params: [
-        { label: "输入维度", type: "number", default: "2" },
-        { label: "输出维度", type: "number", default: "1" },
-      ],
-    },
-  ],
+  nodes: [],
 
   // 连接线列表
-  links: [{ id: generateId(), from: "a_a", to: "b_a" }],
+  links: [],
 
   // 视图变换状态
   scale: 1,

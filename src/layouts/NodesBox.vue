@@ -1,6 +1,6 @@
 <template>
   <div class="nodes-box" @dragover.prevent @drop="onNodeDrop" @dragenter="onDragEnter" @dragleave="onDragLeave">
-    <div class="nodes-group" v-for="category in nodeStore.state" :key="category.name">
+    <div class="nodes-group" v-for="category in activeCategory" :key="category.name">
       <h3 class="group-name">{{ category.name }}</h3>
       <Node v-for="node in category.nodes" :key="node.opcode" :node="node" :color="category.color"></Node>
     </div>
@@ -11,6 +11,14 @@
 import Node from "../components/Node.vue";
 import { nodeStore } from "@/stores/nodes";
 import { blueprintStore } from "@/stores/blueprint.js";
+import { editorStore } from "@/stores/editor";
+import { computed } from "vue";
+
+// 计算属性：获取当前激活的分类
+const activeCategory = computed(() => {
+  const index = editorStore.state.activeCategoryIndex;
+  return nodeStore.state[index] ? [nodeStore.state[index]] : [];
+});
 
 // 添加拖拽进入和离开事件处理，用于视觉反馈
 function onDragEnter(e) {

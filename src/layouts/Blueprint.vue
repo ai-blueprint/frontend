@@ -147,6 +147,10 @@ function handleZoom(event) {
 // 组件生命周期
 onMounted(() => {
   window.addEventListener("keydown", handleKeyboardShortcuts);
+  // 创建两个基础节点和连接线
+  blueprintStore.addNode("输入", "input", { x: 100, y: 100 }, null, "input");
+  blueprintStore.addNode("输出", "output", { x: 400, y: 100 }, null, "output");
+  blueprintStore.addLink("input_out1", "output_in1");
 
   // 监听蓝图状态变化，自动调整大小
   watch(

@@ -307,7 +307,7 @@ const handleParamChange = (param, newValue) => {
 .param-item {
   display: flex;
   align-items: center;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   color: #333;
   white-space: nowrap;
@@ -316,7 +316,6 @@ const handleParamChange = (param, newValue) => {
   flex-direction: row;
   flex-wrap: nowrap;
   justify-content: space-between;
-  gap: 20%;
 }
 
 /* 节点名称样式 */

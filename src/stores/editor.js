@@ -7,6 +7,8 @@ const state = reactive({
   nodeContextMenuVisible: false,
   //节点右键菜单位置
   nodeContextMenuPosition: { x: 0, y: 0 },
+  // 当前激活的分类索引
+  activeCategoryIndex: 0,
 });
 
 export const editorStore = {
@@ -55,5 +57,13 @@ export const editorStore = {
   // 隐藏节点右键菜单
   hideNodeContextMenu() {
     state.nodeContextMenuVisible = false;
+  },
+  // 设置激活的分类索引
+  setActiveCategoryIndex(index) {
+    state.activeCategoryIndex = index;
+  },
+  // 获取激活的分类索引
+  getActiveCategoryIndex() {
+    return state.activeCategoryIndex;
   },
 };
