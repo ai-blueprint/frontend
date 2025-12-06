@@ -1,79 +1,78 @@
 <template>
-  <!-- 属性面板容器 -->
+  <!-- 属性面板组件 -->
   <div id="panel" class="panel-container">
-    <!-- 面板标题 -->
+    <!-- 面板头部 -->
     <div class="panel-header">
       <h2>属性</h2>
     </div>
 
     <!-- 面板内容区域 -->
     <div class="panel-content">
-      <!-- 有节点被选中时显示属性编辑器 -->
-      <div v-if="selectedNodes.length > 0" class="param-container">
-        <!-- 当选中多个节点时显示选中节点数量 -->
-        <div v-if="selectedNodes.length > 1" class="selected-count">
+      <!-- 未选择节点时的空状态提示 -->
+      <div v-if="!hasSelectedNodes" class="empty-state">
+        <p>选择节点<br />修改属性</p>
+      </div>
+
+      <!-- 参数编辑器（选择节点后显示） -->
+      <div v-else class="param-editor">
+        <!-- 多选状态提示 -->
+        <div v-if="isMultipleSelection" class="selection-info">
           已选择 {{ selectedNodes.length }} 个节点
         </div>
 
-        <!-- 只有选择单个节点时显示节点名称 -->
-        <!-- <h3 v-if="selectedNodes.length === 1" class="node-name">{{ selectedNodes[0].name }}</h3> -->
-        <!-- 如果选择的所有节点都没有属性就提示没有属性 -->
-        <div v-if="mergedParams.length === 0" class="no-params">
+        <!-- 节点无参数时的空状态提示 -->
+        <div v-if="!hasParams" class="empty-state">
           <p>该节点没有属性</p>
         </div>
-        <!-- 使用Ant Design的ConfigProvider应用主题 -->
-        <a-config-provider :theme="themeConfig">
-          <!-- 遍历合并后的参数列表 -->
-          <div v-for="(param, paramIndex) in mergedParams" :key="paramIndex" class="param-item">
-            <label>{{ param.label }}</label>
-            <!-- 参数输入区域 -->
-            <div class="input-wrapper">
-              <!-- 根据参数类型渲染不同的输入组件 -->
-              <!-- 布尔类型使用开关组件 -->
-              <a-switch v-if="param.type === 'boolean'" :checked="param.default"
-                @change="handleParamChange(param, $event)" :class="{ 'multi-value': param.isMultiValue }" />
 
-              <!-- 数字类型使用数字输入框 -->
-              <a-input-number v-else-if="param.type === 'number'" v-model:value="param.default"
-                @change="handleParamChange(param, $event)" :step="1" :keyboard="true"
-                :class="{ 'multi-value': param.isMultiValue }" />
-
-              <!-- 字符串类型使用文本输入框 -->
-              <a-input v-else-if="param.type === 'string'" :value="param.default"
-                @change="e => handleParamChange(param, e.target.value)"
-                :class="{ 'multi-value': param.isMultiValue }" />
-
-              <!-- 未知类型使用文本输入框 -->
-              <a-input v-else :value="param.default" @change="e => handleParamChange(param, e.target.value)"
-                placeholder="未知类型" :class="{ 'multi-value': param.isMultiValue }" />
-            </div>
+        <!-- 参数列表（使用Ant Design主题配置） -->
+        <a-config-provider v-else :theme="themeConfig">
+          <!-- 遍历渲染每个参数项 -->
+          <div
+            v-for="param in mergedParams"
+            :key="param.key"
+            class="param-item"
+          >
+            <!-- 参数标签 -->
+            <label class="param-label">{{ param.label }}</label>
+            
+            <!-- 动态输入组件（根据参数类型渲染不同组件） -->
+            <component
+              :is="getInputComponent(param.type)"
+              v-model:value="param.default"
+              :checked="param.default"
+              :class="{ 'multi-value': param.isMultiValue }"
+              class="param-input"
+              @change="(value) => handleParamChange(param, value)"
+              @update:value="(value) => handleParamChange(param, value)"
+            />
           </div>
         </a-config-provider>
-      </div>
-
-      <!-- 无节点选中时的提示信息 -->
-      <div v-else class="no-node-selected">
-        <p>选择节点<br>修改属性</p>
       </div>
     </div>
   </div>
 </template>
 
-<script setup>
-/**
- * 属性面板组件
- * 用于显示和编辑选中节点的属性参数
- */
+<script setup lang="js">
+// 导入蓝图存储
+import { blueprintStore } from "@/stores/blueprint";
+// 导入Vue响应式API
+import { computed, ref, watchEffect } from "vue";
+// 导入Ant Design组件
+import {
+  ConfigProvider as AConfigProvider,
+  Switch as ASwitch,
+  InputNumber as AInputNumber,
+  Input as AInput,
+} from "ant-design-vue";
 
-// 导入依赖
-import { blueprintStore } from '@/stores/blueprint';
-import { ref, watch, computed } from 'vue';
-import { ConfigProvider as AConfigProvider, Switch as ASwitch, InputNumber as AInputNumber, Input as AInput } from 'ant-design-vue';
+// 常量：多值标识符
+const MULTI_VALUE_INDICATOR = "多值";
 
-// 自定义主题配置 - Ant Design 6.0
+// Ant Design主题配置
 const themeConfig = {
   token: {
-    colorPrimary: '#8C92DFFF',
+    colorPrimary: "#8C92DFFF",
     borderRadius: 4,
     borderRadiusLG: 8,
   },
@@ -85,174 +84,166 @@ const themeConfig = {
       borderRadius: 8,
     },
     Switch: {
-      colorPrimary: '#8C92DFFF',
+      colorPrimary: "#8C92DFFF",
     },
   },
 };
 
-// 响应式数据
+// 响应式数据：当前选中的节点列表
 const selectedNodes = ref([]);
 
-// 监听选中节点变化
-watch(() => blueprintStore.getSelectedNodes(), (newSelectedNodes) => {
-  selectedNodes.value = newSelectedNodes;
-}, { immediate: true });
+// 监听选中节点变化，同步蓝图存储中的选中状态
+watchEffect(() => {
+  selectedNodes.value = blueprintStore.getSelectedNodes();
+});
 
-/**
- * 转换参数值为正确的类型
- * @param {Object} param - 参数对象
- * @param {*} value - 要转换的值
- * @returns {*} - 转换后的值
- */
-const convertParamValue = (param, value) => {
-  // 如果是多值状态，直接返回
-  if (value === '多值') return value;
+// 计算属性：是否有选中节点
+const hasSelectedNodes = computed(() => selectedNodes.value.length > 0);
 
-  // 根据参数类型转换值
-  switch (param.type) {
-    case 'number':
+// 计算属性：是否多选
+const isMultipleSelection = computed(() => selectedNodes.value.length > 1);
+
+// 计算属性：是否有参数
+const hasParams = computed(() => mergedParams.value.length > 0);
+
+// 计算属性：合并参数（处理单节点和多节点情况）
+const mergedParams = computed(() => {
+  if (!hasSelectedNodes.value) return [];
+
+  const nodes = selectedNodes.value;
+  if (nodes.length === 1) {
+    return processSingleNodeParams(nodes[0]);
+  }
+  return processMultipleNodesParams(nodes);
+});
+
+// 转换参数值为正确类型
+function convertParamValue(type, value) {
+  if (value === MULTI_VALUE_INDICATOR) return value;
+
+  switch (type) {
+    case "number":
       return parseFloat(value);
-    case 'boolean':
-      return value === true || value === 'true';
+    case "boolean":
+      return value === true || value === "true";
     default:
       return value;
   }
-};
+}
 
-/**
- * 检查所有值是否相同
- * @param {Array} values - 值数组
- * @returns {boolean} - 所有值是否相同
- */
-const areAllValuesSame = (values) => {
+// 检查数组中所有值是否相同
+function areAllValuesSame(values) {
   if (!values.length) return true;
-  return values.every(val => val === values[0]);
-};
+  return values.every((val) => val === values[0]);
+}
 
-/**
- * 合并相同参数名的参数，支持多节点属性编辑
- */
-const mergedParams = computed(() => {
-  // 无选中节点时返回空数组
-  if (selectedNodes.value.length === 0) return [];
+// 处理单节点参数
+function processSingleNodeParams(node) {
+  if (!node.params?.length) return [];
 
-  // 单个节点处理逻辑
-  if (selectedNodes.value.length === 1) {
-    const node = selectedNodes.value[0];
-    // 检查节点是否有params属性
-    if (!node.params) return [];
+  return node.params.map((param, index) => {
+    const convertedDefault = convertParamValue(param.type, param.default);
+    return {
+      ...param,
+      nodes: [node],
+      isMultiValue: false,
+      params: [param],
+      default: convertedDefault,
+      originalValue: convertedDefault,
+      key: `${param.label}-${node.id}-${index}`,
+    };
+  });
+}
 
-    // 转换单个节点的参数
-    return node.params.map(param => {
-      const convertedDefault = convertParamValue(param, param.default);
-      return {
-        ...param,
-        nodes: [node],
-        isMultiValue: false,
-        params: [param], // 确保handleParamChange函数能正常工作
-        default: convertedDefault,
-        originalValue: convertedDefault // 存储原始值，用于恢复
-      };
-    });
-  }
+// 处理多节点参数合并
+function processMultipleNodesParams(nodes) {
+  const paramGroups = new Map();
 
-  // 多个节点处理逻辑：按参数名分组
-  const paramGroups = {};
+  nodes.forEach((node) => {
+    if (!node.params?.length) return;
 
-  // 遍历所有选中节点，收集参数
-  selectedNodes.value.forEach(node => {
-    if (!node.params) return;
-
-    node.params.forEach(param => {
-      if (!paramGroups[param.label]) {
-        paramGroups[param.label] = {
+    node.params.forEach((param) => {
+      const group = paramGroups.get(param.label);
+      if (!group) {
+        // 创建新参数分组
+        paramGroups.set(param.label, {
           label: param.label,
           type: param.type,
           values: [param.default],
           nodes: [node],
-          params: [param]
-        };
+          params: [param],
+        });
       } else {
-        paramGroups[param.label].values.push(param.default);
-        paramGroups[param.label].nodes.push(node);
-        paramGroups[param.label].params.push(param);
+        // 添加到现有分组
+        group.values.push(param.default);
+        group.nodes.push(node);
+        group.params.push(param);
       }
     });
   });
 
-  // 转换为数组，并标记多值状态
-  return Object.values(paramGroups).map(group => {
+  // 转换分组为参数列表，处理多值情况
+  return Array.from(paramGroups.values()).map((group, index) => {
     const allValuesSame = areAllValuesSame(group.values);
-    const defaultValue = allValuesSame ? group.values[0] : '多值';
+    const defaultValue = allValuesSame
+      ? group.values[0]
+      : MULTI_VALUE_INDICATOR;
 
     return {
       label: group.label,
       type: group.type,
-      default: convertParamValue(group, defaultValue),
+      default: convertParamValue(group.type, defaultValue),
       isMultiValue: !allValuesSame,
       nodes: group.nodes,
       params: group.params,
-      originalValue: convertParamValue(group, allValuesSame ? group.values[0] : '多值')
+      originalValue: convertParamValue(
+        group.type,
+        allValuesSame ? group.values[0] : MULTI_VALUE_INDICATOR
+      ),
+      key: `${group.label}-${index}`,
     };
   });
-});
+}
 
-/**
- * 验证输入值是否有效
- * @param {Object} param - 参数对象
- * @param {*} value - 输入值
- * @returns {boolean} - 是否有效
- */
-const isValidInput = (param, value) => {
-  // 布尔类型总是有效
-  if (param.type === 'boolean') {
-    return true;
+// 根据参数类型获取对应的输入组件
+function getInputComponent(type) {
+  switch (type) {
+    case "boolean":
+      return ASwitch;
+    case "number":
+      return AInputNumber;
+    case "string":
+    default:
+      return AInput;
   }
+}
 
-  // 检查是否为空或只包含空格
-  if (value === undefined || value === null) {
-    return false;
-  }
-
-  if (typeof value === 'string' && value.trim() === '') {
-    return false;
-  }
-
-  // 数字类型验证
-  if (param.type === 'number') {
-    return !isNaN(parseFloat(value)) && isFinite(value);
-  }
-
-  // 字符串类型只要不为空就有效
-  if (param.type === 'string') {
-    return true;
-  }
-
-  // 其他类型默认有效
+// 验证输入值是否有效
+function isValidInput(type, value) {
+  if (type === "boolean") return true;
+  if (value === undefined || value === null) return false;
+  if (typeof value === "string" && value.trim() === "") return false;
+  if (type === "number") return !isNaN(parseFloat(value)) && isFinite(value);
   return true;
-};
+}
 
-/**
- * 处理参数值变更
- * @param {Object} param - 参数对象
- * @param {*} newValue - 新值
- */
-const handleParamChange = (param, newValue) => {
-  // 验证输入值是否有效
-  if (isValidInput(param, newValue)) {
-    // 更新所有相关节点的参数值
-    param.params.forEach(p => {
-      p.default = newValue;
-    });
-    // 更新原始值
-    param.originalValue = newValue;
-  } else {
-    // 输入无效，恢复原始值
-    param.params.forEach(p => {
+// 处理参数值变更
+function handleParamChange(param, newValue) {
+  // 验证输入有效性
+  if (!isValidInput(param.type, newValue)) {
+    // 无效则恢复原始值
+    param.params.forEach((p) => {
       p.default = param.originalValue;
     });
+    return;
   }
-};
+
+  // 有效则更新所有相关节点
+  param.params.forEach((p) => {
+    p.default = newValue;
+  });
+  param.originalValue = newValue;
+}
 </script>
 
 <style scoped>
@@ -262,12 +253,12 @@ const handleParamChange = (param, newValue) => {
   max-width: 250px;
   width: 100%;
   height: 100%;
-  background-color: #F6F9FE;
+  background-color: #f6f9fe;
   padding: 16px;
   box-sizing: border-box;
 }
 
-/* 面板标题样式 */
+/* 面板头部样式 */
 .panel-header {
   margin-bottom: 20px;
   font-size: 24px;
@@ -278,39 +269,43 @@ const handleParamChange = (param, newValue) => {
   display: flex;
   flex-direction: column;
   height: calc(100% - 60px);
-  /* 减去标题高度 */
-  font-size: 24px;
-  font-weight: bold;
-  color: #4C4C4C;
   overflow: hidden;
 }
 
-/* 参数容器样式 */
-.param-container {
-  height: 100%;
-  overflow-y: auto;
-  width: 100%;
-  padding: 4px;
-}
-
-/* 无节点选中提示样式 */
-.no-node-selected {
+/* 空状态提示样式 */
+.empty-state {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100%;
   width: 100%;
   color: #888;
+  font-size: 24px;
+  font-weight: bold;
 }
 
-/* 参数项样式 */
+/* 参数编辑器样式 */
+.param-editor {
+  height: 100%;
+  overflow-y: auto;
+  width: 100%;
+  padding: 4px;
+}
+
+/* 多选提示信息样式 */
+.selection-info {
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+  margin-bottom: 15px;
+  padding: 5px 0;
+  border-bottom: 1px solid #eaeffc;
+}
+
+/* 单个参数项样式 */
 .param-item {
   display: flex;
   align-items: center;
-  font-size: 14px;
-  font-weight: 600;
-  color: #333;
-  white-space: nowrap;
   margin-bottom: 10px;
   width: 100%;
   flex-direction: row;
@@ -318,56 +313,25 @@ const handleParamChange = (param, newValue) => {
   justify-content: space-between;
 }
 
-/* 节点名称样式 */
-.node-name {
-  font-size: 18px;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 10px;
-  padding-bottom: 5px;
-  border-bottom: 2px solid #EAEFFC;
-  width: 100%;
-  text-align: left;
-}
-
-/* 选中节点数量提示样式 */
-.selected-count {
+/* 参数标签样式 */
+.param-label {
   font-size: 14px;
   font-weight: 600;
-  color: #666;
-  margin-bottom: 15px;
-  padding: 5px 0;
-  border-bottom: 1px solid #EAEFFC;
+  color: #333;
+  white-space: nowrap;
 }
 
-
-
+/* 参数输入框样式 */
+.param-input {
+  width: auto;
+  min-width: 50px;
+  max-width: 100px;
+  background-color: #eaeffc;
+  font-weight: 600;
+}
 
 /* 多值状态样式 */
 .multi-value {
   opacity: 0.5;
-}
-
-/* 确保标签和输入组件正确对齐 */
-.input-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.ant-input,
-.ant-input-number,
-.ant-input-number-input,
-.ant-input-number-input-wrap {
-  width: auto;
-  field-sizing: content;
-  min-width: 50px;
-  max-width: 100px;
-  background-color: #EAEFFC;
-  font-weight: 600;
-}
-
-.ant-input-number .ant-input-number-input {
-  width: 20px;
 }
 </style>
