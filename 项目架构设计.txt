@@ -1,0 +1,547 @@
+前端
+        技术栈
+                Vue3（组合式API + script setup）
+                vueflow（蓝图库，用于显示和操作蓝图）
+                Varlet（UI库，按钮、输入框、开关、弹窗等组件）
+                elkjs（自动排列节点布局算法库，用于蓝图自动整理）
+                WebSocket（与后端通信）
+                pnpm（包管理器）
+        编辑器布局（App.vue）
+                顶部栏（TopBar.vue）
+                        左侧区域
+                                文字LOGO（text-logo.svg）
+                                功能组
+                                        设置图标（setting.svg）
+                                                下拉列表
+                                                        导入（蓝图JSON文件导入）
+                                                        导出（蓝图JSON文件导出）
+                                        插件图标（plugin.svg）
+                        中部区域
+                                蓝图命名输入框
+                                        默认内容：我的架构
+                        右侧区域
+                                按钮组
+                                        运行（WebSocket发送蓝图数据到后端）
+                                        跑分（WebSocket发送蓝图数据到后端）
+                工作区（WorkSpace.vue）
+                        分类栏（CategoryBar.vue）
+                                节点分类项列表
+                                        根据store里的category显示
+                                        每项显示分类图标
+                                        点击切换选中分类（激活态显示分类颜色背景，图标变白）
+                        节点列表（NodeList.vue）
+                                显示当前选中分类的节点
+                                节点可拖拽到蓝图中创建（拖拽时记录opcode）
+                        蓝图区域（Blueprint.vue）
+                                节点（Node.vue）
+                                        输入端口组
+                                                端口（Port.vue）
+                                        节点名称
+                                        输出端口组
+                                                端口（Port.vue）
+                                        警告图标（相对定位在正上方，默认隐藏）
+                                        张量可视化图tensorImage（利用tooltip的形式触发显示在节点的正右方）
+                                连接线
+                                工具栏（ToolBar.vue）
+                                        撤销（Ctrl+Z）
+                                        反撤销（Ctrl+Shift+Z / Ctrl+Y）
+                                        缩小
+                                        缩放数值显示
+                                                点击重置缩放
+                                        放大
+                                        排列节点（elkjs自动布局）
+                                节点菜单（NodeMenu.vue）
+                                        复制并粘贴
+                                        重命名
+                                        删除节点
+                                节点面板（NodePanel.vue）
+                                        标题：节点的参数
+                                        根据选中节点列出所有参数
+                                                整数输入
+                                                浮点数输入
+                                                字符串输入
+                                                布尔开关
+                                                列表输入
+                                                枚举选择
+                                        若节点无参数，不显示
+        对象操作逻辑
+                蓝图（Blueprint.vue）
+                        当空白位置被鼠标单击
+                                如果没有按下Ctrl键
+                                        清空节点选择
+                                隐藏节点菜单和节点面板
+                        当接收拖入时
+                                获取节点opcode
+                                创建节点
+                节点（Node.vue）
+                        当被鼠标单击
+                                如果按下Ctrl
+                                        切换选择当前节点
+                                否则
+                                        清空节点选择
+                                        选中当前节点
+                                如果当前节点不是菜单和面板绑定的节点
+                                        隐藏节点菜单和节点面板
+                        当被鼠标右键点击
+                                阻止浏览器默认右键菜单（preventDefault）
+                                选择当前节点
+                                设置 nodeMenu.nodeId = 当前节点id
+                                设置 nodePanel.nodeId = 当前节点id
+                                设置 nodeMenu.visible = true
+                                设置 nodePanel.visible = true
+                        双击节点
+                                选中当前节点
+                                设置 store.renaming.nodeId = 当前节点id
+                                设置 store.renaming.original = 当前节点的 data.label
+                                Node.vue 中检测到 store.renaming.nodeId === 自身id 时
+                                        将节点名称文字替换为输入框
+                                        输入框自动获取焦点（nextTick后调用focus）
+                                        输入框内容为当前 data.label
+                                确认重命名（以下任一情况触发）
+                                        输入框失去焦点
+                                        按下 Enter 键
+                                确认时
+                                        如果输入框为空，那就恢复为原始值store.renaming.original
+                                        调用 Node.rename(nodeId, 输入框的值)
+                                        设置 store.renaming.nodeId = null
+                                取消重命名
+                                        按下 Esc 键
+                                取消时
+                                        调用 Node.rename(nodeId, store.renaming.original)（恢复原名称）
+                                        设置 store.renaming.nodeId = null
+                        当按下Ctrl键并且鼠标悬停在上方
+                                如果节点有tensorImage数据
+                                        利用tooltip在节点的正右方显示tensorImage用于可视化展示节点运行结果
+                        如果自己的节点信息里有error字段
+                                在节点的正上方显示一个警告图标（warning.svg）
+                                当警告图标被hover时
+                                        使用tooltip显示error字段内容
+                端口（Port.vue）
+                        当被鼠标按下
+                                如果端口是输入口
+                                        如果端口已经被连接
+                                                获取该连接线的输出端口
+                                                断开与该输出端口的连接
+                                                重新建立与输出端口连接到鼠标
+                分类栏（CategoryBar.vue）
+                        分类项
+                                当被鼠标点击
+                                        切换显示该类别的所有节点
+                工具栏（ToolBar.vue）
+                        撤销
+                        反撤销
+                        放大
+                        缩放数值显示与重置
+                        缩小
+                        整理节点
+                节点面板（NodePanel.vue）
+                        遍历选中节点的 data.params
+                        根据每个参数的 type 字段，动态渲染对应的 element 组件
+                                使用 Vue3 的 <component :is="elementMap[param.type]" /> 动态组件
+                                elementMap 映射关系
+                                        'int' → IntInput
+                                        'float' → FloatInput
+                                        'bool' → BoolSwitch
+                                        'str' → StrInput
+                                        'list' → ListInput
+                                        'enum' → EnumSelect
+                        每个 element 组件接收 props
+                                paramKey（参数标识）
+                                param（参数完整对象，包含label、type、value、range、options等）
+                                nodeId（所属节点ID，用于调用 Node.updateParam）
+                        每个 element 组件在值变化时
+                                调用 Node.updateParam(nodeId, paramKey, newValue)
+        文件结构与说明（src）
+                main.js（应用入口，创建Vue实例并挂载，自动从后端获取节点注册表）
+                        main.js 初始化流程
+                                创建Vue应用实例
+                                调用ws.connect()连接后端
+                                写入store.registry
+                                设置store.selected.category为第一个分类的标识
+                                挂载Vue应用到DOM
+                                调用AutoRecord.init()初始化自动历史记录
+                                调用Shortcut.init()初始化快捷键监听
+                                调用History.record()记录初始空白状态
+                App.vue（根组件，顶部栏+工作区，初始化快捷键和自动历史记录）
+                style.css（全局样式，每个组件的样式写在组件的 <style scoped> 里）
+                watchers.js（数据维护，由watch自动监控和更新的东西放这里）
+                        watch store.blueprint.nodes 的长度变化
+                                当节点被删除时，检查 nodeMenu.nodeId 和 nodePanel.nodeId 对应的节点是否还存在
+                                如果不存在，隐藏对应的菜单和面板
+                        watch store.blueprint.nodes 里对应节点面板和节点菜单的节点的变化，用于更新store.nodeMenu和store.nodePanel的位置（需要节点面板和节点菜单为显示状态才触发）
+                ws.js（websocket通信）
+                        连接管理
+                                连接地址（默认ws://localhost:8765）
+                                connect()
+                                        连接到后端WebSocket服务
+                                        连接成功后自动请求节点注册表并存入store.registry
+                                        连不上就弹个弹窗说连不上
+                                disconnect()
+                                        断开WebSocket连接
+                        消息收发（发送消息时若发现未连接就尝试一次重连）
+                                请求节点注册表
+                                        发送：{ type: "getRegistry" }
+                                        接收：{ type: "registry", data: 注册表JSON数据 }
+                                        收到后写入store.registry
+                                        若连接失败或超时，从本地registry.json加载
+                                发送蓝图运行
+                                        发送：{ type: "run", data: { blueprint: store.blueprint } }
+                                        接收：{ type: "run", data: 运行结果 }
+                                        data里解析出{ nodeId: 节点ID, tensor: base64图片数据, error: 节点运行报错 } 
+                                        如果有tensor就存入对应节点的tensorImage更新并把节点里的error字段改为null
+                                        如果没有tensor就是节点运行错误，获取error，存入节点里的error更新并修改tensorImage为null
+                                        收到消息输出到浏览器控制台（console.log）
+                                发送蓝图跑分
+                                        发送：{ type: "score", data: { blueprint: store.blueprint } }
+                                        接收：{ type: "score", data: 运行结果 }
+                                        收到消息输出到浏览器控制台（console.log）
+                        初始化时机
+                                在main.js中调用connect()
+                                注册表获取完成后再挂载Vue应用（确保组件渲染时数据已就绪）
+                                如果发送消息时发现没有连接就去连接
+                store.js（存储全局数据，所有自定义命令均调节该数据实现自动更新，采用reactive()）
+                        蓝图基础数据（blueprint）
+                                name（字符串，蓝图名称，默认"我的架构"）
+                                nodes（数组，每项结构如下）
+                                        id（字符串，随机生成的唯一ID）
+                                        type（节点类型，对应Node.vue里的自定义节点baseNode）
+                                        position（节点位置，都是对象）
+                                                x
+                                                y
+                                        data（节点信息，格式完全对应注册表里节点格式，可被修改）
+                                        measured（节点尺寸，都是对象）
+                                                width
+                                                height
+                                        selected（当被选中时为true）
+                                        tensorImage（用于存储节点运行后得到的可视化Tensor图，base64格式，默认null）
+                                        error（用于存储这个节点的运行错误内容，默认null）
+                                edges（数组，每项结构如下）
+                                        id（字符串，随机生成的唯一ID）
+                                        source（字符串，输出端口所在节点的ID）
+                                        sourceHandle（字符串，输出端口的标识）
+                                        target（字符串，输入端口所在节点的ID）
+                                        targetHandle（字符串，输入端口的标识）
+                        选择状态（selected）
+                                category（字符串，当前选中的分类标识，默认为第一个分类）
+                        内联编辑状态（renaming）
+                                nodeId（字符串或null，当前正在重命名的节点ID，null表示没有在重命名）
+                                original（字符串，重命名前的原始名称，用于ESC取消时恢复）
+                        视口状态（viewport）
+                                x: 0
+                                y: 0
+                                zoom: 1
+                        悬浮组件状态（这两个都需要动态计算位置，实现分别显示在目标节点的正上方和正下方的效果）
+                                nodeMenu
+                                        visible（布尔值，是否显示）
+                                        nodeId（字符串或null，绑定的节点ID）
+                                        x（数字，菜单在屏幕上的X坐标）
+                                        y（数字，菜单在屏幕上的Y坐标）
+                                nodePanel
+                                        visible（布尔值，是否显示）
+                                        nodeId（字符串或null，绑定的节点ID）
+                                        x（数字，菜单在屏幕上的X坐标）
+                                        y（数字，菜单在屏幕上的Y坐标）
+                        历史记录（history）
+                                snapshots（数组，每项是nodes和edges的深拷贝快照）
+                                currentIndex（数字，当前快照索引，默认0）
+                                maxCount（数字，最大快照数量，默认50）
+                                paused（布尔，用于撤销和重做时不会重复记录）
+                        剪贴板（clipboard）
+                                nodes（数组，复制的节点数据）
+                                edges（数组，复制的连接线数据）
+                        节点注册表（registry）
+                                与registry.json格式一致
+                                        categories（分类表）
+                                        nodes（节点表）
+                        跑分状态数据（scoring）
+                                （占位，内容格式未定，根据后端设定）
+                components/
+                        TopBar.vue
+                        WorkSpace.vue
+                        CategoryBar.vue
+                        NodeList.vue
+                        Blueprint.vue
+                        ToolBar.vue
+                        Node.vue
+                        Port.vue
+                        NodePanel.vue
+                        NodeMenu.vue
+                elements/
+                        IntInput.vue（整数输入，包含输入框，若有range则显示滑块）
+                        FloatInput.vue（浮点数输入，包含输入框，若有range则显示滑块）
+                        BoolSwitch.vue（布尔开关，使用VARLET的Switch组件）
+                        StrInput.vue（字符串输入，使用VARLET的Input组件）
+                        ListInput.vue（列表输入，输入格式如"1,2,3"，自动转为数组）
+                        EnumSelect.vue（枚举选择，使用VARLET的Select组件，选项来自options）
+                utils/
+                        arrange.js(整理计算)
+                        position.js(画布坐标与屏幕坐标互转)
+                        generateId.js(随机id生成)
+                        更新节点菜单和节点面板的位置
+                                获取当前节点的 position 和 measured 尺寸
+                                调用 position.js 将节点顶部中心点转换为屏幕坐标
+                                store.nodeMenu.x = 屏幕坐标X（节点中心）
+                                store.nodePanel.x = 屏幕坐标X（节点中心）
+                                store.nodeMenu.y = 屏幕坐标Y（节点顶部）- 间距 - 节点高度的一半
+                                store.nodePanel.y = 屏幕坐标Y（节点底部）+ 间距 + 节点高度的一半
+                commands/
+                        Blueprint.js
+                                关于蓝图自身可调节命令
+                                        整理
+                                                arrange()
+                                                        调用elkjs计算所有节点的新坐标（注意一定要考虑节点里端口的上下顺序！不然会出现连接线交叉的情况！）
+                                                        更新store.blueprint.nodes中每个节点的x和y
+                                                        调用vueflow的fitView()来让所有节点都在可视范围内显示
+                                        放大
+                                                zoomIn(step?)
+                                                        step默认0.1
+                                                        store.viewport.zoom增加step
+                                                        上限2（200%）
+                                        缩小
+                                                zoomOut(step?)
+                                                        step默认0.1
+                                                        store.viewport.zoom减少step
+                                                        下限0.5（50%）
+                                        重置缩放
+                                                resetZoom()
+                                                        store.viewport.zoom设为1
+                                        设置视口
+                                                setViewport(x, y, zoom)
+                                                        直接设置视口三个值
+                                        导入
+                                                importBlueprint(jsonData)
+                                                        参数可以是JSON字符串或对象
+                                                        解析后写入store.blueprint
+                                                        清空历史记录
+                                        导出
+                                                exportBlueprint()
+                                                        将store.blueprint打包为JSON
+                                                        触发浏览器文件下载
+                                        设置蓝图名称
+                                                setName(name)
+                                                        store.blueprint.name = name
+                        Node.js
+                                节点相关命令
+                                        选中
+                                                select(nodeId)
+                                                        将store.blueprint.nodes里为nodeId的节点selected字段设为true
+                                                select([nodeId1, nodeId2])
+                                                        支持传入数组，批量选中
+                                        选中全部
+                                                selectAll()
+                                                        选中全部的节点
+                                        切换选中
+                                                toggleSelect(nodeId)
+                                                        如果已选中则取消，如果未选中则加入
+                                        清空选中
+                                                clearSelect()
+                                                        清空store.blueprint.nodes里所有selected字段
+                                        创建
+                                                add(opcode, x?, y?)
+                                                        根据opcode从store.registry.nodes中查找节点定义
+                                                        创建新节点对象（生成ID、复制默认参数值）
+                                                        x和y可选，默认放在画布中心
+                                                        push到store.blueprint.nodes
+                                                        返回新节点的ID
+                                        删除
+                                                remove(nodeId)
+                                                        从store.blueprint.nodes中移除该节点
+                                                        同时删除该节点相关的所有连接线（调用Edge.getByNode然后Edge.remove）
+                                                remove([nodeId1, nodeId2])
+                                                        支持传入数组，批量删除
+                                        删除选中节点
+                                                removeSelected()
+                                                        删除store.blueprint.nodes里有selected字段的所有节点
+                                        重命名
+                                                rename(nodeId, newLabel)
+                                                        找到节点，修改其label，data.label = newLabel
+                                        更新节点参数
+                                                updateParam(nodeId, paramKey, value)
+                                                        找到节点，修改其data.params[paramKey].value = value
+                                        根据ID获取节点
+                                                getById(nodeId)
+                                                        返回store.blueprint.nodes中匹配的节点对象
+                                        获取选中的节点
+                                                getSelected()
+                                                        返回store.blueprint.nodes里有selected字段的node对应的节点对象数组
+                        Edge.js
+                                连接线相关命令
+                                        创建
+                                                add(source, sourcePort, target, targetPort)
+                                                        检查：输入端口是否已有连接线（一个输入端口只能接一条线）
+                                                                调用 getByInputPort(target, targetPort)
+                                                                如果已有连接线，先删除旧连接线
+                                                        创建新连接线对象（生成ID）
+                                                        push到store.blueprint.edges
+                                                        返回新连接线的ID
+                                        删除
+                                                remove(edgeId)
+                                                        从store.blueprint.edges中移除
+                                                remove([edgeId1, edgeId2])
+                                                        支持传入数组，批量删除
+                                        获取节点相关连接线
+                                                getByNode(nodeId)
+                                                        返回与该节点相关的所有连接线（source或target为该节点）
+                                        获取端口连接线
+                                                getByPort(nodeId, portKey)
+                                                        返回该端口的所有连接线
+                                        获取输入端口连接线
+                                                getByInputPort(nodeId, portKey)
+                                                        返回连接到该输入端口的连接线（最多一条，输入端口只能有一条连接线）
+                        History.js
+                                历史记录命令
+                                        记录
+                                                record()
+                                                        将当前 store.blueprint 的 nodes 和 edges 做深拷贝，生成快照对象
+                                                        如果 currentIndex 不在 snapshots 末尾（说明之前执行过撤销）
+                                                                丢弃 currentIndex 之后的所有快照（截断未来分支）
+                                                        将新快照 push 到 snapshots
+                                                        currentIndex 指向最新快照（snapshots.length - 1）
+                                                        如果 snapshots.length 超过 maxCount
+                                                                移除最早的快照（shift）
+                                                                currentIndex 减 1（因为数组整体前移了一位）
+                                        撤销
+                                                undo()
+                                                        设置 store.history.paused = true（暂停自动记录，防止恢复快照时触发AutoRecord再次记录）
+                                                        currentIndex减1
+                                                        用 snapshots[currentIndex] 深拷贝恢复 store.blueprint
+                                                        nextTick后设置 store.history.paused = false（恢复自动记录）
+                                        重做
+                                                redo()
+                                                        设置 store.history.paused = true
+                                                        currentIndex加1
+                                                        用 snapshots[currentIndex] 深拷贝恢复 store.blueprint
+                                                        nextTick后设置 store.history.paused = false
+                                        检查是否可撤销
+                                                canUndo()
+                                                        返回currentIndex > 0
+                                        检查是否可重做
+                                                canRedo()
+                                                        返回currentIndex < snapshots.length - 1
+                                        清空历史记录
+                                                clear()
+                                                        清空snapshots，currentIndex设为0
+                                                        记录当前状态作为初始快照
+                                        获取历史记录信息
+                                                getInfo()
+                                                        返回{ total: 快照总数, current: 当前索引, canUndo, canRedo }
+                        Clipboard.js
+                                节点复制粘贴相关命令
+                                        复制
+                                                copy(nodeIds?)
+                                                        nodeIds可选，默认使用store.blueprint.nodes里有selected字段的node
+                                                        深拷贝选中节点到store.clipboard.nodes
+                                                        深拷贝选中节点之间的连接线到store.clipboard.edges
+                                        粘贴
+                                                paste(offsetX?, offsetY?)
+                                                        offset默认20
+                                                        将copiedNodes生成新ID后添加到store.blueprint.nodes
+                                                        将copiedEdges映射新ID后添加到store.blueprint.edges
+                                                        选中新粘贴的节点
+                                        复制并粘贴
+                                                copyAndPaste()
+                                                        调用copy()然后调用paste()
+                                        检查剪贴板内容
+                                                hasContent()
+                                                        返回store.clipboard.nodes.length > 0
+                                        清空剪贴板
+                                                clear()
+                                                        清空store.clipboard.nodes和store.clipboard.edges
+                        Shortcut.js
+                                注册全局键盘快捷键
+                                        init()
+                                                在document上注册keydown事件监听
+                                                当焦点在输入框（input、textarea）内时，不响应自定义快捷键
+                                                快捷键映射
+                                                        Ctrl+Z → History.undo()
+                                                        Ctrl+Shift+Z → History.redo()
+                                                        Ctrl+Y → History.redo()
+                                                        Delete → Node.removeSelected()
+                                                        Ctrl+C → Clipboard.copy()
+                                                        Ctrl+V → Clipboard.paste()
+                                                        Ctrl+D → Clipboard.copyAndPaste()
+                                                        Ctrl+A → Node.selectAll()
+                                        destroy()
+                                                移除keydown事件监听
+                        AutoRecord.js
+                                自动历史记录
+                                        watch 监听 store 中的关键数据变化（store.blueprint）
+                                        如果 store.history.paused === true，跳过本次记录
+                                        变化时自动记录快照（排除用户触发的撤销和重做）
+                                        配合 watchDebounce（防抖）避免高频触发
+                        注：每个命令的调用格式示例为Node.add，Edge.remove这种格式，在需要的时候import并调用
+                constants/
+                        registry.json(节点注册表，若无法连接后端时加载这个作为备用)
+                                节点注册表格式
+                                        分类表（categories）
+                                                每个分类
+                                                        分类标识（作为key，如base、math）
+                                                        分类名称（label，如"基础"、"数学"）
+                                                        分类颜色（color，十六进制色值，如"#8B92E5"）
+                                                        分类图标（icon，base64格式的纯色图标，用于分类栏的分类项显示）
+                                                        包含的节点列表（nodes，该分类下所有节点的opcode数组）
+                                        节点表（nodes）
+                                                每个节点
+                                                        节点标识（opcode，全局唯一标识符，如"input"、"linear"）
+                                                        节点名称（label，节点显示名，如"输入"、"全连接层"）
+                                                        端口定义（ports）
+                                                                输入端口组（input）
+                                                                        每个端口
+                                                                                端口标识（作为key，如"x"、"y"）
+                                                                                端口名称（作为value，如"输入1"，空字符串表示不显示名称）
+                                                                输出端口组（output）
+                                                                        每个端口
+                                                                                端口标识（作为key，如"out"、"result"）
+                                                                                端口名称（作为value，如"输出"，空字符串表示不显示名称）
+                                                        参数定义（params）
+                                                                每个参数
+                                                                        参数标识（作为key，如"int_param"、"float_param"）
+                                                                        参数名称（label，显示用的中文名，如"整数参数示例"）
+                                                                        参数类型（type）
+                                                                                int（整数，显示为数字输入框）
+                                                                                float（浮点数，显示为数字输入框）
+                                                                                bool（布尔值，显示为开关）
+                                                                                str（字符串，显示为文本输入框）
+                                                                                list（列表，显示为列表输入）
+                                                                                enum（枚举，配合options使用，显示为下拉选择）
+                                                                        枚举选项（options，仅enum类型使用）
+                                                                                每个选项
+                                                                                        选项标识（作为key，如"option1"）
+                                                                                        选项名称（作为value，如"选项1"）
+                                                                        可能存在range字段，如"range": [0, 1024]，用于限制输入
+                                                                        默认值（value，类型与参数类型对应）
+                assets/
+                        ContextMenu/
+                                copy-paste.svg
+                                delete.svg
+                                rename.svg
+                        ToolBar/
+                                undo.svg
+                                redo.svg
+                                zoom-in.svg
+                                zoom-out.svg
+                                arrange.svg
+                        TopBar/
+                                text-logo.svg
+                                setting.svg
+                                plugin.svg
+                        warning.svg
+                备注说明
+                        utils负责复杂数据计算，被command导入并调用
+                        command负责修改store.js里的全局数据，被components导入调用
+                        components只负责内容布局和绑定store.js里的数据显示以及事件触发
+        编程风格遵循【线性指令响应流】
+                语法表现与注释
+                        极简判定：当条件判断（if/else）后的执行逻辑只有单行时，需要省去大括号｛｝，让逻辑与判断语句保持在同一行。
+                        即时注释：要求在每一行代码的末尾，都尾随一段简单、直白的大白话注释，解释这行代码在业务上的实际作用。
+                函数设计与参数兼容(Postel's    Law)
+                        语义化兼容：希望你设计的函数具备识别多态参数的能力。无论传入的是ID字符串、ID数组还是包含ID的对象，函数内部都尽可能通过逻辑判定进行自动解析，将调用的灵活性留给开发者。
+                        复杂度消化：希望函数内部能自主处理数据格式的差异，对外保持统一的语义化调用接口。
+                架构层次：双层扁平编排
+                        结构定义：代码结构建议严格划分为“主编排层”和“原子算子层"。
+                        层级控制：主逻辑函数尽可能只负责编排业务步骤，具体的实现细节建议下沉到算子函数中。希望逻辑深度保持在两层以内，子逻辑内部尽可能不再嵌套调用其它业务函数。
+                驱动模式与流程控制
+                        卫语句先行：在函数起始部分，希望你通过单行卫语句处理完所有的参数校验和异常拦截，确保主业务逻辑处于无缩进的扁平状态。
+                        混合驱动：核心业务流程建议由事件显式点火触发。对于日志滚动、状态联动等次要的副作用，希望你利用响应式机制（如watch或computed）来处理，从而保持主干流程的线性感。
+                        状态快照：在流程的关键节点，希望你显式地为状态变量赋值，使UI能够作为数据的快照进行被动映射。
+                变量名和函数名等要简洁易于理解，并且符合项目语境，全部使用驼峰命名法
