@@ -2,18 +2,19 @@ import store from '@/store.js'                  // 引入全局状态
 import fallbackRegistry from '@/constants/registry.json' // 引入备用注册表
 
 let socket = null                                       // WebSocket实例
-let connectResolve = null                               // 连接成功的Promise回调
+let connectResolve = null                               // 注册表就绪后的Promise回调
 
 // --- 连接WebSocket ---
 const connect = (address = 'ws://localhost:8765') => {
     return new Promise((resolve, reject) => {
         try {
+            connectResolve = resolve                              // 保存resolve引用，等注册表收到后调用
+
             socket = new WebSocket(address)                   // 创建WebSocket连接
 
             socket.onopen = () => {                           // 连接成功回调
                 console.log('[ws] 已连接到后端')                  // 输出连接成功日志
                 requestRegistry()                               // 连接成功后请求节点注册表
-                resolve(true)                                   // 通知调用方连接成功
             }
 
             socket.onmessage = (event) => {                   // 收到消息回调
@@ -31,13 +32,19 @@ const connect = (address = 'ws://localhost:8765') => {
                 alert('无法连接到后端服务，已加载本地备用注册表')     // 弹窗提示用户连接失败
                 loadFallbackRegistry()                          // 加载本地备用注册表
                 socket = null                                   // 清空实例
-                resolve(false)                                  // 通知调用方连接失败但已用备用数据
+                if (connectResolve) {                           // 如果还没resolve过
+                    connectResolve(false)                         // 通知调用方连接失败但已用备用数据
+                    connectResolve = null                         // 清空引用防止重复调用
+                }
             }
         } catch (error) {
             console.warn('[ws] 连接异常，使用本地注册表')         // 捕获异常
             alert('无法连接到后端服务，已加载本地备用注册表')       // 弹窗提示用户连接异常
             loadFallbackRegistry()                            // 加载本地备用注册表
-            resolve(false)                                    // 通知调用方
+            if (connectResolve) {                             // 如果还没resolve过
+                connectResolve(false)                           // 通知调用方
+                connectResolve = null                           // 清空引用
+            }
         }
     })
 }
@@ -86,6 +93,11 @@ const handleMessage = (message) => {
 const handleRegistry = (data) => {
     store.registry = data                                 // 将注册表数据写入store
     console.log('[ws] 注册表已更新')                        // 输出更新日志
+
+    if (connectResolve) {                                // 如果connect还在等待注册表
+        connectResolve(true)                               // 通知调用方注册表已就绪
+        connectResolve = null                              // 清空引用防止重复调用
+    }
 }
 
 // --- 处理蓝图运行结果 ---
