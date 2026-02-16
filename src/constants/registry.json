@@ -1,0 +1,187 @@
+{
+	"categories": {
+		"base": {
+			"label": "基础",
+			"color": "#8B92E5",
+			"icon": "",
+			"nodes": ["input", "output"]
+		},
+		"layer": {
+			"label": "层",
+			"color": "#E58B8B",
+			"icon": "",
+			"nodes": ["linear", "conv2d"]
+		},
+		"activation": {
+			"label": "激活",
+			"color": "#8BE5A0",
+			"icon": "",
+			"nodes": ["relu", "sigmoid"]
+		},
+		"math": {
+			"label": "数学",
+			"color": "#E5C98B",
+			"icon": "",
+			"nodes": ["add", "multiply"]
+		}
+	},
+	"nodes": {
+		"input": {
+			"opcode": "input",
+			"label": "输入",
+			"ports": {
+				"input": {},
+				"output": {
+					"out": "输出"
+				}
+			},
+			"params": {
+				"shape": {
+					"label": "形状",
+					"type": "list",
+					"value": [1, 3, 224, 224]
+				}
+			}
+		},
+		"output": {
+			"opcode": "output",
+			"label": "输出",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {}
+			},
+			"params": {}
+		},
+		"linear": {
+			"opcode": "linear",
+			"label": "全连接层",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "输出"
+				}
+			},
+			"params": {
+				"inputSize": {
+					"label": "输入大小",
+					"type": "int",
+					"value": 512,
+					"range": [1, 65536]
+				},
+				"outputSize": {
+					"label": "输出大小",
+					"type": "int",
+					"value": 256,
+					"range": [1, 65536]
+				},
+				"hasBias": {
+					"label": "使用偏置",
+					"type": "bool",
+					"value": true
+				}
+			}
+		},
+		"conv2d": {
+			"opcode": "conv2d",
+			"label": "2D卷积",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "输出"
+				}
+			},
+			"params": {
+				"inputChannel": {
+					"label": "输入通道",
+					"type": "int",
+					"value": 3,
+					"range": [1, 2048]
+				},
+				"outputChannel": {
+					"label": "输出通道",
+					"type": "int",
+					"value": 64,
+					"range": [1, 2048]
+				},
+				"kernelSize": {
+					"label": "卷积核大小",
+					"type": "int",
+					"value": 3,
+					"range": [1, 31]
+				},
+				"stride": {
+					"label": "步长",
+					"type": "int",
+					"value": 1,
+					"range": [1, 16]
+				},
+				"padding": {
+					"label": "填充",
+					"type": "int",
+					"value": 1,
+					"range": [0, 16]
+				}
+			}
+		},
+		"relu": {
+			"opcode": "relu",
+			"label": "ReLU",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "输出"
+				}
+			},
+			"params": {}
+		},
+		"sigmoid": {
+			"opcode": "sigmoid",
+			"label": "Sigmoid",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "输出"
+				}
+			},
+			"params": {}
+		},
+		"add": {
+			"opcode": "add",
+			"label": "加法",
+			"ports": {
+				"input": {
+					"x": "输入1",
+					"y": "输入2"
+				},
+				"output": {
+					"out": "输出"
+				}
+			},
+			"params": {}
+		},
+		"multiply": {
+			"opcode": "multiply",
+			"label": "乘法",
+			"ports": {
+				"input": {
+					"x": "输入1",
+					"y": "输入2"
+				},
+				"output": {
+					"out": "输出"
+				}
+			},
+			"params": {}
+		}
+	}
+}

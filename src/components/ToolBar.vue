@@ -1,0 +1,176 @@
+<script setup>
+import store from '@/store.js'                     // 引入全局状态
+import Blueprint from '@/commands/Blueprint.js'     // 引入蓝图命令
+import History from '@/commands/History.js'         // 引入历史记录命令
+
+import undoIcon from '@/assets/ToolBar/undo.svg'    // 撤销图标
+import redoIcon from '@/assets/ToolBar/redo.svg'    // 反撤销图标
+import zoomInIcon from '@/assets/ToolBar/zoom-in.svg'   // 放大图标
+import zoomOutIcon from '@/assets/ToolBar/zoom-out.svg'  // 缩小图标
+import arrangeIcon from '@/assets/ToolBar/arrange.svg'   // 排列图标
+
+// --- 缩放百分比显示 ---
+const zoomPercent = () => Math.round(store.viewport.zoom * 100) + '%' // 计算缩放百分比
+
+// --- 撤销 ---
+const onUndo = () => History.undo()                 // 执行撤销
+
+// --- 反撤销 ---
+const onRedo = () => History.redo()                 // 执行重做
+
+// --- 缩小 ---
+const onZoomOut = () => Blueprint.zoomOut()          // 执行缩小
+
+// --- 放大 ---
+const onZoomIn = () => Blueprint.zoomIn()            // 执行放大
+
+// --- 点击缩放数值重置 ---
+const onResetZoom = () => Blueprint.resetZoom()      // 重置缩放到100%
+
+// --- 排列节点 ---
+const onArrange = () => Blueprint.arrange()          // 执行自动排列
+</script>
+
+<template>
+    <div class="toolbar"> <!-- 工具栏容器 -->
+        <button class="tool-button" @click="onUndo" title="撤销 (Ctrl+Z)">
+            <img :src="undoIcon" alt="undo" class="tool-icon" /> <!-- 撤销按钮 -->
+        </button>
+
+        <button class="tool-button" @click="onRedo" title="反撤销 (Ctrl+Shift+Z)">
+            <img :src="redoIcon" alt="redo" class="tool-icon" /> <!-- 反撤销按钮 -->
+        </button>
+
+        <div class="tool-divider"></div> <!-- 分隔线 -->
+
+        <button class="tool-button" @click="onZoomOut" title="缩小">
+            <img :src="zoomOutIcon" alt="zoom-out" class="tool-icon" /> <!-- 缩小按钮 -->
+        </button>
+
+        <button class="zoom-display" @click="onResetZoom" title="点击重置缩放">
+            {{ zoomPercent() }} <!-- 缩放百分比显示 -->
+        </button>
+
+        <button class="tool-button" @click="onZoomIn" title="放大">
+            <img :src="zoomInIcon" alt="zoom-in" class="tool-icon" /> <!-- 放大按钮 -->
+        </button>
+
+        <div class="tool-divider"></div> <!-- 分隔线 -->
+
+        <button class="tool-button" @click="onArrange" title="排列节点">
+            <img :src="arrangeIcon" alt="arrange" class="tool-icon" /> <!-- 排列按钮 -->
+        </button>
+    </div>
+</template>
+
+<style scoped>
+.toolbar {
+    position: absolute;
+    /* 绝对定位在蓝图区域内 */
+    bottom: 16px;
+    /* 距底部16px */
+    left: 50%;
+    /* 水平居中 */
+    transform: translateX(-50%);
+    /* 精确居中 */
+    display: flex;
+    /* 横向排列 */
+    align-items: center;
+    /* 垂直居中 */
+    gap: 4px;
+    /* 按钮间距 */
+    background: #ffffff;
+    /* 白色背景 */
+    border: 1px solid #e0e0e0;
+    /* 浅色边框 */
+    border-radius: 8px;
+    /* 圆角 */
+    padding: 4px 8px;
+    /* 内边距 */
+    z-index: 10;
+    /* 层级 */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    /* 阴影 */
+}
+
+.tool-button {
+    display: flex;
+    /* 居中对齐 */
+    align-items: center;
+    /* 垂直居中 */
+    justify-content: center;
+    /* 水平居中 */
+    width: 32px;
+    /* 按钮宽度 */
+    height: 32px;
+    /* 按钮高度 */
+    background: transparent;
+    /* 透明背景 */
+    border: none;
+    /* 无边框 */
+    border-radius: 6px;
+    /* 圆角 */
+    cursor: pointer;
+    /* 鼠标指针 */
+    transition: background 0.15s;
+    /* 过渡动画 */
+}
+
+.tool-button:hover {
+    background: #f0f0f0;
+    /* 悬停浅灰背景 */
+}
+
+.tool-icon {
+    width: 18px;
+    /* 图标宽度 */
+    height: 18px;
+    /* 图标高度 */
+    opacity: 0.6;
+    /* 默认透明度 */
+}
+
+.tool-button:hover .tool-icon {
+    opacity: 0.9;
+    /* 悬停时透明度提高 */
+}
+
+.tool-divider {
+    width: 1px;
+    /* 分隔线宽度 */
+    height: 20px;
+    /* 分隔线高度 */
+    background: #e0e0e0;
+    /* 浅色分隔线 */
+    margin: 0 4px;
+    /* 左右间距 */
+}
+
+.zoom-display {
+    padding: 4px 8px;
+    /* 内边距 */
+    background: transparent;
+    /* 透明背景 */
+    border: none;
+    /* 无边框 */
+    border-radius: 4px;
+    /* 圆角 */
+    color: #666666;
+    /* 灰色文字 */
+    font-size: 12px;
+    /* 字号 */
+    cursor: pointer;
+    /* 鼠标指针 */
+    min-width: 45px;
+    /* 最小宽度 */
+    text-align: center;
+    /* 文字居中 */
+}
+
+.zoom-display:hover {
+    background: #f0f0f0;
+    /* 悬停浅灰背景 */
+    color: #333333;
+    /* 悬停深色文字 */
+}
+</style>
