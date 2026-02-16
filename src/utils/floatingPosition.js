@@ -14,15 +14,16 @@ const updateFloatingPosition = (nodeId) => {
     const topY = node.position.y                                 // 节点顶部Y
     const bottomY = node.position.y + height                     // 节点底部Y
     const gap = 10                                                // 菜单/面板与节点的间距
+    const halfScreenHeight = (height * store.viewport.zoom) / 2  // 节点高度的一半（屏幕尺度）
 
-    const screenCenter = toScreen(centerX, topY)                 // 节点顶部中心转屏幕坐标
+    const screenTop = toScreen(centerX, topY)                    // 节点顶部中心转屏幕坐标
     const screenBottom = toScreen(centerX, bottomY)              // 节点底部中心转屏幕坐标
 
-    store.nodeMenu.x = screenCenter.x                            // 菜单X设为节点中心
-    store.nodeMenu.y = screenCenter.y - gap                      // 菜单Y设在节点正上方
+    store.nodeMenu.x = screenTop.x                               // 菜单X设为节点中心
+    store.nodeMenu.y = screenTop.y - gap                         // 菜单Y设在节点顶部上方
 
     store.nodePanel.x = screenBottom.x                           // 面板X设为节点中心
-    store.nodePanel.y = screenBottom.y + gap                     // 面板Y设在节点正下方
+    store.nodePanel.y = screenBottom.y + gap                     // 面板Y设在节点底部下方
 }
 
 export { updateFloatingPosition }                               // 导出位置更新函数

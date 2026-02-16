@@ -28,12 +28,14 @@ const connect = (address = 'ws://localhost:8765') => {
 
             socket.onerror = () => {                          // 连接错误回调
                 console.warn('[ws] 连接失败，使用本地注册表')       // 输出错误日志
+                alert('无法连接到后端服务，已加载本地备用注册表')     // 弹窗提示用户连接失败
                 loadFallbackRegistry()                          // 加载本地备用注册表
                 socket = null                                   // 清空实例
                 resolve(false)                                  // 通知调用方连接失败但已用备用数据
             }
         } catch (error) {
             console.warn('[ws] 连接异常，使用本地注册表')         // 捕获异常
+            alert('无法连接到后端服务，已加载本地备用注册表')       // 弹窗提示用户连接异常
             loadFallbackRegistry()                            // 加载本地备用注册表
             resolve(false)                                    // 通知调用方
         }

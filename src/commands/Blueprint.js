@@ -1,6 +1,7 @@
 import store from '@/store.js'                     // 引入全局状态
 import { calculateLayout } from '@/utils/arrange.js' // 引入布局计算
 import { toCanvas } from '@/utils/position.js'     // 引入坐标转换
+import History from '@/commands/History.js'         // 引入历史记录命令
 
 let vueFlowInstance = null                                      // 存储vueflow实例引用
 
@@ -71,6 +72,8 @@ const importBlueprint = (jsonData) => {
         if (!('tensorImage' in node)) node.tensorImage = null       // 补全tensorImage字段
         if (!('error' in node)) node.error = null                   // 补全error字段
     })
+
+    History.clear()                                                 // 清空历史记录并记录当前状态
 }
 
 // --- 导出蓝图 ---

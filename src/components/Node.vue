@@ -78,7 +78,6 @@ const onContextMenu = (event) => {
 
 // --- 节点被双击 ---
 const onDoubleClick = () => {
-    NodeCmd.clearSelect()                             // 清空选中
     NodeCmd.select(props.id)                          // 选中当前节点
     store.renaming.nodeId = props.id                  // 设置重命名目标
     store.renaming.original = props.data.label        // 记录原始名称
