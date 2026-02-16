@@ -55,11 +55,9 @@ const onClick = (event) => {
         NodeCmd.select(props.id)                        // 选中当前节点
     }
 
-    // --- 如果点击的不是菜单和面板绑定的节点，就隐藏它们 ---
-    if (store.nodeMenu.nodeId !== props.id) {
+    // --- 如果当前节点不是菜单和面板绑定的节点，就隐藏它们 ---
+    if (store.nodeMenu.nodeId !== props.id || store.nodePanel.nodeId !== props.id) {
         store.nodeMenu.visible = false                  // 隐藏菜单
-    }
-    if (store.nodePanel.nodeId !== props.id) {
         store.nodePanel.visible = false                 // 隐藏面板
     }
 }
@@ -146,7 +144,7 @@ watch(isRenaming, (newVal) => {
 
         <!-- 输入端口组 -->
         <div class="ports input-ports"> <!-- 左侧输入端口区域 -->
-            <Port v-for="[key, label] in inputPorts" :key="key" :portKey="key" :portLabel="label" type="target" position="left" /> <!-- 渲染每个输入端口 -->
+            <Port v-for="[key, label] in inputPorts" :key="key" :portKey="key" :portLabel="label" type="target" position="left" :nodeId="id" /> <!-- 渲染每个输入端口 -->
         </div>
 
         <!-- 节点名称 -->
@@ -157,7 +155,7 @@ watch(isRenaming, (newVal) => {
 
         <!-- 输出端口组 -->
         <div class="ports output-ports"> <!-- 右侧输出端口区域 -->
-            <Port v-for="[key, label] in outputPorts" :key="key" :portKey="key" :portLabel="label" type="source" position="right" /> <!-- 渲染每个输出端口 -->
+            <Port v-for="[key, label] in outputPorts" :key="key" :portKey="key" :portLabel="label" type="source" position="right" :nodeId="id" /> <!-- 渲染每个输出端口 -->
         </div>
 
         <!-- 张量可视化图（Ctrl+悬停时显示在节点正右方）-->

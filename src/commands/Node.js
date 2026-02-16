@@ -1,5 +1,6 @@
 import store from '@/store.js'                     // 引入全局状态
 import generateId from '@/utils/generateId.js'     // 引入ID生成器
+import Edge from '@/commands/Edge.js'              // 引入连接线命令
 
 // --- 选中节点（支持单个ID、数组、对象）---
 const select = (nodeId) => {
@@ -67,13 +68,11 @@ const add = (opcode, x, y) => {
 const remove = (nodeId) => {
     const ids = normalizeIds(nodeId)                              // 统一转为ID数组
     ids.forEach(id => {
-        const relatedEdges = getEdgesByNode(id)                     // 获取关联的连接线
-        relatedEdges.forEach(edge => {
-            const index = store.blueprint.edges.findIndex(e => e.id === edge.id) // 找到连接线索引
-            if (index !== -1) store.blueprint.edges.splice(index, 1)             // 删除连接线
-        })
-        const nodeIndex = store.blueprint.nodes.findIndex(n => n.id === id)    // 找到节点索引
-        if (nodeIndex !== -1) store.blueprint.nodes.splice(nodeIndex, 1)       // 删除节点
+        const relatedEdges = Edge.getByNode(id)                     // 获取关联的连接线
+        const edgeIds = relatedEdges.map(e => e.id)                 // 提取连接线ID
+        Edge.remove(edgeIds)                                        // 批量删除关联连接线
+        const nodeIndex = store.blueprint.nodes.findIndex(n => n.id === id) // 找到节点索引
+        if (nodeIndex !== -1) store.blueprint.nodes.splice(nodeIndex, 1)    // 删除节点
     })
 }
 
@@ -108,11 +107,6 @@ const getById = (nodeId) => {
 // --- 获取所有选中节点 ---
 const getSelected = () => {
     return store.blueprint.nodes.filter(n => n.selected)          // 返回所有选中节点数组
-}
-
-// --- 辅助：获取节点相关的连接线 ---
-const getEdgesByNode = (nodeId) => {
-    return store.blueprint.edges.filter(e => e.source === nodeId || e.target === nodeId) // 过滤关联线
 }
 
 // --- 辅助：将各种格式的ID统一转为数组 ---
