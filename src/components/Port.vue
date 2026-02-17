@@ -38,15 +38,33 @@ const onMouseDown = (event) => {
 <style scoped>
 .port {
     display: flex;
-    /* 横向排列 */
-    align-items: center;
-    /* 垂直居中 */
-    position: relative;
-    /* 相对定位 */
-    padding: 3px 0;
-    /* 上下内边距 */
-    min-height: 20px;
-    /* 最小高度 */
+    /* 布局容器 */
+    width: 8px;
+    /* 端口宽度 */
+    height: 8px;
+    /* 端口高度 */
+    background-color: #ffffff;
+    /* 白色圆点 */
+    border-radius: 50%;
+    /* 圆形 */
+    cursor: pointer;
+    /* 鼠标指针 */
+    transition: 0.1s ease-in-out;
+    /* 过渡动画 */
+}
+
+.port:hover {
+    transform: scale(1.2);
+    /* 悬停放大 */
+    background-color: #8cff00;
+    /* 悬停变绿 */
+}
+
+.port.snap {
+    background-color: #FFD700;
+    /* 吸附状态金色 */
+    transform: scale(1.4);
+    /* 吸附状态放大 */
 }
 
 .port-left {
@@ -62,8 +80,8 @@ const onMouseDown = (event) => {
 .port-label {
     font-size: 11px;
     /* 标签字号 */
-    color: #666666;
-    /* 标签灰色文字 */
+    color: rgba(255, 255, 255, 0.7);
+    /* 标签半透明白色文字 */
     padding: 0 8px;
     /* 左右内边距 */
     white-space: nowrap;
@@ -73,20 +91,24 @@ const onMouseDown = (event) => {
 }
 
 .port-handle {
-    width: 10px !important;
+    width: 8px !important;
     /* 端口圆点宽度 */
-    height: 10px !important;
+    height: 8px !important;
     /* 端口圆点高度 */
-    background: #999999 !important;
-    /* 端口默认灰色 */
-    border: 2px solid #ffffff !important;
-    /* 端口白色边框 */
+    background: #ffffff !important;
+    /* 白色端口 */
+    border: none !important;
+    /* 无边框 */
     border-radius: 50% !important;
     /* 圆形 */
+    transition: 0.1s ease-in-out;
+    /* 过渡动画 */
 }
 
 .port-handle:hover {
-    background: #4a90d9 !important;
-    /* 悬停时蓝色 */
+    background: #8cff00 !important;
+    /* 悬停变绿 */
+    transform: scale(1.2);
+    /* 悬停放大 */
 }
 </style>

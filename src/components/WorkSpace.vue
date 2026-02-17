@@ -14,11 +14,15 @@ import Blueprint from '@/components/Blueprint.vue'     // 引入蓝图组件
 
 <style scoped>
 .workspace {
+    position: relative;
+    /* 相对定位，作为子组件的定位参考 */
     display: flex;
-    /* 横向排列 */
+    /* 横向排列：分类栏 + 节点列表 + 蓝图 */
     flex: 1;
     /* 占满剩余高度 */
     overflow: hidden;
-    /* 隐藏溢出 */
+    /* 隐藏溢出内容 */
+    background-color: #e2e9fa;
+    /* 工作区背景色 */
 }
 </style>

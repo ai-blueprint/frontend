@@ -38,16 +38,37 @@ const onDragStart = (event, opcode) => {
 
 <style scoped>
 .node-list {
-    width: 160px;
-    /* 节点列表宽度 */
-    background: #ffffff;
-    /* 白色背景 */
-    border-right: 1px solid #e0e0e0;
-    /* 右侧分隔线 */
-    padding: 8px;
-    /* 内边距 */
+    width: 30%;
+    /* 占工作区30%宽度 */
+    min-width: 180px;
+    /* 最小宽度 */
+    max-width: 200px;
+    /* 最大宽度 */
+    background-color: #eaeffc;
+    /* 浅蓝紫背景 */
     overflow-y: auto;
-    /* 超出时滚动 */
+    /* 纵向滚动 */
+    overflow-x: hidden;
+    /* 隐藏横向溢出 */
+    padding: 10px;
+    /* 内边距 */
+    height: 100%;
+    /* 铺满高度 */
+    direction: rtl;
+    /* 滚动条移到左侧 */
+}
+
+.node-group {
+    display: flex;
+    /* 纵向排列节点列表 */
+    flex-direction: column;
+    /* 垂直布局 */
+    margin-bottom: 30px;
+    /* 分组间距 */
+    gap: 18px;
+    /* 节点项间距 */
+    direction: ltr;
+    /* 内容恢复从左到右 */
 }
 
 .node-item {
@@ -70,13 +91,20 @@ const onDragStart = (event, opcode) => {
 }
 
 .node-item:hover {
-    background: #f0f0f0;
-    /* 悬停浅灰背景 */
+    background: rgba(0, 0, 0, 0.05);
+    /* 悬停半透明背景 */
 }
 
 .node-item:active {
     cursor: grabbing;
     /* 拖拽中鼠标指针 */
+}
+
+.group-name {
+    font-size: 16px;
+    /* 分组名称字号 */
+    font-weight: 600;
+    /* 加粗 */
 }
 
 .node-name {
@@ -95,5 +123,28 @@ const onDragStart = (event, opcode) => {
     /* 字号 */
     padding: 20px 0;
     /* 上下内边距 */
+    direction: ltr;
+    /* 提示文字从左到右 */
+}
+
+/* --- 滚动条美化 --- */
+.node-list::-webkit-scrollbar {
+    width: 6px;
+    /* 滚动条宽度 */
+}
+
+.node-list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0);
+    /* 轨道透明 */
+}
+
+.node-list::-webkit-scrollbar-thumb {
+    background: #aaaaaa;
+    /* 滑块默认灰色 */
+}
+
+.node-list::-webkit-scrollbar-thumb:hover {
+    background: #8992eb;
+    /* 滑块悬停紫色 */
 }
 </style>

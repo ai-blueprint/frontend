@@ -46,51 +46,63 @@ body,
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #a0a0a0;
-    /* 悬停时滑块颜色加深 */
+    background: #8992eb;
+    /* 悬停时滑块变紫色 */
 }
 
 /* ========== Vue Flow 样式覆盖 ========== */
 .vue-flow__edge-path {
-    stroke: #999999;
-    /* 连接线颜色 */
-    stroke-width: 2;
+    fill: none;
+    /* 无填充 */
+    stroke: #ffffff;
+    /* 白色连接线 */
+    stroke-width: 4;
     /* 连接线宽度 */
+    stroke-linecap: round;
+    /* 圆头线帽 */
 }
 
 .vue-flow__edge.selected .vue-flow__edge-path {
-    stroke: #4a90d9;
-    /* 选中连接线颜色 */
+    stroke: #ffffff;
+    /* 选中连接线保持白色 */
+    filter: drop-shadow(0 0 4px #ffffff);
+    /* 选中时发光效果 */
 }
 
 .vue-flow__connection-line {
-    stroke: #4a90d9;
-    /* 拖拽连线时的线条颜色 */
-    stroke-width: 2;
+    stroke: #ffffff;
+    /* 白色拖拽连线 */
+    stroke-width: 4;
     /* 拖拽连线宽度 */
+    stroke-linecap: round;
+    /* 圆头线帽 */
 }
 
 .vue-flow__handle {
-    width: 10px;
+    width: 8px;
     /* 端口圆点宽度 */
-    height: 10px;
+    height: 8px;
     /* 端口圆点高度 */
     border-radius: 50%;
     /* 端口为圆形 */
-    background: #999999;
-    /* 端口默认颜色 */
-    border: 2px solid #ffffff;
-    /* 端口边框 */
+    background: #ffffff;
+    /* 白色端口 */
+    border: none;
+    /* 无边框 */
+    transition: 0.1s ease-in-out;
+    /* 过渡动画 */
 }
 
 .vue-flow__handle:hover {
-    background: #4a90d9;
-    /* 端口悬停颜色 */
+    background: #8cff00;
+    /* 端口悬停变绿 */
+    transform: scale(1.2);
+    /* 悬停放大 */
 }
 
 .vue-flow__background {
-    background: #f5f5f5;
-    /* 画布背景色 */
+    background: #e2e9fa;
+    /* 工作区蓝灰背景 */
 }
 
 /* ========== 通用过渡动画 ========== */

@@ -67,30 +67,23 @@ const onArrange = () => Blueprint.arrange()          // 执行自动排列
 .toolbar {
     position: absolute;
     /* 绝对定位在蓝图区域内 */
-    bottom: 16px;
-    /* 距底部16px */
-    left: 50%;
-    /* 水平居中 */
-    transform: translateX(-50%);
-    /* 精确居中 */
+    bottom: 10px;
+    /* 距底部10px */
+    right: 10px;
+    /* 距右侧10px */
+    border-radius: 12px;
+    /* 圆角 */
     display: flex;
     /* 横向排列 */
     align-items: center;
     /* 垂直居中 */
-    gap: 4px;
-    /* 按钮间距 */
-    background: #ffffff;
-    /* 白色背景 */
-    border: 1px solid #e0e0e0;
-    /* 浅色边框 */
-    border-radius: 8px;
-    /* 圆角 */
-    padding: 4px 8px;
-    /* 内边距 */
     z-index: 10;
     /* 层级 */
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    /* 阴影 */
+}
+
+.toolbar-group {
+    display: flex;
+    /* 横向排列按钮组 */
 }
 
 .tool-button {
@@ -98,41 +91,48 @@ const onArrange = () => Blueprint.arrange()          // 执行自动排列
     /* 居中对齐 */
     align-items: center;
     /* 垂直居中 */
-    justify-content: center;
-    /* 水平居中 */
-    width: 32px;
-    /* 按钮宽度 */
-    height: 32px;
-    /* 按钮高度 */
-    background: transparent;
-    /* 透明背景 */
+    padding: 4px 8px;
+    /* 内边距 */
     border: none;
     /* 无边框 */
-    border-radius: 6px;
+    border-radius: 8px;
     /* 圆角 */
     cursor: pointer;
     /* 鼠标指针 */
-    transition: background 0.15s;
+    font-size: 18px;
+    /* 字号 */
+    font-weight: bold;
+    /* 加粗 */
+    transition: all 0.1s;
     /* 过渡动画 */
+    color: #8992eb;
+    /* 紫色文字 */
 }
 
-.tool-button:hover {
-    background: #f0f0f0;
-    /* 悬停浅灰背景 */
+.tool-button:hover:not(:disabled) {
+    scale: 1.1;
+    /* 悬停放大效果 */
+}
+
+.tool-button:active:not(:disabled) {
+    scale: 0.9;
+    /* 点击缩小效果 */
+}
+
+.tool-button:disabled {
+    opacity: 0.7;
+    /* 禁用时半透明 */
+    cursor: not-allowed;
+    /* 禁用时禁止光标 */
 }
 
 .tool-icon {
-    width: 18px;
+    width: 26px;
     /* 图标宽度 */
-    height: 18px;
+    height: 26px;
     /* 图标高度 */
-    opacity: 0.6;
-    /* 默认透明度 */
-}
-
-.tool-button:hover .tool-icon {
-    opacity: 0.9;
-    /* 悬停时透明度提高 */
+    object-fit: contain;
+    /* 图标等比缩放 */
 }
 
 .tool-divider {
@@ -140,10 +140,12 @@ const onArrange = () => Blueprint.arrange()          // 执行自动排列
     /* 分隔线宽度 */
     height: 20px;
     /* 分隔线高度 */
-    background: #e0e0e0;
-    /* 浅色分隔线 */
+    background: #8992eb;
+    /* 紫色分隔线 */
     margin: 0 4px;
     /* 左右间距 */
+    opacity: 0.3;
+    /* 半透明 */
 }
 
 .zoom-display {
@@ -155,10 +157,12 @@ const onArrange = () => Blueprint.arrange()          // 执行自动排列
     /* 无边框 */
     border-radius: 4px;
     /* 圆角 */
-    color: #666666;
-    /* 灰色文字 */
+    color: #8992eb;
+    /* 紫色文字 */
     font-size: 12px;
     /* 字号 */
+    font-weight: bold;
+    /* 加粗 */
     cursor: pointer;
     /* 鼠标指针 */
     min-width: 45px;
@@ -168,9 +172,7 @@ const onArrange = () => Blueprint.arrange()          // 执行自动排列
 }
 
 .zoom-display:hover {
-    background: #f0f0f0;
-    /* 悬停浅灰背景 */
-    color: #333333;
-    /* 悬停深色文字 */
+    scale: 1.1;
+    /* 悬停放大效果 */
 }
 </style>

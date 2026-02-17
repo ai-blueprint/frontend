@@ -62,64 +62,87 @@ const onDelete = () => {
     position: fixed;
     /* 固定定位 */
     transform: translate(-50%, -100%);
-    /* 居中并向上偏移，显示在节点正上方 */
-    background: #ffffff;
-    /* 白色背景 */
-    border: 1px solid #e0e0e0;
-    /* 浅色边框 */
-    border-radius: 8px;
-    /* 圆角 */
-    padding: 4px;
-    /* 内边距 */
+    /* 居中并向上偏移 */
     z-index: 1000;
     /* 高层级 */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-    /* 阴影 */
-    min-width: 140px;
-    /* 最小宽度 */
+    border-radius: 14px;
+    /* 大圆角 */
+    display: flex;
+    /* 横向排列菜单项 */
+    flex-direction: row;
+    /* 水平布局 */
+    padding: 12px;
+    /* 内边距 */
+    gap: 12px;
+    /* 菜单项间距 */
+    background: #F6F9FE;
+    /* 浅蓝灰背景 */
+    box-shadow: 0px 2px 20px rgba(111, 125, 176, 0.1);
+    /* 柔和阴影 */
+    font-size: 12px;
+    /* 文字字号 */
+    font-weight: 600;
+    /* 加粗文字 */
+    letter-spacing: 0.5px;
+    /* 字间距 */
+    white-space: nowrap;
+    /* 不换行 */
+    color: rgb(111, 125, 176);
+    /* 蓝灰色文字 */
 }
 
 .menu-item {
     display: flex;
-    /* 横向排列 */
+    /* 纵向排列图标和文字 */
+    flex-direction: column;
+    /* 垂直布局 */
     align-items: center;
-    /* 垂直居中 */
-    gap: 8px;
-    /* 图标和文字间距 */
-    padding: 6px 10px;
-    /* 内边距 */
-    border-radius: 4px;
-    /* 圆角 */
+    /* 水平居中 */
+    flex-wrap: nowrap;
+    /* 不换行 */
+    gap: 5px;
+    /* 图标与文字间距 */
     cursor: pointer;
     /* 鼠标指针 */
-    transition: background 0.15s;
+}
+
+.icon-container {
+    border-radius: 10px;
+    /* 图标容器圆角 */
+    background: #EAEFFC;
+    /* 图标容器背景 */
+    display: flex;
+    /* 居中图标 */
+    transition: all 0.1s ease-in-out;
     /* 过渡动画 */
 }
 
-.menu-item:hover {
-    background: #f0f0f0;
-    /* 悬停浅灰背景 */
+.icon-container:hover {
+    filter: brightness(1.05);
+    /* 悬停提亮 */
 }
 
-.menu-item.danger:hover {
-    background: rgba(231, 76, 60, 0.08);
-    /* 删除选项悬停背景 */
+.icon-container:active {
+    filter: brightness(0.98);
+    /* 点击变暗 */
 }
 
 .menu-icon {
-    width: 16px;
+    width: 60px;
     /* 图标宽度 */
-    height: 16px;
+    height: 40px;
     /* 图标高度 */
-    opacity: 0.6;
-    /* 默认透明度 */
+    margin: 5px;
+    /* 图标内边距 */
+    scale: 1.4;
+    /* 图标放大 */
 }
 
 .menu-text {
-    font-size: 13px;
+    font-size: 12px;
     /* 文字字号 */
-    color: #333333;
-    /* 深色文字 */
+    color: rgb(111, 125, 176);
+    /* 蓝灰色文字 */
     white-space: nowrap;
     /* 不换行 */
 }

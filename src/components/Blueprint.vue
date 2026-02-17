@@ -94,7 +94,18 @@ const onDrop = (event) => {
     /* 相对定位，用于悬浮元素 */
     overflow: hidden;
     /* 隐藏溢出 */
-    background: #f5f5f5;
-    /* 亮色背景 */
+    cursor: grab;
+    /* 默认抓取光标 */
+    transform-origin: 0 0;
+    /* 变换原点在左上角 */
+    min-width: 100%;
+    /* 确保最小宽度 */
+    min-height: 100%;
+    /* 确保最小高度 */
+}
+
+.blueprint:active {
+    cursor: grabbing;
+    /* 拖动时的光标样式 */
 }
 </style>

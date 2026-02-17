@@ -12,15 +12,15 @@ import WorkSpace from '@/components/WorkSpace.vue' // 引入工作区组件
 
 <style scoped>
 .app {
-    display: flex;
-    /* 纵向排列 */
-    flex-direction: column;
-    /* 垂直布局 */
     width: 100%;
     /* 铺满宽度 */
     height: 100%;
     /* 铺满高度 */
+    display: flex;
+    /* 弹性布局 */
+    flex-direction: column;
+    /* 纵向排列：顶部栏 + 工作区 */
     overflow: hidden;
-    /* 隐藏溢出 */
+    /* 隐藏溢出内容 */
 }
 </style>

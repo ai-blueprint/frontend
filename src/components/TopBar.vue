@@ -109,18 +109,18 @@ const onScore = () => {
 .topbar {
     display: flex;
     /* 横向排列 */
-    align-items: center;
-    /* 垂直居中 */
     justify-content: space-between;
     /* 三区域分布 */
-    height: 48px;
-    /* 顶部栏高度 */
-    background: #ffffff;
-    /* 白色背景 */
-    border-bottom: 1px solid #e0e0e0;
-    /* 底部分隔线 */
-    padding: 0 16px;
-    /* 左右内边距 */
+    align-items: center;
+    /* 垂直居中 */
+    padding: 8px 20px;
+    /* 内边距 */
+    height: fit-content;
+    /* 自适应高度 */
+    background-color: #5f38df;
+    /* 紫色主题背景 */
+    color: #ffffff;
+    /* 白色文字 */
     z-index: 100;
     /* 层级 */
     position: relative;
@@ -132,7 +132,7 @@ const onScore = () => {
     /* 横向排列 */
     align-items: center;
     /* 垂直居中 */
-    gap: 16px;
+    gap: 30px;
     /* 元素间距 */
 }
 
@@ -167,13 +167,18 @@ const onScore = () => {
     /* 圆角 */
     cursor: pointer;
     /* 鼠标指针 */
-    transition: background 0.15s;
+    transition: all 0.1s ease-in-out;
     /* 过渡动画 */
 }
 
 .icon-wrapper:hover {
-    background: #f0f0f0;
-    /* 悬停浅灰背景 */
+    scale: 1.05;
+    /* 悬停放大效果 */
+}
+
+.icon-wrapper:active {
+    scale: 0.95;
+    /* 点击缩小效果 */
 }
 
 .function-icon {
@@ -181,7 +186,7 @@ const onScore = () => {
     /* 图标宽度 */
     height: 18px;
     /* 图标高度 */
-    opacity: 0.6;
+    opacity: 0.8;
     /* 默认透明度 */
 }
 
@@ -229,38 +234,40 @@ const onScore = () => {
 }
 
 .topbar-center {
-    flex: 1;
-    /* 中部占据剩余空间 */
-    display: flex;
-    /* 居中对齐 */
-    justify-content: center;
-    /* 水平居中 */
+    max-width: 170px;
+    /* 限制最大宽度 */
+    margin: 0 10px;
+    /* 左右外边距 */
 }
 
 .name-input {
-    width: 200px;
-    /* 输入框宽度 */
-    padding: 6px 12px;
+    width: 100%;
+    /* 铺满容器 */
+    padding: 8px 16px;
     /* 内边距 */
-    background: #f5f5f5;
-    /* 浅灰背景 */
-    border: 1px solid #d0d0d0;
-    /* 浅色边框 */
-    border-radius: 6px;
-    /* 圆角 */
-    color: #333333;
-    /* 深色文字 */
+    border: 0px;
+    /* 无边框 */
+    border-radius: 999px;
+    /* 药丸形圆角 */
     font-size: 14px;
     /* 字号 */
+    font-weight: 500;
+    /* 中等字重 */
     text-align: center;
     /* 文字居中 */
+    background-color: #7f60e5;
+    /* 紫色输入框背景 */
+    color: #ffffff;
+    /* 白色文字 */
     outline: none;
     /* 去除聚焦边框 */
 }
 
-.name-input:focus {
-    border-color: #4a90d9;
-    /* 聚焦时蓝色边框 */
+.name-input::placeholder {
+    color: #ffffff;
+    /* 占位符白色 */
+    opacity: 0.5;
+    /* 占位符半透明 */
 }
 
 .topbar-right {
@@ -268,7 +275,7 @@ const onScore = () => {
     /* 横向排列 */
     align-items: center;
     /* 垂直居中 */
-    gap: 8px;
+    gap: 20px;
     /* 按钮间距 */
 }
 
@@ -279,38 +286,38 @@ const onScore = () => {
     /* 无边框 */
     border-radius: 6px;
     /* 圆角 */
-    font-size: 13px;
+    font-size: 14px;
     /* 字号 */
     font-weight: 500;
     /* 字重 */
+    color: #ffffff;
+    /* 白色文字 */
     cursor: pointer;
     /* 鼠标指针 */
-    transition: all 0.15s;
+    letter-spacing: -1px;
+    /* 紧凑字距 */
+    transition: all 0.1s ease-in-out;
     /* 过渡动画 */
 }
 
-.run-button {
-    background: #4a90d9;
-    /* 运行按钮蓝色背景 */
-    color: #ffffff;
-    /* 白色文字 */
+.action-button:hover {
+    scale: 1.05;
+    /* 悬停放大效果 */
 }
 
-.run-button:hover {
-    background: #357abd;
-    /* 悬停时颜色加深 */
+.action-button:active {
+    scale: 0.95;
+    /* 点击缩小效果 */
+}
+
+.run-button {
+    background-color: #7DC7F5;
+    /* 运行按钮天蓝色背景 */
 }
 
 .score-button {
-    background: #5cb85c;
-    /* 跑分按钮绿色背景 */
-    color: #ffffff;
-    /* 白色文字 */
-}
-
-.score-button:hover {
-    background: #4cae4c;
-    /* 悬停时颜色加深 */
+    background-color: #E1B86B;
+    /* 跑分按钮金色背景 */
 }
 
 .menu-backdrop {

@@ -33,24 +33,16 @@ const onSelectCategory = (categoryKey) => {
 
 <style scoped>
 .category-bar {
+    width: fit-content;
+    /* 自适应宽度 */
+    background-color: #f6f9fe;
+    /* 浅蓝灰背景 */
     display: flex;
     /* 纵向排列 */
     flex-direction: column;
     /* 垂直布局 */
-    align-items: center;
-    /* 水平居中 */
-    width: 48px;
-    /* 分类栏宽度 */
-    background: #fafafa;
-    /* 浅灰背景 */
-    border-right: 1px solid #e0e0e0;
-    /* 右侧分隔线 */
-    padding: 8px 0;
-    /* 上下内边距 */
-    gap: 4px;
-    /* 分类项间距 */
-    overflow-y: auto;
-    /* 超出时滚动 */
+    height: 100%;
+    /* 铺满高度 */
 }
 
 .category-item {
@@ -60,40 +52,56 @@ const onSelectCategory = (categoryKey) => {
     /* 垂直居中 */
     justify-content: center;
     /* 水平居中 */
-    width: 36px;
+    width: 50px;
     /* 分类项宽度 */
-    height: 36px;
+    height: 50px;
     /* 分类项高度 */
-    border-radius: 8px;
-    /* 圆角 */
     cursor: pointer;
     /* 鼠标指针 */
-    transition: all 0.15s;
+    margin: 4px;
+    /* 外边距 */
+    border-radius: 8px;
+    /* 圆角 */
+    position: relative;
+    /* 相对定位 */
+    transition: all 0.1s ease-in-out;
     /* 过渡动画 */
 }
 
 .category-item:hover {
-    background: #eeeeee;
-    /* 悬停浅灰背景 */
+    background-color: rgba(0, 0, 0, 0.1);
+    /* 悬停半透明背景 */
+    scale: 1.1;
+    /* 悬停放大效果 */
+}
+
+.category-item:active {
+    scale: 0.9;
+    /* 点击缩小效果 */
 }
 
 .category-item.active {
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-    /* 激活态阴影 */
+    background-color: var(--category-color);
+    /* 激活态使用分类颜色 */
+    color: white;
+    /* 激活态白色文字 */
+}
+
+.category-item.active:hover {
+    scale: 1;
+    /* 激活态不放大 */
 }
 
 .category-icon {
-    width: 20px;
-    /* 图标宽度 */
-    height: 20px;
-    /* 图标高度 */
-    opacity: 0.7;
-    /* 默认透明度 */
+    width: 100%;
+    /* 图标铺满 */
+    user-select: none;
+    /* 禁止拖拽 */
+    pointer-events: none;
+    /* 禁止点击图标 */
 }
 
 .category-icon.icon-active {
-    opacity: 1;
-    /* 激活态完全不透明 */
     filter: brightness(10);
     /* 激活态图标变白 */
 }

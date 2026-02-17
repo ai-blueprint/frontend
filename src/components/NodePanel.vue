@@ -53,45 +53,41 @@ const hasParams = computed(() => {
 
 <style scoped>
 .node-panel {
-    position: fixed;
-    /* 固定定位 */
-    transform: translateX(-50%);
-    /* 水平居中 */
-    background: #ffffff;
-    /* 白色背景 */
-    border: 1px solid #e0e0e0;
-    /* 浅色边框 */
-    border-radius: 8px;
-    /* 圆角 */
-    padding: 12px;
-    /* 内边距 */
-    z-index: 1000;
-    /* 高层级 */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-    /* 阴影 */
     min-width: 200px;
     /* 最小宽度 */
-    max-width: 280px;
+    max-width: 250px;
     /* 最大宽度 */
-    max-height: 400px;
-    /* 最大高度 */
+    width: 100%;
+    /* 铺满可用宽度 */
+    height: 100%;
+    /* 铺满高度 */
+    background-color: #F6F9FE;
+    /* 浅蓝灰背景 */
+    padding: 16px;
+    /* 内边距 */
+    box-sizing: border-box;
+    /* 盒模型 */
     overflow-y: auto;
     /* 内容超出时滚动 */
 }
 
 .panel-title {
-    font-size: 13px;
+    font-size: 18px;
     /* 标题字号 */
-    font-weight: 600;
+    font-weight: bold;
     /* 标题加粗 */
     color: #333333;
     /* 深色标题 */
     margin-bottom: 10px;
     /* 标题下方间距 */
-    padding-bottom: 6px;
+    padding-bottom: 5px;
     /* 底部内边距 */
-    border-bottom: 1px solid #e0e0e0;
-    /* 底部分隔线 */
+    border-bottom: 2px solid #EAEFFC;
+    /* 紫蓝色底部分隔线 */
+    width: 100%;
+    /* 铺满宽度 */
+    text-align: left;
+    /* 左对齐 */
 }
 
 .panel-content {
@@ -99,7 +95,40 @@ const hasParams = computed(() => {
     /* 纵向排列 */
     flex-direction: column;
     /* 垂直布局 */
-    gap: 4px;
+    height: calc(100% - 60px);
+    /* 减去标题高度 */
+    font-size: 14px;
+    /* 内容字号 */
+    font-weight: 600;
+    /* 加粗 */
+    color: #4C4C4C;
+    /* 深灰文字 */
+    overflow: hidden;
+    /* 隐藏溢出 */
+}
+
+.param-item {
+    display: flex;
+    /* 横向排列标签和输入 */
+    align-items: center;
+    /* 垂直居中 */
+    font-size: 14px;
+    /* 参数字号 */
+    font-weight: 600;
+    /* 加粗 */
+    color: #333333;
+    /* 深色文字 */
+    white-space: nowrap;
+    /* 不换行 */
+    margin-bottom: 10px;
     /* 参数间距 */
+    width: 100%;
+    /* 铺满宽度 */
+    flex-direction: row;
+    /* 横向排列 */
+    flex-wrap: nowrap;
+    /* 不换行 */
+    justify-content: space-between;
+    /* 两端对齐 */
 }
 </style>

@@ -169,29 +169,54 @@ watch(isRenaming, (newVal) => {
 .custom-node {
     display: flex;
     /* 横向排列：输入端口 | 名称 | 输出端口 */
-    align-items: stretch;
-    /* 子元素撑满高度 */
-    background: #ffffff;
-    /* 节点白色背景 */
-    border: 2px solid #d0d0d0;
-    /* 节点浅色边框 */
-    border-radius: 8px;
+    flex-direction: row;
+    /* 横向布局 */
+    align-items: center;
+    /* 垂直居中 */
+    width: fit-content;
+    /* 自适应宽度 */
+    flex-wrap: nowrap;
+    /* 不换行 */
+    border-radius: 12px;
     /* 圆角 */
-    min-width: 120px;
-    /* 最小宽度 */
+    background-color: #8992eb;
+    /* 紫蓝色节点背景 */
+    padding: 12px 10px;
+    /* 内边距 */
+    gap: 40px;
+    /* 端口组与名称间距 */
+    cursor: grab;
+    /* 抓取光标 */
+    outline: #ffffff;
+    /* 白色描边预设 */
+    transition: opacity 0.2s, filter 0.2s, outline 0.2s, scale 0.2s;
+    /* 过渡动画 */
     position: relative;
     /* 相对定位，用于悬浮元素 */
     user-select: none;
     /* 禁止文字选中 */
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-    /* 轻微阴影 */
+}
+
+.custom-node:active {
+    cursor: grabbing;
+    /* 拖拽中光标 */
+}
+
+.custom-node:hover {
+    filter: brightness(1.1);
+    /* 悬停时提亮 */
+}
+
+.custom-node:hover:active {
+    scale: 0.98;
+    /* 按住时轻微缩小 */
 }
 
 .custom-node.selected {
-    border-color: #4a90d9;
-    /* 选中时边框颜色 */
-    box-shadow: 0 0 8px rgba(74, 144, 217, 0.25);
-    /* 选中时发光效果 */
+    outline: 3px solid #ffffff;
+    /* 选中时白色描边 */
+    filter: drop-shadow(0 0 3px #ffffff) drop-shadow(0 0 15px #ffffff) brightness(1.1);
+    /* 选中发光效果 */
 }
 
 .ports {
@@ -199,10 +224,12 @@ watch(isRenaming, (newVal) => {
     /* 纵向排列端口 */
     flex-direction: column;
     /* 垂直布局 */
-    justify-content: center;
-    /* 垂直居中 */
-    padding: 4px 0;
-    /* 上下内边距 */
+    align-items: center;
+    /* 水平居中 */
+    gap: 16px;
+    /* 端口间距 */
+    width: 8px;
+    /* 端口组宽度 */
 }
 
 .input-ports {
@@ -222,17 +249,17 @@ watch(isRenaming, (newVal) => {
     /* 垂直居中 */
     justify-content: center;
     /* 水平居中 */
-    padding: 8px 12px;
-    /* 内边距 */
-    min-width: 60px;
-    /* 最小宽度 */
+    width: fit-content;
+    /* 自适应宽度 */
 }
 
 .label-text {
-    font-size: 13px;
+    font-size: 18px;
     /* 名称字号 */
-    color: #333333;
-    /* 名称深色文字 */
+    color: #ffffff;
+    /* 白色文字 */
+    word-break: keep-all;
+    /* 保持单词完整 */
     white-space: nowrap;
     /* 不换行 */
 }
@@ -242,15 +269,15 @@ watch(isRenaming, (newVal) => {
     /* 重命名输入框宽度 */
     padding: 2px 4px;
     /* 内边距 */
-    background: #f5f5f5;
-    /* 浅灰背景 */
-    border: 1px solid #4a90d9;
-    /* 蓝色边框 */
-    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.2);
+    /* 半透明白色背景 */
+    border: 1px solid #ffffff;
+    /* 白色边框 */
+    border-radius: 6px;
     /* 圆角 */
-    color: #333333;
-    /* 深色文字 */
-    font-size: 13px;
+    color: #ffffff;
+    /* 白色文字 */
+    font-size: 16px;
     /* 字号 */
     outline: none;
     /* 去除聚焦边框 */
