@@ -3,7 +3,6 @@ import App from "./App.vue"; // 引入根组件
 import Varlet, { Themes, StyleProvider } from "@varlet/ui"; // 引入Varlet UI库
 import "@varlet/ui/es/style"; // 引入Varlet样式
 import "./style.css"; // 引入全局自定义样式
-import store from "./store.js"; // 引入全局状态
 import ws from "./ws.js"; // 引入WebSocket模块
 import AutoRecord from "./commands/AutoRecord.js"; // 引入自动记录模块
 import Shortcut from "./commands/Shortcut.js"; // 引入快捷键模块
