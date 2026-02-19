@@ -21,17 +21,6 @@ const { onConnect, onPaneClick, onViewportChange, screenToFlowCoordinate, update
 // --- 在组件挂载后设置vueflow实例到蓝图命令中 ---
 const onPaneReady = (instance) => Blueprint.setFlowInstance(instance);
 
-// --- 校验连接是否合法（只允许输出端口连输入端口）---
-const checkConnection = (connection) => {
-	const sourceNode = store.blueprint.nodes.find((n) => n.id === connection.source); // 查找来源节点
-	const targetNode = store.blueprint.nodes.find((n) => n.id === connection.target); // 查找目标节点
-	if (!sourceNode || !targetNode) return false; // 节点不存在就拒绝
-
-	const isSourceOutput = connection.sourceHandle in (sourceNode.data?.ports?.output || {}); // 来源端口必须是输出端口
-	const isTargetInput = connection.targetHandle in (targetNode.data?.ports?.input || {}); // 目标端口必须是输入端口
-	return isSourceOutput && isTargetInput; // 两个条件都满足才允许连接
-};
-
 // --- 连接线创建时的处理 ---
 onConnect((params) => {
 	const existingId = Edge.getByInputPort(params.target, params.targetHandle)?.id; // 记录旧边ID
@@ -88,7 +77,7 @@ const onContextMenu = (event) => {
 			v-model:viewport="store.viewport"
 			selection-mode="partial"
 			:node-types="nodeTypes"
-			:is-valid-connection="checkConnection"
+			:is-valid-connection="Edge.checkConnection"
 			:min-zoom="0.5"
 			:max-zoom="2"
 			edges-updatable

@@ -47,6 +47,17 @@ const getByInputPort = (nodeId, portKey) => {
     return store.blueprint.edges.find(e => e.target === nodeId && e.targetHandle === portKey) || null // 查找连入该输入端口的线
 }
 
+// --- 校验连接是否合法（只允许输出端口连输入端口）---
+const checkConnection = (connection) => {
+    const sourceNode = store.blueprint.nodes.find(n => n.id === connection.source)    // 查找来源节点
+    const targetNode = store.blueprint.nodes.find(n => n.id === connection.target)    // 查找目标节点
+    if (!sourceNode || !targetNode) return false                                       // 节点不存在就拒绝
+
+    const isSourceOutput = connection.sourceHandle in (sourceNode.data?.ports?.output || {}) // 来源端口必须是输出端口
+    const isTargetInput = connection.targetHandle in (targetNode.data?.ports?.input || {})   // 目标端口必须是输入端口
+    return isSourceOutput && isTargetInput                                                    // 两个条件都满足才允许连接
+}
+
 // --- 辅助：将各种格式的ID统一转为数组 ---
 const normalizeIds = (input) => {
     if (Array.isArray(input)) return input                        // 已经是数组直接返回
@@ -54,4 +65,4 @@ const normalizeIds = (input) => {
     return [input]                                                // 单个ID包装成数组
 }
 
-export default { add, remove, getByNode, getByPort, getByInputPort } // 导出所有连接线命令
+export default { add, remove, getByNode, getByPort, getByInputPort, checkConnection } // 导出所有连接线命令
