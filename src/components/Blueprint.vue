@@ -16,7 +16,7 @@ import NodePanel from "@/components/NodePanel.vue"; // 引入节点面板组件
 const nodeTypes = { baseNode: markRaw(CustomNode) }; // 节点类型映射
 
 // --- 初始化vueflow实例 ---
-const { onConnect, onPaneClick, onViewportChange, project } = useVueFlow(); // 获取vueflow钩子
+const { onConnect, onPaneClick, onViewportChange, screenToFlowCoordinate } = useVueFlow(); // 获取vueflow钩子
 
 // --- 在组件挂载后设置vueflow实例到蓝图命令中 ---
 const onPaneReady = (instance) => {
@@ -54,8 +54,10 @@ const onDrop = (event) => {
 	const opcode = event.dataTransfer.getData("application/opcode"); // 获取拖入的节点opcode
 	if (!opcode) return; // 没有opcode直接返回
 
-	const position = project({ x: event.clientX, y: event.clientY }); // 将屏幕坐标转为画布坐标
+	const position = screenToFlowCoordinate({ x: event.clientX, y: event.clientY }); // 将屏幕坐标转为画布坐标
 	Node.add(opcode, position.x, position.y); // 在画布对应位置创建节点
+    console.log({ x: event.clientX, y: event.clientY });
+    console.log({ x: position.x, y: position.y });
 };
 </script>
 
