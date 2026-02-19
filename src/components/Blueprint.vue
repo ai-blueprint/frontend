@@ -16,13 +16,17 @@ import NodePanel from "@/components/NodePanel.vue"; // 引入节点面板组件
 const nodeTypes = { baseNode: markRaw(CustomNode) }; // 节点类型映射
 
 // --- 初始化vueflow实例 ---
-const { onConnect, onPaneClick, onViewportChange, screenToFlowCoordinate, updateEdge } = useVueFlow(); // 获取vueflow钩子
+const { onConnect, onPaneClick, onViewportChange, screenToFlowCoordinate, updateEdge, addEdges } = useVueFlow(); // 获取vueflow钩子
 
 // --- 在组件挂载后设置vueflow实例到蓝图命令中 ---
 const onPaneReady = (instance) => Blueprint.setFlowInstance(instance);
 
 // --- 连接线创建时的处理 ---
-onConnect((params) => Edge.add(params.source, params.sourceHandle, params.target, params.targetHandle));
+onConnect((params) => {
+	const existing = Edge.getByInputPort(params.target, params.targetHandle); // 检查输入端口是否已有连线
+	if (existing) Edge.remove(existing.id); // 有旧线就先删掉
+	addEdges([params]); // 用VueFlow原生方法添加新边
+});
 
 // --- 连接线被拖拽重连时的处理 ---
 const onEdgeUpdate = ({ edge, connection }) => {

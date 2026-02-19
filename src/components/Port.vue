@@ -13,9 +13,8 @@ const props = defineProps({
 });
 
 // --- 输入端口被按下时，检查是否需要拔线重连 ---
-const onPointerDown = (event) => {
+const onMouseDown = (event) => {
 	if (props.type !== "target") return; // 只处理输入端口
-	if (!event.target.classList.contains("port-handle")) return; // 只处理点击在端口圆点上的事件
 
 	const existingEdge = Edge.getByInputPort(props.nodeId, props.portKey); // 检查该输入端口是否已有连线
 	if (!existingEdge) return; // 没有连线就让VueFlow正常处理新建连接
@@ -34,23 +33,21 @@ const onPointerDown = (event) => {
 		const sourceHandle = document.querySelector(`.vue-flow__handle[data-handleid="${sourcePortKey}"][data-nodeid="${sourceNodeId}"]`); // 找到原输出端口的DOM元素
 		if (!sourceHandle) return; // 找不到就放弃
 
-		const pointerEvent = new PointerEvent("pointerdown", {
-			// 构造模拟的指针按下事件
+		const mouseEvent = new MouseEvent("mousedown", {
+			// 构造模拟的鼠标按下事件
 			bubbles: true, // 允许冒泡
 			cancelable: true, // 允许取消
 			clientX: event.clientX, // 使用原始鼠标X坐标
 			clientY: event.clientY, // 使用原始鼠标Y坐标
-			pointerId: event.pointerId, // 保持指针ID一致
-			pointerType: event.pointerType, // 保持指针类型一致
 		});
-		sourceHandle.dispatchEvent(pointerEvent); // 触发输出端口的连接拖拽
+		sourceHandle.dispatchEvent(mouseEvent); // 触发输出端口的连接拖拽
 	});
 };
 </script>
 
 <template>
-	<div class="port" :class="['port-' + position]" @pointerdown.capture="onPointerDown">
-		<!-- 端口容器，捕获阶段拦截指针事件实现拔线 -->
+	<div class="port" :class="['port-' + position]" @mousedown.capture="onMouseDown">
+		<!-- 端口容器，捕获阶段拦截鼠标事件实现拔线 -->
 		<Handle :id="portKey" :type="type" :position="position" class="port-handle" :connectable="true" />
 		<!-- vueflow端口圆点 -->
 		<span v-if="portLabel" class="port-label">{{ portLabel }}</span>
