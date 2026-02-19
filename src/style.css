@@ -51,7 +51,7 @@ body,
 }
 
 /* ========== Vue Flow 样式覆盖 ========== */
-.vue-flow__edge-path {
+.vue-flow__edge-path ,.vue-flow__connection-path{
     fill: none;
     /* 无填充 */
     stroke: #ffffff;
@@ -96,8 +96,6 @@ body,
 .vue-flow__handle:hover {
     background: #8cff00;
     /* 端口悬停变绿 */
-    transform: scale(1.2);
-    /* 悬停放大 */
 }
 
 .vue-flow__background {

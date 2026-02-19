@@ -1,6 +1,5 @@
 <script setup>
-import { Handle, useVueFlow } from '@vue-flow/core' // 引入vueflow端口组件和钩子
-import store from '@/store.js'                     // 引入全局状态
+import { Handle } from '@vue-flow/core' // 引入vueflow端口组件和钩子
 import Edge from '@/commands/Edge.js'               // 引入连接线命令
 
 const props = defineProps({                         // 接收父组件传入的属性
@@ -54,8 +53,6 @@ const onMouseDown = (event) => {
 }
 
 .port:hover {
-    transform: scale(1.2);
-    /* 悬停放大 */
     background-color: #8cff00;
     /* 悬停变绿 */
 }
@@ -63,8 +60,6 @@ const onMouseDown = (event) => {
 .port.snap {
     background-color: #FFD700;
     /* 吸附状态金色 */
-    transform: scale(1.4);
-    /* 吸附状态放大 */
 }
 
 .port-left {
@@ -108,7 +103,5 @@ const onMouseDown = (event) => {
 .port-handle:hover {
     background: #8cff00 !important;
     /* 悬停变绿 */
-    transform: scale(1.2);
-    /* 悬停放大 */
 }
 </style>
