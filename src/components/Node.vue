@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, nextTick, watch } from 'vue' // 引入Vue组合式API
 import store from '@/store.js'                     // 引入全局状态
-import NodeCmd from '@/commands/Node.js'            // 引入节点命令
+import Node from '@/commands/Node.js'            // 引入节点命令
 import Port from '@/components/Port.vue'            // 引入端口组件
 
 const props = defineProps({                         // 接收vueflow传入的节点属性
@@ -49,10 +49,10 @@ const hasTensorImage = computed(() => {
 // --- 节点被单击 ---
 const onClick = (event) => {
     if (event.ctrlKey || event.metaKey) {             // 按住Ctrl键
-        NodeCmd.toggleSelect(props.id)                  // 切换选中状态
+        Node.toggleSelect(props.id)                  // 切换选中状态
     } else {
-        NodeCmd.clearSelect()                           // 清空所有选中
-        NodeCmd.select(props.id)                        // 选中当前节点
+        Node.clearSelect()                           // 清空所有选中
+        Node.select(props.id)                        // 选中当前节点
     }
 
     // --- 如果当前节点不是菜单和面板绑定的节点，就隐藏它们 ---
@@ -67,7 +67,7 @@ const onContextMenu = (event) => {
     event.preventDefault()                            // 阻止浏览器默认右键菜单
     event.stopPropagation()                           // 阻止事件冒泡
 
-    NodeCmd.select(props.id)                          // 选中当前节点
+    Node.select(props.id)                          // 选中当前节点
     store.nodeMenu.nodeId = props.id                  // 绑定菜单到当前节点
     store.nodePanel.nodeId = props.id                 // 绑定面板到当前节点
     store.nodeMenu.visible = true                     // 显示菜单
@@ -76,7 +76,7 @@ const onContextMenu = (event) => {
 
 // --- 节点被双击 ---
 const onDoubleClick = () => {
-    NodeCmd.select(props.id)                          // 选中当前节点
+    Node.select(props.id)                          // 选中当前节点
     store.renaming.nodeId = props.id                  // 设置重命名目标
     store.renaming.original = props.data.label        // 记录原始名称
 }
@@ -85,13 +85,13 @@ const onDoubleClick = () => {
 const confirmRename = () => {
     const value = renameValue.value.trim()            // 获取并去除空格
     const finalValue = value || store.renaming.original // 为空则恢复原名
-    NodeCmd.rename(props.id, finalValue)              // 执行重命名
+    Node.rename(props.id, finalValue)              // 执行重命名
     store.renaming.nodeId = null                      // 清除重命名状态
 }
 
 // --- 取消重命名 ---
 const cancelRename = () => {
-    NodeCmd.rename(props.id, store.renaming.original) // 恢复原名称
+    Node.rename(props.id, store.renaming.original) // 恢复原名称
     store.renaming.nodeId = null                      // 清除重命名状态
 }
 
@@ -195,6 +195,7 @@ watch(isRenaming, (newVal) => {
     /* 相对定位，用于悬浮元素 */
     user-select: none;
     /* 禁止文字选中 */
+    transform-origin: center center; /* 变换原点 */
 }
 
 .custom-node:active {

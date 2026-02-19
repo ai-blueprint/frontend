@@ -54,7 +54,6 @@ const add = (opcode, x, y) => {
             ports: JSON.parse(JSON.stringify(definition.ports)),      // 深拷贝端口定义
             params,                                                   // 参数对象
         },
-        measured: { width: 0, height: 0 },                          // 尺寸由渲染后自动填充
         selected: false,                                            // 默认未选中
         tensorImage: null,                                          // 默认无可视化图
         error: null,                                                // 默认无错误
