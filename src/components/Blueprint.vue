@@ -25,7 +25,11 @@ const onPaneReady = (instance) => Blueprint.setFlowInstance(instance);
 onConnect((params) => Edge.add(params.source, params.sourceHandle, params.target, params.targetHandle));
 
 // --- 连接线被拖拽重连时的处理 ---
-const onEdgeUpdate = ({ edge, connection }) => updateEdge(edge, connection); // 用VueFlow原生方法更新连接线端点
+const onEdgeUpdate = ({ edge, connection }) => {
+	const existing = Edge.getByInputPort(connection.target, connection.targetHandle); // 检查目标端口是否已有连线
+	if (existing && existing.id !== edge.id) Edge.remove(existing.id); // 有旧线且不是自己就删掉
+	updateEdge(edge, connection); // 更新连接线端点
+};
 
 // --- 画布空白处被点击 ---
 onPaneClick((event) => {

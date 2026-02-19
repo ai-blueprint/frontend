@@ -264,8 +264,6 @@ watch(isRenaming, (newVal) => {
 	/* 水平居中 */
 	gap: 16px;
 	/* 端口间距 */
-	width: 8px;
-	/* 端口组宽度 */
 }
 
 .input-ports {

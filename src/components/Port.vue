@@ -42,6 +42,11 @@ defineProps({
 }
 
 .port-handle {
+	position: relative !important; /* 脱离绝对定位，参与flex布局 */
+	top: auto !important; /* 清除VueFlow默认的top偏移 */
+	left: auto !important; /* 清除VueFlow默认的left偏移 */
+	right: auto !important; /* 清除VueFlow默认的right偏移 */
+	transform: none !important; /* 清除VueFlow默认的居中偏移 */
 	width: 8px !important; /* 端口圆点宽度 */
 	height: 8px !important; /* 端口圆点高度 */
 	background: #ffffff !important; /* 白色端口 */

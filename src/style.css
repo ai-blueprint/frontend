@@ -51,7 +51,8 @@ body,
 }
 
 /* ========== Vue Flow 样式覆盖 ========== */
-.vue-flow__edge-path ,.vue-flow__connection-path{
+.vue-flow__edge-path,
+.vue-flow__connection-path {
     fill: none;
     /* 无填充 */
     stroke: #ffffff;
@@ -67,6 +68,11 @@ body,
     /* 选中连接线保持白色 */
     filter: drop-shadow(0 0 4px #ffffff);
     /* 选中时发光效果 */
+}
+
+.vue-flow__edge:hover .vue-flow__edge-path {
+    stroke: #ffffff;
+    /* 悬停时保持白色，覆盖VueFlow默认主题的变色 */
 }
 
 .vue-flow__connection-line {
