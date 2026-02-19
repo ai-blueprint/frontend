@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'                         // 引入Vue响应式引用
 import store from '@/store.js'                     // 引入全局状态
-import blueprint from '@/commands/Blueprint.js'  // 引入蓝图命令
+import Blueprint from '@/commands/Blueprint.js'  // 引入蓝图命令
 import ws from '@/ws.js'                            // 引入WebSocket模块
 
 import textLogo from '@/assets/TopBar/text-logo.svg' // LOGO图标
@@ -12,7 +12,7 @@ const fileInput = ref(null)                         // 文件输入框引用
 
 // --- 蓝图名称变化时更新store ---
 const onNameChange = (event) => {
-    blueprint.setName(event.target.value)          // 更新蓝图名称
+    Blueprint.setName(event.target.value)          // 更新蓝图名称
 }
 
 // --- 导入蓝图 ---
@@ -27,7 +27,7 @@ const onFileSelected = (event) => {
 
     const reader = new FileReader()                   // 创建文件读取器
     reader.onload = (e) => {
-        blueprint.importBlueprint(e.target.result)   // 读取完成后导入蓝图
+        Blueprint.importBlueprint(e.target.result)   // 读取完成后导入蓝图
     }
     reader.readAsText(file)                           // 以文本格式读取文件
     event.target.value = ''                           // 清空文件选择（允许重复选同一文件）
@@ -35,7 +35,7 @@ const onFileSelected = (event) => {
 
 // --- 导出蓝图 ---
 const onExport = () => {
-    blueprint.exportBlueprint()                    // 执行导出
+    Blueprint.exportBlueprint()                    // 执行导出
 }
 
 // --- 运行蓝图 ---
