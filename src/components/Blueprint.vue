@@ -1,5 +1,5 @@
 <script setup>
-import { markRaw } from "vue"; // 引入markRaw避免组件被reactive化
+import { markRaw, nextTick } from "vue"; // 引入markRaw和nextTick
 import { VueFlow, useVueFlow } from "@vue-flow/core"; // 引入vueflow核心
 import "@vue-flow/core/dist/style.css"; // 引入默认主题样式
 import "@vue-flow/core/dist/theme-default.css";
@@ -23,9 +23,9 @@ const onPaneReady = (instance) => Blueprint.setFlowInstance(instance);
 
 // --- 连接线创建时的处理 ---
 onConnect((params) => {
-	const existing = Edge.getByInputPort(params.target, params.targetHandle); // 检查输入端口是否已有连线
-	if (existing) Edge.remove(existing.id); // 有旧线就先删掉
-	addEdges([params]); // 用VueFlow原生方法添加新边
+	const existingId = Edge.getByInputPort(params.target, params.targetHandle)?.id; // 记录旧边ID
+	addEdges([params]); // 先让VueFlow添加新边
+	if (existingId) nextTick(() => Edge.remove(existingId)); // 等VueFlow更新完再删旧边
 });
 
 // --- 连接线被拖拽重连时的处理 ---
