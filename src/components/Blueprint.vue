@@ -16,7 +16,7 @@ import NodePanel from '@/components/NodePanel.vue'  // 引入节点面板组件
 const nodeTypes = { baseNode: markRaw(CustomNode) } // 节点类型映射
 
 // --- 初始化vueflow实例 ---
-const { onConnect, onPaneClick, onViewportChange, onNodesChange, project } = useVueFlow() // 获取vueflow钩子
+const { onConnect, onPaneClick, onViewportChange, project } = useVueFlow() // 获取vueflow钩子
 
 // --- 在组件挂载后设置vueflow实例到蓝图命令中 ---
 const onPaneReady = (instance) => {
@@ -43,7 +43,6 @@ onViewportChange((viewport) => {
 })
 
 
-
 // --- 接收拖入事件 ---
 const onDragOver = (event) => {
     event.preventDefault()                            // 允许放置
@@ -63,7 +62,7 @@ const onDrop = (event) => {
 
 <template>
     <div class="blueprint" @dragover="onDragOver" @drop="onDrop"> <!-- 蓝图区域容器 -->
-        <VueFlow v-model:nodes="store.blueprint.nodes" v-model:edges="store.blueprint.edges" v-model:viewport="store.viewport" :node-types="nodeTypes" :min-zoom="0.5" :max-zoom="2" fit-view-on-init @pane-ready="onPaneReady"> <!-- VueFlow画布 -->
+        <VueFlow v-model:nodes="store.blueprint.nodes" v-model:edges="store.blueprint.edges" v-model:viewport="store.viewport" :node-types="nodeTypes" :min-zoom="0.5" :max-zoom="2" fit-view-on-init @pane-ready="onPaneReady" selection-mode="partial" selection-key-code="Shift" :selectable="true"> <!-- VueFlow画布 -->
         </VueFlow>
 
         <ToolBar /> <!-- 底部工具栏 -->
