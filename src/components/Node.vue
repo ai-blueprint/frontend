@@ -161,7 +161,7 @@ watch(isRenaming, (newVal) => {
 		<!-- 输入端口组 -->
 		<div class="ports input-ports">
 			<!-- 左侧输入端口区域 -->
-			<Port v-for="[key, label] in inputPorts" :key="key" :portKey="key" :portLabel="label" type="target" position="left" />
+			<Port v-for="[key, label] in inputPorts" :key="key" :portKey="key" :portLabel="label" type="target" position="left" :nodeId="id" />
 			<!-- 渲染每个输入端口 -->
 		</div>
 
@@ -184,7 +184,7 @@ watch(isRenaming, (newVal) => {
 		<!-- 输出端口组 -->
 		<div class="ports output-ports">
 			<!-- 右侧输出端口区域 -->
-			<Port v-for="[key, label] in outputPorts" :key="key" :portKey="key" :portLabel="label" type="source" position="right" />
+			<Port v-for="[key, label] in outputPorts" :key="key" :portKey="key" :portLabel="label" type="source" position="right" :nodeId="id" />
 			<!-- 渲染每个输出端口 -->
 		</div>
 
