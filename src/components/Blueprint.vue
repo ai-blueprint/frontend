@@ -1,11 +1,12 @@
 <script setup>
 import { markRaw } from 'vue'                      // 引入markRaw避免组件被reactive化
 import { VueFlow, useVueFlow } from '@vue-flow/core' // 引入vueflow核心
+import '@vue-flow/core/dist/style.css';// 引入默认主题样式
+import '@vue-flow/core/dist/theme-default.css';
 import store from '@/store.js'                     // 引入全局状态
 import Node from '@/commands/Node.js'            // 引入节点命令
 import Edge from '@/commands/Edge.js'            // 引入连接线命令
 import Blueprint from '@/commands/Blueprint.js'  // 引入蓝图命令
-import { toCanvas } from '@/utils/position.js'     // 引入坐标转换
 import CustomNode from '@/components/Node.vue'      // 引入自定义节点组件
 import ToolBar from '@/components/ToolBar.vue'      // 引入工具栏组件
 import NodeMenu from '@/components/NodeMenu.vue'    // 引入节点菜单组件
@@ -15,7 +16,7 @@ import NodePanel from '@/components/NodePanel.vue'  // 引入节点面板组件
 const nodeTypes = { baseNode: markRaw(CustomNode) } // 节点类型映射
 
 // --- 初始化vueflow实例 ---
-const { onConnect, onPaneClick, onViewportChange, onNodesChange } = useVueFlow() // 获取vueflow钩子
+const { onConnect, onPaneClick, onViewportChange, onNodesChange, project } = useVueFlow() // 获取vueflow钩子
 
 // --- 在组件挂载后设置vueflow实例到蓝图命令中 ---
 const onPaneReady = (instance) => {
@@ -38,25 +39,10 @@ onPaneClick((event) => {
 
 // --- 视口变化时同步到store ---
 onViewportChange((viewport) => {
-    store.viewport.x = viewport.x                     // 同步视口X
-    store.viewport.y = viewport.y                     // 同步视口Y
-    store.viewport.zoom = viewport.zoom               // 同步缩放
+    store.viewport = viewport                         // 同步视口
 })
 
-// --- 节点尺寸变化时更新measured ---
-onNodesChange((changes) => {
-    changes.forEach(change => {
-        if (change.type === 'dimensions' && change.dimensions) { // 尺寸变化事件
-            const node = store.blueprint.nodes.find(n => n.id === change.id) // 找到对应节点
-            if (node) {
-                node.measured = {                           // 更新节点尺寸
-                    width: change.dimensions.width,           // 宽度
-                    height: change.dimensions.height,         // 高度
-                }
-            }
-        }
-    })
-})
+
 
 // --- 接收拖入事件 ---
 const onDragOver = (event) => {
@@ -70,14 +56,14 @@ const onDrop = (event) => {
     const opcode = event.dataTransfer.getData('application/opcode') // 获取拖入的节点opcode
     if (!opcode) return                               // 没有opcode直接返回
 
-    const canvasPos = toCanvas(event.clientX, event.clientY) // 将屏幕坐标转为画布坐标
-    Node.add(opcode, canvasPos.x, canvasPos.y)     // 在画布对应位置创建节点
+    const position = project({ x: event.clientX, y: event.clientY }) // 将屏幕坐标转为画布坐标
+    Node.add(opcode, position.x, position.y)     // 在画布对应位置创建节点
 }
 </script>
 
 <template>
     <div class="blueprint" @dragover="onDragOver" @drop="onDrop"> <!-- 蓝图区域容器 -->
-        <VueFlow v-model:nodes="store.blueprint.nodes" v-model:edges="store.blueprint.edges" :default-viewport="store.viewport" :node-types="nodeTypes" :min-zoom="0.5" :max-zoom="2" fit-view-on-init @pane-ready="onPaneReady"> <!-- VueFlow画布 -->
+        <VueFlow v-model:nodes="store.blueprint.nodes" v-model:edges="store.blueprint.edges" v-model:viewport="store.viewport" :node-types="nodeTypes" :min-zoom="0.5" :max-zoom="2" fit-view-on-init @pane-ready="onPaneReady"> <!-- VueFlow画布 -->
         </VueFlow>
 
         <ToolBar /> <!-- 底部工具栏 -->
@@ -98,9 +84,9 @@ const onDrop = (event) => {
     /* 默认抓取光标 */
     transform-origin: 0 0;
     /* 变换原点在左上角 */
-    min-width: 100%;
+    width: 100%;
     /* 确保最小宽度 */
-    min-height: 100%;
+    height: 100%;
     /* 确保最小高度 */
 }
 
