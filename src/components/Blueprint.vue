@@ -16,13 +16,16 @@ import NodePanel from "@/components/NodePanel.vue"; // 引入节点面板组件
 const nodeTypes = { baseNode: markRaw(CustomNode) }; // 节点类型映射
 
 // --- 初始化vueflow实例 ---
-const { onConnect, onPaneClick, onViewportChange, screenToFlowCoordinate } = useVueFlow(); // 获取vueflow钩子
+const { onConnect, onPaneClick, onViewportChange, screenToFlowCoordinate, updateEdge } = useVueFlow(); // 获取vueflow钩子
 
 // --- 在组件挂载后设置vueflow实例到蓝图命令中 ---
 const onPaneReady = (instance) => Blueprint.setFlowInstance(instance);
 
 // --- 连接线创建时的处理 ---
 onConnect((params) => Edge.add(params.source, params.sourceHandle, params.target, params.targetHandle));
+
+// --- 连接线被拖拽重连时的处理 ---
+const onEdgeUpdate = ({ edge, connection }) => updateEdge(edge, connection); // 用VueFlow原生方法更新连接线端点
 
 // --- 画布空白处被点击 ---
 onPaneClick((event) => {
@@ -68,8 +71,10 @@ const onContextMenu = (event) => {
 			:node-types="nodeTypes"
 			:min-zoom="0.5"
 			:max-zoom="2"
+			edges-updatable
 			fit-view-on-init
 			@pane-ready="onPaneReady"
+			@edge-update="onEdgeUpdate"
 			@contextmenu="onContextMenu">
 			<!-- VueFlow画布 -->
 		</VueFlow>
