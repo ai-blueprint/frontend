@@ -2,9 +2,9 @@
 import { markRaw } from 'vue'                      // 引入markRaw避免组件被reactive化
 import { VueFlow, useVueFlow } from '@vue-flow/core' // 引入vueflow核心
 import store from '@/store.js'                     // 引入全局状态
-import NodeCmd from '@/commands/Node.js'            // 引入节点命令
-import EdgeCmd from '@/commands/Edge.js'            // 引入连接线命令
-import BlueprintCmd from '@/commands/Blueprint.js'  // 引入蓝图命令
+import Node from '@/commands/Node.js'            // 引入节点命令
+import Edge from '@/commands/Edge.js'            // 引入连接线命令
+import Blueprint from '@/commands/Blueprint.js'  // 引入蓝图命令
 import { toCanvas } from '@/utils/position.js'     // 引入坐标转换
 import CustomNode from '@/components/Node.vue'      // 引入自定义节点组件
 import ToolBar from '@/components/ToolBar.vue'      // 引入工具栏组件
@@ -19,18 +19,18 @@ const { onConnect, onPaneClick, onViewportChange, onNodesChange } = useVueFlow()
 
 // --- 在组件挂载后设置vueflow实例到蓝图命令中 ---
 const onPaneReady = (instance) => {
-    BlueprintCmd.setFlowInstance(instance)             // 保存vueflow实例引用
+    Blueprint.setFlowInstance(instance)             // 保存vueflow实例引用
 }
 
 // --- 连接线创建时的处理 ---
 onConnect((params) => {
-    EdgeCmd.add(params.source, params.sourceHandle, params.target, params.targetHandle) // 创建连接线
+    Edge.add(params.source, params.sourceHandle, params.target, params.targetHandle) // 创建连接线
 })
 
 // --- 画布空白处被点击 ---
 onPaneClick((event) => {
     if (!event.ctrlKey && !event.metaKey) {            // 没有按Ctrl键
-        NodeCmd.clearSelect()                            // 清空节点选择
+        Node.clearSelect()                            // 清空节点选择
     }
     store.nodeMenu.visible = false                    // 隐藏节点菜单
     store.nodePanel.visible = false                   // 隐藏节点面板
@@ -71,13 +71,13 @@ const onDrop = (event) => {
     if (!opcode) return                               // 没有opcode直接返回
 
     const canvasPos = toCanvas(event.clientX, event.clientY) // 将屏幕坐标转为画布坐标
-    NodeCmd.add(opcode, canvasPos.x, canvasPos.y)     // 在画布对应位置创建节点
+    Node.add(opcode, canvasPos.x, canvasPos.y)     // 在画布对应位置创建节点
 }
 </script>
 
 <template>
     <div class="blueprint" @dragover="onDragOver" @drop="onDrop"> <!-- 蓝图区域容器 -->
-        <VueFlow v-model:nodes="store.blueprint.nodes" v-model:edges="store.blueprint.edges" :default-viewport="store.viewport" :node-types="nodeTypes" :snap-to-grid="true" :snap-grid="[15, 15]" :min-zoom="0.5" :max-zoom="2" fit-view-on-init @pane-ready="onPaneReady"> <!-- VueFlow画布 -->
+        <VueFlow v-model:nodes="store.blueprint.nodes" v-model:edges="store.blueprint.edges" :default-viewport="store.viewport" :node-types="nodeTypes" :min-zoom="0.5" :max-zoom="2" fit-view-on-init @pane-ready="onPaneReady"> <!-- VueFlow画布 -->
         </VueFlow>
 
         <ToolBar /> <!-- 底部工具栏 -->

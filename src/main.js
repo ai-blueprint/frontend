@@ -14,15 +14,9 @@ const app = createApp(App); // 创建Vue应用实例
 app.use(Varlet); // 注册Varlet UI库
 StyleProvider(Themes.md3Light);
 app.mount("#app"); // 挂载Vue应用到DOM
-await ws.connect(); // 连接后端WebSocket
-
-// --- 设置默认选中第一个分类 ---
-const categoryKeys = Object.keys(store.registry.categories || {}); // 获取所有分类标识
-if (categoryKeys.length) {
-	store.selected.category = categoryKeys[0]; // 默认选中第一个分类
-}
-
 initWatchers(); // 初始化数据维护监听
 AutoRecord.init(); // 初始化自动历史记录
 Shortcut.init(); // 初始化快捷键监听
 History.record(); // 记录初始空白状态
+await ws.connect(); // 连接后端WebSocket
+
