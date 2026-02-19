@@ -1,34 +1,22 @@
 <script setup>
 import { ref } from 'vue'                         // 引入Vue响应式引用
 import store from '@/store.js'                     // 引入全局状态
-import BlueprintCmd from '@/commands/Blueprint.js'  // 引入蓝图命令
+import blueprint from '@/commands/Blueprint.js'  // 引入蓝图命令
 import ws from '@/ws.js'                            // 引入WebSocket模块
 
 import textLogo from '@/assets/TopBar/text-logo.svg' // LOGO图标
 import settingIcon from '@/assets/TopBar/setting.svg' // 设置图标
 import pluginIcon from '@/assets/TopBar/plugin.svg'   // 插件图标
 
-const showSettingMenu = ref(false)                  // 设置下拉菜单是否显示
 const fileInput = ref(null)                         // 文件输入框引用
 
 // --- 蓝图名称变化时更新store ---
 const onNameChange = (event) => {
-    BlueprintCmd.setName(event.target.value)          // 更新蓝图名称
-}
-
-// --- 切换设置下拉菜单 ---
-const toggleSettingMenu = () => {
-    showSettingMenu.value = !showSettingMenu.value     // 切换显示状态
-}
-
-// --- 关闭设置菜单（点击其他地方时）---
-const closeSettingMenu = () => {
-    showSettingMenu.value = false                     // 关闭下拉菜单
+    blueprint.setName(event.target.value)          // 更新蓝图名称
 }
 
 // --- 导入蓝图 ---
 const onImport = () => {
-    showSettingMenu.value = false                     // 关闭菜单
     fileInput.value.click()                           // 触发文件选择
 }
 
@@ -39,7 +27,7 @@ const onFileSelected = (event) => {
 
     const reader = new FileReader()                   // 创建文件读取器
     reader.onload = (e) => {
-        BlueprintCmd.importBlueprint(e.target.result)   // 读取完成后导入蓝图
+        blueprint.importBlueprint(e.target.result)   // 读取完成后导入蓝图
     }
     reader.readAsText(file)                           // 以文本格式读取文件
     event.target.value = ''                           // 清空文件选择（允许重复选同一文件）
@@ -47,8 +35,7 @@ const onFileSelected = (event) => {
 
 // --- 导出蓝图 ---
 const onExport = () => {
-    showSettingMenu.value = false                     // 关闭菜单
-    BlueprintCmd.exportBlueprint()                    // 执行导出
+    blueprint.exportBlueprint()                    // 执行导出
 }
 
 // --- 运行蓝图 ---
@@ -70,19 +57,15 @@ const onScore = () => {
             <img :src="textLogo" alt="logo" class="text-logo" /> <!-- 文字LOGO -->
 
             <div class="function-group"> <!-- 功能组 -->
-                <div class="icon-wrapper" @click="toggleSettingMenu"> <!-- 设置图标 -->
+                <var-menu placement="bottom">
                     <img :src="settingIcon" alt="setting" class="function-icon" />
+                    <template #menu>
+                        <var-cell @click="onImport">导入</var-cell>
+                        <var-cell @click="onExport">导出</var-cell>
+                    </template>
+                </var-menu>
 
-                    <!-- 设置下拉菜单 -->
-                    <div v-if="showSettingMenu" class="dropdown-menu" @click.stop> <!-- 阻止冒泡 -->
-                        <div class="dropdown-item" @click="onImport">导入</div> <!-- 导入选项 -->
-                        <div class="dropdown-item" @click="onExport">导出</div> <!-- 导出选项 -->
-                    </div>
-                </div>
-
-                <div class="icon-wrapper"> <!-- 插件图标 -->
-                    <img :src="pluginIcon" alt="plugin" class="function-icon" />
-                </div>
+                <img :src="pluginIcon" alt="plugin" class="function-icon" /><!-- 插件图标 -->
             </div>
         </div>
 
@@ -100,9 +83,6 @@ const onScore = () => {
         <!-- 隐藏的文件输入框（用于导入）-->
         <input ref="fileInput" type="file" accept=".json" style="display: none" @change="onFileSelected" /> <!-- 隐藏的文件选择器 -->
     </div>
-
-    <!-- 点击背景关闭设置菜单 -->
-    <div v-if="showSettingMenu" class="menu-backdrop" @click="closeSettingMenu"></div> <!-- 透明遮罩层 -->
 </template>
 
 <style scoped>
@@ -132,12 +112,12 @@ const onScore = () => {
     /* 横向排列 */
     align-items: center;
     /* 垂直居中 */
-    gap: 30px;
+    gap: 4vw;
     /* 元素间距 */
 }
 
 .text-logo {
-    height: 24px;
+    height: 42px;
     /* LOGO高度 */
 }
 
@@ -146,48 +126,30 @@ const onScore = () => {
     /* 横向排列 */
     align-items: center;
     /* 垂直居中 */
-    gap: 4px;
+    gap: 3vw;
     /* 图标间距 */
 }
 
-.icon-wrapper {
-    position: relative;
-    /* 相对定位（用于下拉菜单）*/
-    display: flex;
-    /* 居中对齐 */
-    align-items: center;
-    /* 垂直居中 */
-    justify-content: center;
-    /* 水平居中 */
-    width: 32px;
-    /* 图标区域宽度 */
-    height: 32px;
-    /* 图标区域高度 */
-    border-radius: 6px;
-    /* 圆角 */
-    cursor: pointer;
-    /* 鼠标指针 */
-    transition: all 0.1s ease-in-out;
-    /* 过渡动画 */
+
+
+
+.function-icon {
+    width: 20px;
+    /* 图标宽度 */
+    height: 20px;
+    /* 图标高度 */
+    opacity: 0.8;
+    /* 默认透明度 */
 }
 
-.icon-wrapper:hover {
+.function-icon:hover {
     scale: 1.05;
     /* 悬停放大效果 */
 }
 
-.icon-wrapper:active {
+.function-icon:active {
     scale: 0.95;
     /* 点击缩小效果 */
-}
-
-.function-icon {
-    width: 18px;
-    /* 图标宽度 */
-    height: 18px;
-    /* 图标高度 */
-    opacity: 0.8;
-    /* 默认透明度 */
 }
 
 .dropdown-menu {
@@ -318,17 +280,5 @@ const onScore = () => {
 .score-button {
     background-color: #E1B86B;
     /* 跑分按钮金色背景 */
-}
-
-.menu-backdrop {
-    position: fixed;
-    /* 固定定位 */
-    top: 0;
-    /* 铺满整个页面 */
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 99;
-    /* 在菜单下方 */
 }
 </style>
