@@ -19,11 +19,11 @@ const updateFloatingPosition = (nodeId) => {
     const screenTop = toScreen(centerX, topY)                    // 节点顶部中心转屏幕坐标
     const screenBottom = toScreen(centerX, bottomY)              // 节点底部中心转屏幕坐标
 
-    store.nodeMenu.x = screenTop.x                               // 菜单X设为节点中心
-    store.nodeMenu.y = screenTop.y - gap - halfHeight             // 菜单Y设在节点顶部上方（减去半高偏移）
+    store.nodeContext.x = screenTop.x                               // 菜单X设为节点中心
+    store.nodeContext.y = screenTop.y - gap - halfHeight             // 菜单Y设在节点顶部上方（减去半高偏移）
 
-    store.nodePanel.x = screenBottom.x                           // 面板X设为节点中心
-    store.nodePanel.y = screenBottom.y + gap + halfHeight         // 面板Y设在节点底部下方（加上半高偏移）
+    store.nodeContext.x = screenBottom.x                           // 面板X设为节点中心
+    store.nodeContext.y = screenBottom.y + gap + halfHeight         // 面板Y设在节点底部下方（加上半高偏移）
 }
 
 export { updateFloatingPosition }                               // 导出位置更新函数

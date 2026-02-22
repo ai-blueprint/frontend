@@ -85,10 +85,10 @@
                         当被鼠标右键点击
                                 阻止浏览器默认右键菜单（preventDefault）
                                 选择当前节点
-                                设置 nodeMenu.nodeId = 当前节点id
-                                设置 nodePanel.nodeId = 当前节点id
-                                设置 nodeMenu.visible = true
-                                设置 nodePanel.visible = true
+                                设置 nodeContext.nodeId = 当前节点id
+                                设置 nodeContext.nodeId = 当前节点id
+                                设置 nodeContext.visible = true
+                                设置 nodeContext.visible = true
                         双击节点
                                 选中当前节点
                                 设置 store.renaming.nodeId = 当前节点id
@@ -166,9 +166,9 @@
                 style.css（全局样式，每个组件的样式写在组件的 <style scoped> 里）
                 watchers.js（数据维护，由watch自动监控和更新的东西放这里）
                         watch store.blueprint.nodes 的长度变化
-                                当节点被删除时，检查 nodeMenu.nodeId 和 nodePanel.nodeId 对应的节点是否还存在
+                                当节点被删除时，检查 nodeContext.nodeId 和 nodeContext.nodeId 对应的节点是否还存在
                                 如果不存在，隐藏对应的菜单和面板
-                        watch store.blueprint.nodes 里对应节点面板和节点菜单的节点的变化，用于更新store.nodeMenu和store.nodePanel的位置（需要节点面板和节点菜单为显示状态才触发）
+                        watch store.blueprint.nodes 里对应节点面板和节点菜单的节点的变化，用于更新store.nodeContext和store.nodeContext的位置（需要节点面板和节点菜单为显示状态才触发）
                 ws.js（websocket通信）
                         连接管理
                                 连接地址（默认ws://localhost:8765）
@@ -231,12 +231,12 @@
                                 y: 0
                                 zoom: 1
                         悬浮组件状态（这两个都需要动态计算位置，实现分别显示在目标节点的正上方和正下方的效果）
-                                nodeMenu
+                                nodeContext
                                         visible（布尔值，是否显示）
                                         nodeId（字符串或null，绑定的节点ID）
                                         x（数字，菜单在屏幕上的X坐标）
                                         y（数字，菜单在屏幕上的Y坐标）
-                                nodePanel
+                                nodeContext
                                         visible（布尔值，是否显示）
                                         nodeId（字符串或null，绑定的节点ID）
                                         x（数字，菜单在屏幕上的X坐标）
@@ -280,10 +280,10 @@
                         更新节点菜单和节点面板的位置
                                 获取当前节点的 position 和 measured 尺寸
                                 调用 position.js 将节点顶部中心点转换为屏幕坐标
-                                store.nodeMenu.x = 屏幕坐标X（节点中心）
-                                store.nodePanel.x = 屏幕坐标X（节点中心）
-                                store.nodeMenu.y = 屏幕坐标Y（节点顶部）- 间距 - 节点高度的一半
-                                store.nodePanel.y = 屏幕坐标Y（节点底部）+ 间距 + 节点高度的一半
+                                store.nodeContext.x = 屏幕坐标X（节点中心）
+                                store.nodeContext.x = 屏幕坐标X（节点中心）
+                                store.nodeContext.y = 屏幕坐标Y（节点顶部）- 间距 - 节点高度的一半
+                                store.nodeContext.y = 屏幕坐标Y（节点底部）+ 间距 + 节点高度的一半
                 commands/
                         Blueprint.js
                                 关于蓝图自身可调节命令

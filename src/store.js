@@ -30,20 +30,6 @@ const store = reactive({
         y: 0,                                   // 菜单在屏幕上的Y坐标
     },
 
-    nodeMenu: {                               // 节点右键菜单状态
-        visible: false,                         // 是否显示菜单
-        nodeId: null,                           // 绑定的节点ID
-        x: 0,                                   // 菜单在屏幕上的X坐标
-        y: 0,                                   // 菜单在屏幕上的Y坐标
-    },
-
-    nodePanel: {                              // 节点参数面板状态
-        visible: false,                         // 是否显示面板
-        nodeId: null,                           // 绑定的节点ID
-        x: 0,                                   // 面板在屏幕上的X坐标
-        y: 0,                                   // 面板在屏幕上的Y坐标
-    },
-
     history: {                                // 历史记录
         snapshots: [],                          // 快照数组，每项是nodes和edges的深拷贝
         currentIndex: 0,                        // 当前快照索引
