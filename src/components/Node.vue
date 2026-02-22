@@ -299,8 +299,8 @@ watch(isRenaming, (newVal) => {
 }
 
 .rename-input {
-	width: 80px;
-	/* 重命名输入框宽度 */
+	field-sizing: content;
+	/* 宽度自动，根据内容长度而变化 */
 	padding: 2px 4px;
 	/* 内边距 */
 	background: rgba(255, 255, 255, 0.2);
