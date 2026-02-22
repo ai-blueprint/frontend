@@ -246,9 +246,9 @@ const onScore = () => {
     /* 内边距 */
     border: none;
     /* 无边框 */
-    border-radius: 6px;
+    border-radius: 8px;
     /* 圆角 */
-    font-size: 14px;
+    font-size: 16px;
     /* 字号 */
     font-weight: 500;
     /* 字重 */

@@ -51,6 +51,9 @@ body,
 }
 
 /* ========== Vue Flow 样式覆盖 ========== */
+.vue-flow__nodesselection-rect{
+    display: none;
+}
 .vue-flow__edge-path,
 .vue-flow__connection-path {
     fill: none;
