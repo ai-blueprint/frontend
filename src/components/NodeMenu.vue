@@ -43,7 +43,7 @@ const onDelete = () => {
 		class="node-menu"
 		:style="{
 			left: store.nodeContext.x + 'px',
-			top: store.nodeContext.y + 'px',
+			top: store.nodeContext.y - store.nodeContext.gap + 'px',
 		}">
 		<!-- 节点右键菜单 -->
 		<div class="menu-item" @click="onCopyPaste">

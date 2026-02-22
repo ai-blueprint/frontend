@@ -26,6 +26,7 @@ const store = reactive({
     nodeContext: {                                // 节点上下文菜单状态，这个直接包含节点菜单和节点面板
         visible: false,                         // 是否显示菜单
         nodeId: null,                           // 绑定的节点ID
+        gap: 0,                                // 菜单与节点的间距
         x: 0,                                   // 菜单在屏幕上的X坐标
         y: 0,                                   // 菜单在屏幕上的Y坐标
     },
