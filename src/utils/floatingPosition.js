@@ -15,7 +15,7 @@ const updateFloatingPosition = (nodeId) => {
 
     store.nodeContext.x = screenPosition.x                               // 菜单X设为节点中心
     store.nodeContext.y = screenPosition.y              // 菜单Y设在节点顶部上方（减去半高偏移）
-    store.nodeContext.gap = (height / 2) * store.viewport.zoom                     // 菜单与节点的间距设为节点高度一半，需要考虑viewport缩放
+    store.nodeContext.gap = (height / 2) * store.viewport.zoom + 24                     // 菜单与节点的间距设为节点高度一半，需要考虑viewport缩放
 }
 
 export { updateFloatingPosition }                               // 导出位置更新函数

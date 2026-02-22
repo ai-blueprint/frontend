@@ -48,24 +48,27 @@ const onDelete = () => {
 		<!-- 节点右键菜单 -->
 		<div class="menu-item" @click="onCopyPaste">
 			<!-- 复制并粘贴选项 -->
-			<img :src="copyPasteIcon" alt="copy" class="menu-icon" />
-			<!-- 图标 -->
-			<span class="menu-text">复制并粘贴</span>
+			 <span class="icon-container">
+				<img :src="copyPasteIcon" alt="copy" class="menu-icon" />
+			 </span>
 			<!-- 文字 -->
+			 <span class="menu-text">复制并粘贴</span>
 		</div>
 		<div class="menu-item" @click="onRename">
 			<!-- 重命名选项 -->
-			<img :src="renameIcon" alt="rename" class="menu-icon" />
-			<!-- 图标 -->
-			<span class="menu-text">重命名</span>
+			 <span class="icon-container">
+				<img :src="renameIcon" alt="rename" class="menu-icon" />
+			 </span>
 			<!-- 文字 -->
+			 <span class="menu-text">重命名</span>
 		</div>
-		<div class="menu-item danger" @click="onDelete">
+		<div class="menu-item" @click="onDelete">
 			<!-- 删除选项 -->
-			<img :src="deleteIcon" alt="delete" class="menu-icon" />
-			<!-- 图标 -->
-			<span class="menu-text">删除节点</span>
+			 <span class="icon-container">
+				<img :src="deleteIcon" alt="delete" class="menu-icon" />
+			 </span>
 			<!-- 文字 -->
+			 <span class="menu-text">删除节点</span>
 		</div>
 	</div>
 </template>
@@ -158,10 +161,5 @@ const onDelete = () => {
 	/* 蓝灰色文字 */
 	white-space: nowrap;
 	/* 不换行 */
-}
-
-.danger .menu-text {
-	color: #e74c3c;
-	/* 删除选项红色文字 */
 }
 </style>
