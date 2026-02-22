@@ -1,6 +1,6 @@
 <script setup>
 import store from '@/store.js'                     // 引入全局状态
-import NodeCmd from '@/commands/Node.js'            // 引入节点命令
+import Node from '@/commands/Node.js'            // 引入节点命令
 import Clipboard from '@/commands/Clipboard.js'     // 引入剪贴板命令
 
 import copyPasteIcon from '@/assets/ContextMenu/copy-paste.svg' // 复制粘贴图标
@@ -18,7 +18,7 @@ const onRename = () => {
     const nodeId = store.nodeMenu.nodeId              // 获取菜单绑定的节点ID
     if (!nodeId) return                               // 无节点ID直接返回
 
-    const node = NodeCmd.getById(nodeId)              // 获取节点对象
+    const node = Node.getById(nodeId)              // 获取节点对象
     if (!node) return                                 // 节点不存在直接返回
 
     store.renaming.nodeId = nodeId                    // 设置重命名目标
@@ -31,7 +31,7 @@ const onDelete = () => {
     const nodeId = store.nodeMenu.nodeId              // 获取菜单绑定的节点ID
     if (!nodeId) return                               // 无节点ID直接返回
 
-    NodeCmd.remove(nodeId)                            // 删除节点
+    Node.remove(nodeId)                            // 删除节点
     store.nodeMenu.visible = false                    // 关闭菜单
     store.nodePanel.visible = false                   // 关闭面板
 }

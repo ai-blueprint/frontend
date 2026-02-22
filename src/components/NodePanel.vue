@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from 'vue'                     // 引入Vue计算属性
 import store from '@/store.js'                     // 引入全局状态
-import NodeCmd from '@/commands/Node.js'            // 引入节点命令
+import Node from '@/commands/Node.js'            // 引入节点命令
 
 import IntInput from '@/elements/IntInput.vue'     // 整数输入组件
 import FloatInput from '@/elements/FloatInput.vue' // 浮点数输入组件
@@ -23,7 +23,7 @@ const elementMap = {
 // --- 获取当前面板绑定的节点 ---
 const currentNode = computed(() => {
     if (!store.nodePanel.nodeId) return null           // 没有绑定节点返回null
-    return NodeCmd.getById(store.nodePanel.nodeId)     // 查找节点对象
+    return Node.getById(store.nodePanel.nodeId)     // 查找节点对象
 })
 
 // --- 获取节点参数列表 ---
