@@ -28,8 +28,8 @@ const initWatchers = () => {
             return {                                                  // 返回需要监听的数据
                 x: node.position.x,                                    // 节点X坐标
                 y: node.position.y,                                    // 节点Y坐标
-                width: node.measured?.width,                            // 节点宽度
-                height: node.measured?.height,                          // 节点高度
+                width: node.dimensions?.width,                            // 节点宽度
+                height: node.dimensions?.height,                          // 节点高度
                 viewportX: store.viewport.x,                            // 视口X
                 viewportY: store.viewport.y,                            // 视口Y
                 viewportZoom: store.viewport.zoom,                      // 视口缩放

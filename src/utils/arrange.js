@@ -8,8 +8,8 @@ const calculateLayout = async (nodes, edges) => {
 
     // --- 构建elk节点数据 ---
     const elkNodes = nodes.map(node => {
-        const width = node.measured?.width || 150                  // 获取节点宽度，默认150
-        const height = node.measured?.height || 50                 // 获取节点高度，默认50
+        const width = node.dimensions?.width || 150                  // 获取节点宽度，默认150
+        const height = node.dimensions?.height || 50                 // 获取节点高度，默认50
         const inputPorts = node.data?.ports?.input || {}           // 获取输入端口
         const outputPorts = node.data?.ports?.output || {}         // 获取输出端口
         const inputKeys = Object.keys(inputPorts)                  // 输入端口标识列表

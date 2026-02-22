@@ -209,7 +209,7 @@
                                                 x
                                                 y
                                         data（节点信息，格式完全对应注册表里节点格式，可被修改）
-                                        measured（节点尺寸，都是对象）
+                                        dimensions（节点尺寸，都是对象）
                                                 width
                                                 height
                                         selected（当被选中时为true）
@@ -278,7 +278,7 @@
                         position.js(画布坐标与屏幕坐标互转)
                         generateId.js(随机id生成)
                         更新节点菜单和节点面板的位置
-                                获取当前节点的 position 和 measured 尺寸
+                                获取当前节点的 position 和 dimensions 尺寸
                                 调用 position.js 将节点顶部中心点转换为屏幕坐标
                                 store.nodeContext.x = 屏幕坐标X（节点中心）
                                 store.nodeContext.x = 屏幕坐标X（节点中心）
