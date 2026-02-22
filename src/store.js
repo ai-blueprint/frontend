@@ -23,6 +23,13 @@ const store = reactive({
         zoom: 1,                                // 缩放比例
     },
 
+    nodeContext: {                                // 节点上下文菜单状态，这个直接包含节点菜单和节点面板
+        visible: false,                         // 是否显示菜单
+        nodeId: null,                           // 绑定的节点ID
+        x: 0,                                   // 菜单在屏幕上的X坐标
+        y: 0,                                   // 菜单在屏幕上的Y坐标
+    },
+
     nodeMenu: {                               // 节点右键菜单状态
         visible: false,                         // 是否显示菜单
         nodeId: null,                           // 绑定的节点ID
