@@ -109,4 +109,16 @@ const getSelected = () => {
     return store.blueprint.nodes.filter(node => node.selected)    // 返回所有选中节点数组
 }
 
-export default { select, selectAll, toggleSelect, clearSelect, add, remove, removeSelected, rename, updateParam, getById, getSelected } // 导出所有节点命令
+// --- 打开节点菜单 ---
+const openContextMenu = (nodeId) => {
+    if (!nodeId) return                                            // 没有节点ID直接返回
+    store.nodeContext.nodeId = nodeId                              // 绑定菜单到节点
+    store.nodeContext.visible = true                               // 显示菜单
+}
+
+// --- 关闭节点菜单 ---
+const closeContextMenu = () => {
+    store.nodeContext.visible = false                              // 隐藏菜单
+}
+
+export default { select, selectAll, toggleSelect, clearSelect, add, remove, removeSelected, rename, updateParam, getById, getSelected, openContextMenu, closeContextMenu } // 导出所有节点命令

@@ -38,8 +38,7 @@ const onEdgeUpdate = ({ edge, connection }) => {
 // --- 画布空白处被点击 ---
 onPaneClick((event) => {
 	if (!event.ctrlKey && !event.metaKey) Node.clearSelect();
-	store.nodeContext.visible = false; // 隐藏节点菜单
-	store.nodeContext.visible = false; // 隐藏节点面板
+	Node.closeContextMenu(); // 隐藏节点菜单
 });
 
 // --- 视口变化时同步到store ---

@@ -5,6 +5,10 @@ import { nextTick } from 'vue'                     // 引入nextTick
 const record = () => {
     if (store.history.paused) return                              // 暂停期间不记录
 
+    // --- 快照策略说明 ---
+    // 当前使用全量深拷贝快照而不是增量快照，目的是让撤销/重做行为稳定且易懂。
+    // 这个策略适合中小规模蓝图（节点与连线数量有限）并且维护成本低。
+    // 如果后续蓝图规模明显增大导致记录性能下降，再升级为增量快照。
     // --- 深拷贝当前蓝图状态 ---
     const snapshot = {
         nodes: JSON.parse(JSON.stringify(store.blueprint.nodes)),   // 深拷贝节点数据

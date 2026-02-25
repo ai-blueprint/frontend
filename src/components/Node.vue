@@ -57,9 +57,9 @@ const onClick = (event) => {
 		Node.select(props.id); // 选中当前节点
 	}
 
-	// --- 如果当前节点不是菜单和面板绑定的节点，就隐藏它们 ---
+	// --- 如果当前节点不是菜单绑定的节点，就关闭菜单 ---
 	if (store.nodeContext.nodeId !== props.id) {
-		store.nodeContext.visible = false;
+		Node.closeContextMenu();
 	}
 };
 
@@ -69,8 +69,7 @@ const onContextMenu = (event) => {
 	event.stopPropagation(); // 阻止事件冒泡
 
 	Node.select(props.id); // 选中当前节点
-	store.nodeContext.nodeId = props.id;
-	store.nodeContext.visible = true;
+	Node.openContextMenu(props.id); // 打开当前节点菜单
 };
 
 // --- 节点被双击 ---
