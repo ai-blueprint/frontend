@@ -1,147 +1,212 @@
-import store from '@/store.js'                  // 引入全局状态
-import fallbackRegistry from '@/constants/registry.json' // 引入备用注册表
+import store from '@/store.js'                              // 引入全局状态
+import fallbackRegistry from '@/constants/registry.json'     // 引入本地备用注册表
 
-let socket = null                                       // WebSocket实例
-let connectResolve = null                               // 注册表就绪后的Promise回调
-let connectingPromise = null                            // 连接中的Promise（single-flight）
-store.registry = fallbackRegistry
-// --- 设置默认选中第一个分类 ---
-const categoryKeys = Object.keys(store.registry.categories || {}); // 获取所有分类标识
-if (categoryKeys.length) {
-    store.selected.category = categoryKeys[0]; // 默认选中第一个分类
-}
-// --- 连接WebSocket ---
-const connect = (address = 'ws://localhost:8765') => {
-    if (socket && socket.readyState === WebSocket.OPEN) return Promise.resolve(true) // 已连接直接复用结果
-    if (connectingPromise) return connectingPromise                 // 正在连接时复用同一个Promise
+let socket = null                                            // 当前WebSocket实例
+let finishConnect = null                                     // 当前连接任务的结束回调
+let pendingConnectTask = null                                // 当前连接中的Promise任务
 
-    connectingPromise = new Promise((resolve) => {
-        try {
-            connectResolve = (isReady) => {                         // 统一连接结束出口
-                resolve(isReady)                                      // 返回连接结果
-                connectResolve = null                                 // 清空回调引用
-                connectingPromise = null                              // 清空连接中的Promise
-            }
-
-            socket = new WebSocket(address)                         // 创建WebSocket连接
-
-            socket.onopen = () => {                                 // 连接成功回调
-                console.log('[ws] 已连接到后端')                    // 输出连接成功日志
-                requestRegistry()                                   // 连接成功后请求节点注册表
-            }
-
-            socket.onmessage = (event) => {                         // 收到消息回调
-                const message = JSON.parse(event.data)              // 解析收到的JSON消息
-                handleMessage(message)                              // 分发处理消息
-            }
-
-            socket.onclose = () => {                                // 连接关闭回调
-                console.log('[ws] 连接已关闭')                      // 输出关闭日志
-                socket = null                                       // 清空实例
-                if (connectResolve) connectResolve(false)           // 连接过程中关闭则按失败收口
-            }
-
-            socket.onerror = () => {                                // 连接错误回调
-                console.warn('[ws] 连接失败，使用本地注册表')        // 输出错误日志
-                loadFallbackRegistry()                              // 加载本地备用注册表
-                socket = null                                       // 清空实例
-                if (connectResolve) connectResolve(false)           // 通知调用方连接失败但已用备用数据
-            }
-        } catch (error) {
-            console.warn('[ws] 连接异常，使用本地注册表')           // 捕获异常
-            loadFallbackRegistry()                                  // 加载本地备用注册表
-            if (connectResolve) connectResolve(false)               // 通知调用方连接失败
-        }
-    })
-
-    return connectingPromise
+// --- 初始化注册表状态 ---
+const initRegistryState = () => {
+    setFallbackRegistry()                                    // 先写入本地备用注册表
+    setFirstCategory()                                       // 默认选中第一个分类
 }
 
-// --- 断开WebSocket连接 ---
-const disconnect = () => {
-    if (!socket) return                                   // 没有连接直接返回
-    socket.close()                                        // 关闭连接
-    socket = null                                         // 清空实例
+// --- 设置本地备用注册表 ---
+const setFallbackRegistry = () => {
+    store.registry = fallbackRegistry                        // 使用本地注册表兜底
 }
 
-// --- 发送消息（发现未连接就尝试一次重连）---
-const send = async (message) => {
-    if (!socket || socket.readyState !== WebSocket.OPEN) { // 检查连接状态
-        console.log('[ws] 未连接，尝试重连...')                 // 输出重连日志
-        await connect()                                     // 尝试重连
+// --- 设置默认分类 ---
+const setFirstCategory = () => {
+    const categoryKeys = Object.keys(store.registry.categories || {}) // 获取所有分类键
+    if (!categoryKeys.length) return                         // 没有分类直接返回
+    store.selected.category = categoryKeys[0]               // 默认选中第一个分类
+}
+
+// --- 判断连接是否可发送 ---
+const isSocketOpen = () => {
+    return !!socket && socket.readyState === WebSocket.OPEN // 仅OPEN状态可发送
+}
+
+// --- 结束连接任务（single-flight统一收口） ---
+const finishConnectResult = (isReady) => {
+    if (!finishConnect) return                               // 没有连接任务直接返回
+    finishConnect(isReady)                                   // 返回连接结果
+    finishConnect = null                                     // 清空结束回调
+    pendingConnectTask = null                                // 清空连接任务
+}
+
+// --- 创建WebSocket实例 ---
+const createSocket = (address) => {
+    socket = new WebSocket(address)                          // 按地址创建连接
+}
+
+// --- 绑定WebSocket事件 ---
+const bindSocketEvents = () => {
+    if (!socket) return                                      // 没有实例直接返回
+
+    socket.onopen = () => {
+        console.log('[ws] 已连接到后端')                      // 记录连接成功日志
+        sendGetRegistry()                                    // 连接成功后主动请求注册表
     }
-    if (socket && socket.readyState === WebSocket.OPEN) { // 重连后再检查一次
-        socket.send(JSON.stringify(message))                // 发送JSON消息
-    } else {
-        console.warn('[ws] 发送失败，无法连接到后端')            // 发送失败警告
+
+    socket.onmessage = (event) => {
+        const message = parseMessage(event.data)             // 解析服务端消息
+        if (!message) return                                 // 解析失败不再处理
+        checkServerMessage(message)                          // 分发消息到处理器
     }
+
+    socket.onclose = () => {
+        console.log('[ws] 连接已关闭')                        // 记录连接关闭日志
+        socket = null                                        // 清空连接实例
+        finishConnectResult(false)                           // 连接未完成时按失败收口
+    }
+
+    socket.onerror = () => {
+        console.warn('[ws] 连接失败，使用本地注册表')           // 记录连接失败日志
+        setFallbackRegistry()                                // 失败时回退本地注册表
+        socket = null                                        // 清空连接实例
+        finishConnectResult(false)                           // 连接失败按失败收口
+    }
+}
+
+// --- 解析消息文本 ---
+const parseMessage = (messageText) => {
+    try {
+        return JSON.parse(messageText)                       // 尝试解析JSON文本
+    } catch (error) {
+        console.warn('[ws] 消息解析失败，已忽略')               // 解析失败只记录警告
+        return null                                          // 返回空表示无效消息
+    }
+}
+
+// --- 发送JSON消息 ---
+const sendJson = (message) => {
+    if (!isSocketOpen()) return false                        // 未连接时不能发送
+    socket.send(JSON.stringify(message))                     // 序列化后发送消息
+    return true                                              // 返回发送成功
 }
 
 // --- 请求节点注册表 ---
-const requestRegistry = () => {
-    send({ type: 'getRegistry' })                         // 发送获取注册表请求
+const sendGetRegistry = () => {
+    sendJson({ type: 'getRegistry' })                        // 向后端请求注册表
 }
 
-// --- 加载本地备用注册表 ---
-const loadFallbackRegistry = () => {
-    store.registry = fallbackRegistry                     // 将备用注册表写入store
-    console.log('[ws] 已加载本地备用注册表')                 // 输出加载成功日志
+// --- 分发服务端消息 ---
+const checkServerMessage = (message) => {
+    console.log('[ws] 收到消息:', message)                    // 输出收到的原始消息
+
+    const messageType = message?.type                        // 读取消息类型
+    const messageData = message?.data                        // 读取消息数据
+    if (!messageType) return                                 // 没有类型直接返回
+
+    const messageHandler = messageHandlerMap[messageType]    // 根据类型查找处理器
+    if (!messageHandler) return                              // 未注册处理器直接返回
+    messageHandler(messageData)                              // 执行对应处理器
 }
 
-// --- 消息分发处理 ---
-const handleMessage = (message) => {
-    console.log('[ws] 收到消息:', message)                  // 在控制台输出收到的消息
-
-    if (message.type === 'registry') handleRegistry(message.data)   // 处理注册表数据
-    if (message.type === 'run') handleRunResult(message.data)       // 处理运行结果
-    if (message.type === 'score') handleScoreResult(message.data)   // 处理跑分结果
+// --- 写入注册表消息 ---
+const onRegistryMessage = (registryData) => {
+    store.registry = registryData                            // 更新注册表到全局状态
+    console.log('[ws] 注册表已更新')                          // 输出更新日志
+    setFirstCategory()                                       // 注册表更新后刷新默认分类
+    finishConnectResult(true)                                // 注册表到达后连接任务成功收口
 }
 
-// --- 处理注册表响应 ---
-const handleRegistry = (data) => {
-    store.registry = data                                 // 将注册表数据写入store
-    console.log('[ws] 注册表已更新')                        // 输出更新日志
+// --- 查找节点 ---
+const findNodeById = (nodeId) => {
+    return store.blueprint.nodes.find(node => node.id === nodeId) || null // 按ID查找节点
+}
 
-    if (connectResolve) {                                // 如果connect还在等待注册表
-        connectResolve(true)                               // 通知调用方注册表已就绪
-        connectResolve = null                              // 清空引用防止重复调用
+// --- 写入单个节点运行结果 ---
+const setNodeRunResult = (node, runItem) => {
+    if (runItem.tensor) {
+        node.tensorImage = runItem.tensor                    // 写入可视化图片
+        node.error = null                                    // 清空错误信息
+        return
     }
+
+    node.error = runItem.error || '未知错误'                  // 写入错误信息
+    node.tensorImage = null                                  // 清空可视化图片
 }
 
-// --- 处理蓝图运行结果 ---
-const handleRunResult = (data) => {
-    if (!data) return                                     // 没有数据直接返回
+// --- 写入运行结果消息 ---
+const onRunMessage = (runData) => {
+    if (!runData) return                                     // 没有结果直接返回
 
-    const resultList = Array.isArray(data) ? data : [data] // 兼容单个或数组结果
-
-    resultList.forEach(item => {
-        const node = store.blueprint.nodes.find(n => n.id === item.nodeId) // 找到对应节点
-        if (!node) return                                   // 节点不存在就跳过
-
-        if (item.tensor) {                                  // 如果有tensor数据
-            node.tensorImage = item.tensor                    // 存入节点的可视化图
-            node.error = null                                 // 清除错误信息
-        } else {                                            // 没有tensor说明运行出错
-            node.error = item.error || '未知错误'              // 存入错误信息
-            node.tensorImage = null                           // 清除可视化图
-        }
+    const runItems = Array.isArray(runData) ? runData : [runData] // 兼容数组和单项
+    runItems.forEach(runItem => {
+        const node = findNodeById(runItem.nodeId)            // 查找结果对应节点
+        if (!node) return                                    // 节点不存在直接跳过
+        setNodeRunResult(node, runItem)                      // 写入节点运行结果
     })
 }
 
-// --- 处理跑分结果 ---
-const handleScoreResult = (data) => {
-    console.log('[ws] 跑分结果:', data)                     // 在控制台输出跑分结果
-    store.scoring = data || {}                            // 更新跑分状态数据
+// --- 写入跑分消息 ---
+const onScoreMessage = (scoreData) => {
+    console.log('[ws] 跑分结果:', scoreData)                 // 输出跑分结果日志
+    store.scoring = scoreData || {}                          // 更新跑分状态
 }
 
-// --- 发送蓝图运行请求 ---
+const messageHandlerMap = {
+    registry: onRegistryMessage,                             // 注册表消息处理器
+    run: onRunMessage,                                       // 运行结果消息处理器
+    score: onScoreMessage,                                   // 跑分结果消息处理器
+}
+
+// --- 建立WebSocket连接（single-flight） ---
+const connect = (address = 'ws://localhost:8765') => {
+    if (isSocketOpen()) return Promise.resolve(true)         // 已连接直接返回成功
+    if (pendingConnectTask) return pendingConnectTask        // 连接中复用同一个任务
+
+    pendingConnectTask = new Promise((resolve) => {
+        finishConnect = (isReady) => {
+            resolve(isReady)                                 // 返回连接是否就绪
+        }
+
+        try {
+            createSocket(address)                            // 创建连接实例
+            bindSocketEvents()                               // 绑定连接事件
+        } catch (error) {
+            console.warn('[ws] 连接异常，使用本地注册表')      // 捕获连接阶段异常
+            setFallbackRegistry()                            // 异常时回退本地注册表
+            socket = null                                    // 清空连接实例
+            finishConnectResult(false)                       // 异常按失败收口
+        }
+    })
+
+    return pendingConnectTask                                // 返回连接任务
+}
+
+// --- 断开连接 ---
+const disconnect = () => {
+    if (!socket) return                                      // 没有连接直接返回
+    socket.close()                                           // 主动关闭连接
+    socket = null                                            // 立即清空连接实例
+}
+
+// --- 发送业务消息（未连接则先连一次） ---
+const send = async (message) => {
+    if (!isSocketOpen()) {
+        console.log('[ws] 未连接，尝试重连...')                // 记录重连提示日志
+        await connect()                                      // 先确保连接可用
+    }
+
+    const isSent = sendJson(message)                         // 发送JSON消息
+    if (isSent) return                                       // 发送成功直接结束
+    console.warn('[ws] 发送失败，无法连接到后端')               // 发送失败给出警告
+}
+
+// --- 发送运行请求 ---
 const sendRun = () => {
-    send({ type: 'run', data: { blueprint: store.blueprint } }) // 发送蓝图数据到后端运行
+    send({ type: 'run', data: { blueprint: store.blueprint } }) // 发送运行请求
 }
 
-// --- 发送蓝图跑分请求 ---
+// --- 发送跑分请求 ---
 const sendScore = () => {
-    send({ type: 'score', data: { blueprint: store.blueprint } }) // 发送蓝图数据到后端跑分
+    send({ type: 'score', data: { blueprint: store.blueprint } }) // 发送跑分请求
 }
 
-export default { connect, disconnect, send, sendRun, sendScore } // 导出所有WebSocket方法
+initRegistryState()                                          // 文件加载时初始化注册表状态
+
+export default { connect, disconnect, send, sendRun, sendScore } // 导出WebSocket能力
