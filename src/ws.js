@@ -155,8 +155,19 @@ const messageHandlerMap = {
     score: onScoreMessage,                                   // 跑分结果消息处理器
 }
 
+// --- 生成默认WebSocket地址（同域优先） ---
+const getAutoSocketAddress = () => {
+    const envAddress = import.meta.env?.VITE_WS_URL                 // 允许环境变量覆盖地址
+    if (envAddress) return envAddress                               // 有配置优先使用配置地址
+
+    const pageProtocol = window.location.protocol                   // 读取页面协议
+    const socketProtocol = pageProtocol === 'https:' ? 'wss:' : 'ws:' // https页面必须使用wss
+    const pageHost = window.location.host                           // 读取页面主机与端口
+    return `${socketProtocol}//${pageHost}/ws`                      // 默认连接同域WebSocket入口
+}
+
 // --- 建立WebSocket连接（single-flight） ---
-const connect = (address = 'ws://localhost:8765') => {
+const connect = (address = getAutoSocketAddress()) => {
     // --- 复用已有连接任务 ---
     if (isSocketOpen()) return Promise.resolve(true)         // 已连接直接返回成功
     if (pendingConnectTask) return pendingConnectTask        // 连接中复用同一个任务
