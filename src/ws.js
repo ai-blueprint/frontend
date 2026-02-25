@@ -64,8 +64,7 @@ const bindSocketEvents = () => {
     }
 
     socket.onerror = () => {
-        console.warn('[ws] 后端连接失败，节点注册表更新失败')           // 记录连接失败日志
-        console.log('[ws] 使用本地备用注册表，核心功能可以正常使用')           // 记录连接失败日志
+        console.warn('[ws] 后端连接失败')           // 记录连接失败日志
         setFallbackRegistry()                                // 失败时回退本地注册表
         socket = null                                        // 清空连接实例
         finishConnectResult(false)                           // 连接失败按失败收口
