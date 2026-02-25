@@ -17,5 +17,6 @@ initWatchers(); // 初始化数据维护监听
 AutoRecord.init(); // 初始化自动历史记录
 Shortcut.init(); // 初始化快捷键监听
 History.record(); // 记录初始空白状态
+ws.initRegistryState(); // 显式初始化本地注册表状态
 await ws.connect(); // 连接后端WebSocket
 
