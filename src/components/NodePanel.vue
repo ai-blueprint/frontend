@@ -48,8 +48,10 @@ const hasParams = computed(() => {
 			top: store.nodeContext.y + store.nodeContext.gap + 'px',
 		}">
 		<!-- 节点参数面板 -->
-		<div class="panel-title">节点的参数</div>
-		<!-- 面板标题 -->
+		<div class="panel-header">
+			<div class="panel-title">节点的参数</div>
+			<!-- 面板标题 -->
+		</div>
 		<div class="panel-content">
 			<!-- 面板内容区域 -->
 			<component v-for="[key, param] in paramEntries" :key="key" :is="elementMap[param.type]" :paramKey="key" :param="param" :nodeId="store.nodeContext.nodeId" />
@@ -62,74 +64,104 @@ const hasParams = computed(() => {
 .node-panel {
 	position: fixed;
 	transform: translate(-50%, 0%);
+	z-index: 999;
+	border-radius: 14px;
+	background: #f6f9fe;
+	box-shadow: 0 2px 20px rgba(111, 125, 176, 0.15);
 	min-width: 200px;
-	/* 最小宽度 */
-	max-width: 250px;
-	/* 最大宽度 */
-	width: 100%;
-	/* 铺满可用宽度 */
-	background-color: #f6f9fe;
-	/* 浅蓝灰背景 */
-	padding: 16px;
-	/* 内边距 */
+	max-width: 280px;
+	width: max-content;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+.panel-header {
+	background: #eaeffc;
+	padding: 10px 14px;
+	border-bottom: 1px solid rgba(111, 125, 176, 0.1);
 }
 
 .panel-title {
-	font-size: 18px;
-	/* 标题字号 */
-	font-weight: bold;
-	/* 标题加粗 */
-	color: #333333;
-	/* 深色标题 */
-	margin-bottom: 10px;
-	/* 标题下方间距 */
-	padding-bottom: 5px;
-	/* 底部内边距 */
-	border-bottom: 2px solid #eaeffc;
-	/* 紫蓝色底部分隔线 */
-	width: 100%;
-	/* 铺满宽度 */
+	font-size: 13px;
+	font-weight: 600;
+	color: rgb(111, 125, 176);
+	letter-spacing: 0.5px;
 	text-align: left;
-	/* 左对齐 */
 }
 
 .panel-content {
+	padding: 12px 14px;
 	display: flex;
-	/* 纵向排列 */
 	flex-direction: column;
-	/* 垂直布局 */
+	gap: 10px;
+	max-height: 300px;
+	overflow-y: auto;
 	font-size: 14px;
-	/* 内容字号 */
 	font-weight: 600;
-	/* 加粗 */
 	color: #4c4c4c;
-	/* 深灰文字 */
-	overflow: hidden;
-	/* 隐藏溢出 */
 }
 
 .param-item {
 	display: flex;
-	/* 横向排列标签和输入 */
-	align-items: center;
-	/* 垂直居中 */
-	font-size: 14px;
-	/* 参数字号 */
-	font-weight: 600;
-	/* 加粗 */
-	color: #333333;
-	/* 深色文字 */
-	white-space: nowrap;
-	/* 不换行 */
-	margin-bottom: 10px;
-	/* 参数间距 */
-	width: 100%;
-	/* 铺满宽度 */
 	flex-direction: row;
-	/* 横向排列 */
-	flex-wrap: nowrap;
-	/* 不换行 */
+	align-items: center;
 	justify-content: space-between;
-	/* 两端对齐 */
+	gap: 12px;
+	height: 40px;
+	white-space: nowrap;
+}
+
+.param-label,
+label,
+.slider__output {
+	font-size: 12px;
+	font-weight: 500;
+	color: rgb(111, 125, 176);
+}
+
+.param-input {
+	field-sizing: content;
+	font-size: 12px;
+	width: auto;
+	max-width: 100px;
+}
+
+:deep(input[type="number"]::-webkit-inner-spin-button),
+:deep(input[type="number"]::-webkit-outer-spin-button) {
+	opacity: 1;
+}
+
+:deep(.number-input) {
+	border-radius: 100px;
+}
+
+:deep([data-slot="listbox-item"]) {
+	padding-inline: 0;
+}
+
+:deep(svg[data-slot="listbox-item-indicator--checkmark"]) {
+	stroke-width: 4 !important;
+	stroke: #8b92e5 !important;
+}
+
+:deep([data-slot="select"]) {
+	width: max-content;
+}
+
+.panel-content::-webkit-scrollbar {
+	width: 6px;
+}
+
+.panel-content::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.panel-content::-webkit-scrollbar-thumb {
+	background: rgba(111, 125, 176, 0.3);
+	border-radius: 3px;
+}
+
+.panel-content::-webkit-scrollbar-thumb:hover {
+	background: rgba(111, 125, 176, 0.5);
 }
 </style>
