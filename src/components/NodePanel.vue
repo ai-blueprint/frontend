@@ -69,7 +69,7 @@ const hasParams = computed(() => {
 	background: #f6f9fe;
 	box-shadow: 0 2px 20px rgba(111, 125, 176, 0.15);
 	min-width: 200px;
-	max-width: 280px;
+	max-width: 380px;
 	width: max-content;
 	overflow: hidden;
 	white-space: nowrap;
