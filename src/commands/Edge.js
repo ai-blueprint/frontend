@@ -1,5 +1,6 @@
 import store from '@/store.js'                     // 引入全局状态
 import generateId from '@/utils/generateId.js'     // 引入ID生成器
+import { normalizeIds } from '@/utils/normalize.js' // 引入ID归一化工具
 
 // --- 创建连接线 ---
 const add = (source, sourcePort, target, targetPort) => {
@@ -24,45 +25,38 @@ const add = (source, sourcePort, target, targetPort) => {
 const remove = (edgeId) => {
     const ids = normalizeIds(edgeId)                              // 统一转为ID数组
     ids.forEach(id => {
-        const index = store.blueprint.edges.findIndex(e => e.id === id) // 找到连接线索引
+        const index = store.blueprint.edges.findIndex(edge => edge.id === id) // 找到连接线索引
         if (index !== -1) store.blueprint.edges.splice(index, 1)       // 删除连接线
     })
 }
 
 // --- 获取节点相关的所有连接线 ---
 const getByNode = (nodeId) => {
-    return store.blueprint.edges.filter(e => e.source === nodeId || e.target === nodeId) // 过滤关联线
+    return store.blueprint.edges.filter(edge => edge.source === nodeId || edge.target === nodeId) // 过滤关联线
 }
 
 // --- 获取端口的所有连接线 ---
 const getByPort = (nodeId, portKey) => {
-    return store.blueprint.edges.filter(e =>
-        (e.source === nodeId && e.sourceHandle === portKey) ||       // 匹配输出端口
-        (e.target === nodeId && e.targetHandle === portKey)          // 匹配输入端口
+    return store.blueprint.edges.filter(edge =>
+        (edge.source === nodeId && edge.sourceHandle === portKey) || // 匹配输出端口
+        (edge.target === nodeId && edge.targetHandle === portKey)    // 匹配输入端口
     )
 }
 
 // --- 获取输入端口的连接线（最多一条）---
 const getByInputPort = (nodeId, portKey) => {
-    return store.blueprint.edges.find(e => e.target === nodeId && e.targetHandle === portKey) || null // 查找连入该输入端口的线
+    return store.blueprint.edges.find(edge => edge.target === nodeId && edge.targetHandle === portKey) || null // 查找连入该输入端口的线
 }
 
 // --- 校验连接是否合法（只允许输出端口连输入端口）---
 const checkConnection = (connection) => {
-    const sourceNode = store.blueprint.nodes.find(n => n.id === connection.source)    // 查找来源节点
-    const targetNode = store.blueprint.nodes.find(n => n.id === connection.target)    // 查找目标节点
+    const sourceNode = store.blueprint.nodes.find(node => node.id === connection.source) // 查找来源节点
+    const targetNode = store.blueprint.nodes.find(node => node.id === connection.target) // 查找目标节点
     if (!sourceNode || !targetNode) return false                                       // 节点不存在就拒绝
 
     const isSourceOutput = connection.sourceHandle in (sourceNode.data?.ports?.output || {}) // 来源端口必须是输出端口
     const isTargetInput = connection.targetHandle in (targetNode.data?.ports?.input || {})   // 目标端口必须是输入端口
     return isSourceOutput && isTargetInput                                                    // 两个条件都满足才允许连接
-}
-
-// --- 辅助：将各种格式的ID统一转为数组 ---
-const normalizeIds = (input) => {
-    if (Array.isArray(input)) return input                        // 已经是数组直接返回
-    if (typeof input === 'object' && input.id) return [input.id]  // 对象取id字段
-    return [input]                                                // 单个ID包装成数组
 }
 
 export default { add, remove, getByNode, getByPort, getByInputPort, checkConnection } // 导出所有连接线命令

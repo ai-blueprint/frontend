@@ -1,21 +1,22 @@
 import store from '@/store.js'                     // 引入全局状态
 import generateId from '@/utils/generateId.js'     // 引入ID生成器
-import Node from '@/commands/Node.js'               // 引入节点命令
+import Node from '@/commands/Node.js'              // 引入节点命令
+import { normalizeIds } from '@/utils/normalize.js' // 引入ID归一化工具
 
 // --- 复制节点 ---
 const copy = (nodeIds) => {
     const targetNodes = nodeIds                                   // 判断是否传入了指定节点
-        ? store.blueprint.nodes.filter(n => normalizeIds(nodeIds).includes(n.id)) // 按指定ID过滤
-        : store.blueprint.nodes.filter(n => n.selected)             // 默认使用选中节点
+        ? store.blueprint.nodes.filter(node => normalizeIds(nodeIds).includes(node.id)) // 按指定ID过滤
+        : store.blueprint.nodes.filter(node => node.selected)       // 默认使用选中节点
 
     if (!targetNodes.length) return                               // 没有可复制的节点直接返回
 
     store.clipboard.nodes = JSON.parse(JSON.stringify(targetNodes)) // 深拷贝节点到剪贴板
 
     // --- 只复制选中节点之间的连接线 ---
-    const nodeIdSet = new Set(targetNodes.map(n => n.id))         // 构建节点ID集合
-    const relatedEdges = store.blueprint.edges.filter(e =>
-        nodeIdSet.has(e.source) && nodeIdSet.has(e.target)          // 两端都在选中集合内的连线
+    const nodeIdSet = new Set(targetNodes.map(node => node.id))    // 构建节点ID集合
+    const relatedEdges = store.blueprint.edges.filter(edge =>
+        nodeIdSet.has(edge.source) && nodeIdSet.has(edge.target)    // 两端都在选中集合内的连线
     )
     store.clipboard.edges = JSON.parse(JSON.stringify(relatedEdges)) // 深拷贝连接线到剪贴板
 }
@@ -72,13 +73,6 @@ const hasContent = () => {
 const clear = () => {
     store.clipboard.nodes = []                                    // 清空节点
     store.clipboard.edges = []                                    // 清空连接线
-}
-
-// --- 辅助：将各种格式的ID统一转为数组 ---
-const normalizeIds = (input) => {
-    if (Array.isArray(input)) return input                        // 已经是数组直接返回
-    if (typeof input === 'object' && input.id) return [input.id]  // 对象取id字段
-    return [input]                                                // 单个ID包装成数组
 }
 
 export default { copy, paste, copyAndPaste, hasContent, clear } // 导出所有剪贴板命令

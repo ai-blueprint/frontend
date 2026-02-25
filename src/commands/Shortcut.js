@@ -10,59 +10,60 @@ const init = () => {
         const activeTag = document.activeElement?.tagName?.toLowerCase() // 获取当前焦点元素标签
         if (activeTag === 'input' || activeTag === 'textarea') return   // 焦点在输入框时不响应
 
-        const isCtrl = event.ctrlKey || event.metaKey               // 检测是否按下Ctrl/Cmd
+        const isCtrl = event.ctrlKey || event.metaKey                 // 检测是否按下Ctrl/Cmd
+        const key = event.key.toLowerCase()                           // 统一按键为小写
 
         // --- Ctrl+Z 撤销 ---
-        if (isCtrl && !event.shiftKey && event.key === 'z') {
+        if (isCtrl && !event.shiftKey && key === 'z') {
             event.preventDefault()                                    // 阻止浏览器默认行为
             History.undo()                                            // 执行撤销
             return
         }
 
         // --- Ctrl+Shift+Z 重做 ---
-        if (isCtrl && event.shiftKey && event.key === 'Z') {
+        if (isCtrl && event.shiftKey && key === 'z') {
             event.preventDefault()                                    // 阻止浏览器默认行为
             History.redo()                                            // 执行重做
             return
         }
 
         // --- Ctrl+Y 重做 ---
-        if (isCtrl && event.key === 'y') {
+        if (isCtrl && key === 'y') {
             event.preventDefault()                                    // 阻止浏览器默认行为
             History.redo()                                            // 执行重做
             return
         }
 
         // --- Delete 删除选中节点 ---
-        if (event.key === 'Delete') {
+        if (key === 'delete') {
             event.preventDefault()                                    // 阻止浏览器默认行为
             Node.removeSelected()                                     // 删除选中节点
             return
         }
 
         // --- Ctrl+C 复制 ---
-        if (isCtrl && event.key === 'c') {
+        if (isCtrl && key === 'c') {
             event.preventDefault()                                    // 阻止浏览器默认行为
             Clipboard.copy()                                          // 复制选中节点
             return
         }
 
         // --- Ctrl+V 粘贴 ---
-        if (isCtrl && event.key === 'v') {
+        if (isCtrl && key === 'v') {
             event.preventDefault()                                    // 阻止浏览器默认行为
             Clipboard.paste()                                         // 粘贴节点
             return
         }
 
         // --- Ctrl+D 复制并粘贴 ---
-        if (isCtrl && event.key === 'd') {
+        if (isCtrl && key === 'd') {
             event.preventDefault()                                    // 阻止浏览器默认行为
             Clipboard.copyAndPaste()                                  // 复制并粘贴
             return
         }
 
         // --- Ctrl+A 全选 ---
-        if (isCtrl && event.key === 'a') {
+        if (isCtrl && key === 'a') {
             event.preventDefault()                                    // 阻止浏览器默认行为
             Node.selectAll()                                          // 选中全部节点
             return

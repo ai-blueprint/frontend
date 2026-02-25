@@ -1,6 +1,7 @@
 import store from '@/store.js'                     // 引入全局状态
 import generateId from '@/utils/generateId.js'     // 引入ID生成器
 import Edge from '@/commands/Edge.js'              // 引入连接线命令
+import { normalizeIds } from '@/utils/normalize.js' // 引入ID归一化工具
 
 // --- 选中节点（支持单个ID、数组、对象）---
 const select = (nodeId) => {
@@ -19,7 +20,7 @@ const selectAll = () => {
 
 // --- 切换选中状态 ---
 const toggleSelect = (nodeId) => {
-    const node = store.blueprint.nodes.find(n => n.id === nodeId) // 找到目标节点
+    const node = store.blueprint.nodes.find(node => node.id === nodeId) // 找到目标节点
     if (!node) return                                             // 节点不存在直接返回
     node.selected = !node.selected                                // 反转选中状态
 }
@@ -68,9 +69,9 @@ const remove = (nodeId) => {
     const ids = normalizeIds(nodeId)                              // 统一转为ID数组
     ids.forEach(id => {
         const relatedEdges = Edge.getByNode(id)                     // 获取关联的连接线
-        const edgeIds = relatedEdges.map(e => e.id)                 // 提取连接线ID
+        const edgeIds = relatedEdges.map(edge => edge.id)           // 提取连接线ID
         Edge.remove(edgeIds)                                        // 批量删除关联连接线
-        const nodeIndex = store.blueprint.nodes.findIndex(n => n.id === id) // 找到节点索引
+        const nodeIndex = store.blueprint.nodes.findIndex(node => node.id === id) // 找到节点索引
         if (nodeIndex !== -1) store.blueprint.nodes.splice(nodeIndex, 1)    // 删除节点
     })
 }
@@ -78,21 +79,21 @@ const remove = (nodeId) => {
 // --- 删除所有选中节点 ---
 const removeSelected = () => {
     const selectedIds = store.blueprint.nodes
-        .filter(n => n.selected)                                    // 筛选选中的节点
-        .map(n => n.id)                                             // 提取ID
+        .filter(node => node.selected)                              // 筛选选中的节点
+        .map(node => node.id)                                       // 提取ID
     if (selectedIds.length) remove(selectedIds)                   // 批量删除
 }
 
 // --- 重命名节点 ---
 const rename = (nodeId, newLabel) => {
-    const node = store.blueprint.nodes.find(n => n.id === nodeId) // 找到目标节点
+    const node = store.blueprint.nodes.find(node => node.id === nodeId) // 找到目标节点
     if (!node) return                                             // 节点不存在直接返回
     node.data.label = newLabel                                    // 修改节点显示名称
 }
 
 // --- 更新节点参数 ---
 const updateParam = (nodeId, paramKey, value) => {
-    const node = store.blueprint.nodes.find(n => n.id === nodeId) // 找到目标节点
+    const node = store.blueprint.nodes.find(node => node.id === nodeId) // 找到目标节点
     if (!node) return                                             // 节点不存在直接返回
     if (!node.data.params[paramKey]) return                       // 参数不存在直接返回
     node.data.params[paramKey].value = value                      // 更新参数值
@@ -100,19 +101,12 @@ const updateParam = (nodeId, paramKey, value) => {
 
 // --- 根据ID获取节点 ---
 const getById = (nodeId) => {
-    return store.blueprint.nodes.find(n => n.id === nodeId) || null // 返回匹配的节点或null
+    return store.blueprint.nodes.find(node => node.id === nodeId) || null // 返回匹配的节点或null
 }
 
 // --- 获取所有选中节点 ---
 const getSelected = () => {
-    return store.blueprint.nodes.filter(n => n.selected)          // 返回所有选中节点数组
-}
-
-// --- 辅助：将各种格式的ID统一转为数组 ---
-const normalizeIds = (input) => {
-    if (Array.isArray(input)) return input                        // 已经是数组直接返回
-    if (typeof input === 'object' && input.id) return [input.id]  // 对象取id字段
-    return [input]                                                // 单个ID包装成数组
+    return store.blueprint.nodes.filter(node => node.selected)    // 返回所有选中节点数组
 }
 
 export default { select, selectAll, toggleSelect, clearSelect, add, remove, removeSelected, rename, updateParam, getById, getSelected } // 导出所有节点命令

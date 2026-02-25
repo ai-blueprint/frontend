@@ -59,8 +59,6 @@ const onDrop = (event) => {
 
 	const position = screenToFlowCoordinate({ x: event.clientX, y: event.clientY }); // 将屏幕坐标转为画布坐标
 	Node.add(opcode, position.x, position.y); // 在画布对应位置创建节点
-	console.log({ x: event.clientX, y: event.clientY });
-	console.log({ x: position.x, y: position.y });
 };
 
 const onContextMenu = (event) => {
