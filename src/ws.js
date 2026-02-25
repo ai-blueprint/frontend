@@ -64,7 +64,8 @@ const bindSocketEvents = () => {
     }
 
     socket.onerror = () => {
-        console.warn('[ws] 连接失败，使用本地注册表')           // 记录连接失败日志
+        console.warn('[ws] 后端连接失败，节点注册表更新失败')           // 记录连接失败日志
+        console.log('[ws] 使用本地备用注册表，核心功能可以正常使用')           // 记录连接失败日志
         setFallbackRegistry()                                // 失败时回退本地注册表
         socket = null                                        // 清空连接实例
         finishConnectResult(false)                           // 连接失败按失败收口
@@ -173,7 +174,7 @@ const connect = (address = 'ws://localhost:8765') => {
             bindSocketEvents()                               // 绑定连接事件
         } catch (error) {
             // --- 连接异常时回退本地状态 ---
-            console.warn('[ws] 连接异常，使用本地注册表')      // 捕获连接阶段异常
+            console.warn('[ws] 连接异常，后端连接失败')      // 捕获连接阶段异常
             setFallbackRegistry()                            // 异常时回退本地注册表
             socket = null                                    // 清空连接实例
             finishConnectResult(false)                       // 异常按失败收口
