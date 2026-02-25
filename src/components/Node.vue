@@ -58,9 +58,8 @@ const onClick = (event) => {
 	}
 
 	// --- 如果当前节点不是菜单和面板绑定的节点，就隐藏它们 ---
-	if (store.nodeContext.nodeId !== props.id || store.nodeContext.nodeId !== props.id) {
-		store.nodeContext.visible = false; // 隐藏菜单
-		store.nodeContext.visible = false; // 隐藏面板
+	if (store.nodeContext.nodeId !== props.id) {
+		store.nodeContext.visible = false;
 	}
 };
 
@@ -70,10 +69,8 @@ const onContextMenu = (event) => {
 	event.stopPropagation(); // 阻止事件冒泡
 
 	Node.select(props.id); // 选中当前节点
-	store.nodeContext.nodeId = props.id; // 绑定菜单到当前节点
-	store.nodeContext.nodeId = props.id; // 绑定面板到当前节点
-	store.nodeContext.visible = true; // 显示菜单
-	store.nodeContext.visible = true; // 显示面板
+	store.nodeContext.nodeId = props.id;
+	store.nodeContext.visible = true;
 };
 
 // --- 节点被双击 ---

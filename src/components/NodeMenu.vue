@@ -32,8 +32,7 @@ const onDelete = () => {
 	if (!nodeId) return; // 无节点ID直接返回
 
 	Node.remove(nodeId); // 删除节点
-	store.nodeContext.visible = false; // 关闭菜单
-	store.nodeContext.visible = false; // 关闭面板
+	store.nodeContext.visible = false;
 };
 </script>
 
