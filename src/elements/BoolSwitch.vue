@@ -25,7 +25,7 @@ watch(() => props.param.value, (newVal) => {
 <template>
     <div class="bool-switch"> <!-- 布尔开关容器 -->
         <label class="switch-label">{{ param.label }}</label> <!-- 参数名称标签 -->
-        <var-switch :model-value="currentValue" @update:model-value="onChange" size="small" /> <!-- Varlet开关组件 -->
+        <var-switch :model-value="currentValue" @update:model-value="onChange"/> <!-- Varlet开关组件 -->
     </div>
 </template>
 

@@ -45,7 +45,7 @@ const hasParams = computed(() => {
 		class="node-panel"
 		:style="{
 			left: store.nodeContext.x + 'px',
-			top: store.nodeContext.y + 'px',
+			top: store.nodeContext.y + store.nodeContext.gap + 'px',
 		}">
 		<!-- 节点参数面板 -->
 		<div class="panel-title">节点的参数</div>
@@ -60,22 +60,18 @@ const hasParams = computed(() => {
 
 <style scoped>
 .node-panel {
+	position: fixed;
+	transform: translate(-50%, 0%);
 	min-width: 200px;
 	/* 最小宽度 */
 	max-width: 250px;
 	/* 最大宽度 */
 	width: 100%;
 	/* 铺满可用宽度 */
-	height: 100%;
-	/* 铺满高度 */
 	background-color: #f6f9fe;
 	/* 浅蓝灰背景 */
 	padding: 16px;
 	/* 内边距 */
-	box-sizing: border-box;
-	/* 盒模型 */
-	overflow-y: auto;
-	/* 内容超出时滚动 */
 }
 
 .panel-title {
@@ -102,8 +98,6 @@ const hasParams = computed(() => {
 	/* 纵向排列 */
 	flex-direction: column;
 	/* 垂直布局 */
-	height: calc(100% - 60px);
-	/* 减去标题高度 */
 	font-size: 14px;
 	/* 内容字号 */
 	font-weight: 600;
