@@ -2,8 +2,11 @@ import { watch } from 'vue'                            // 引入Vue的watch
 import store from '@/store.js'                         // 引入全局状态
 import { updateFloatingPosition } from '@/utils/floatingPosition.js' // 引入位置更新工具
 
+let hasStarted = false                                            // 标记是否已完成初始化
+
 // --- 初始化数据维护监听 ---
 const initWatchers = () => {
+    if (hasStarted) return                                        // 已初始化直接返回
 
     // --- 监听节点数量变化，清理失效的菜单和面板 ---
     watch(
@@ -41,6 +44,9 @@ const initWatchers = () => {
         },
         { deep: true }                                              // 深度监听
     )
+    hasStarted = true                                             // 标记为已初始化
 }
 
-export { initWatchers }                                         // 导出初始化函数
+initWatchers()                                                    // 导入模块后立即启动
+
+export { initWatchers }                                           // 导出初始化函数

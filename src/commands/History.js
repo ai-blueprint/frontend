@@ -1,6 +1,8 @@
 import store from '@/store.js'                     // 引入全局状态
 import { nextTick } from 'vue'                     // 引入nextTick
 
+let hasRecordedInitial = false                                  // 标记是否已记录初始化快照
+
 // --- 记录快照 ---
 const record = () => {
     if (store.history.paused) return                              // 暂停期间不记录
@@ -89,4 +91,13 @@ const getInfo = () => {
     }
 }
 
-export default { record, undo, redo, canUndo, canRedo, clear, getInfo } // 导出所有历史记录命令
+// --- 初始化历史记录 ---
+const init = () => {
+    if (hasRecordedInitial) return                              // 已初始化直接返回
+    record()                                                    // 记录初始空白状态
+    hasRecordedInitial = true                                   // 标记为已初始化
+}
+
+init()                                                          // 导入模块后立即启动
+
+export default { record, undo, redo, canUndo, canRedo, clear, getInfo, init } // 导出所有历史记录命令

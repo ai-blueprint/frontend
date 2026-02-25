@@ -3,9 +3,12 @@ import Node from '@/commands/Node.js'               // 引入节点命令
 import Clipboard from '@/commands/Clipboard.js'     // 引入剪贴板命令
 
 let keydownHandler = null                                       // 存储事件处理函数引用
+let hasStarted = false                                          // 标记是否已完成初始化
 
 // --- 初始化快捷键监听 ---
 const init = () => {
+    if (hasStarted) return                                      // 已初始化直接返回
+
     keydownHandler = (event) => {
         const activeTag = document.activeElement?.tagName?.toLowerCase() // 获取当前焦点元素标签
         if (activeTag === 'input' || activeTag === 'textarea') return   // 焦点在输入框时不响应
@@ -71,14 +74,19 @@ const init = () => {
     }
 
     document.addEventListener('keydown', keydownHandler)          // 注册键盘按下监听
+    hasStarted = true                                             // 标记为已初始化
 }
 
 // --- 销毁快捷键监听 ---
 const destroy = () => {
     if (keydownHandler) {
-        document.removeEventListener('keydown', keydownHandler)     // 移除键盘监听
-        keydownHandler = null                                       // 清空引用
+        document.removeEventListener('keydown', keydownHandler)   // 移除键盘监听
+        keydownHandler = null                                     // 清空引用
     }
+
+    hasStarted = false                                            // 标记为未初始化
 }
 
-export default { init, destroy }                                // 导出快捷键命令
+init()                                                            // 导入模块后立即启动
+
+export default { init, destroy }                                 // 导出快捷键命令
