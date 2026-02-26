@@ -260,7 +260,7 @@ watch(isRenaming, (newVal) => {
 .custom-node.selected {
 	outline: 3px solid #ffffff;
 	/* 选中时白色描边 */
-	filter: drop-shadow(0 0 3px #ffffff) drop-shadow(0 0 15px #ffffff) brightness(1.1);
+	filter: drop-shadow(0 0 3px var(--node-color)) drop-shadow(0 0 15px var(--node-color)) brightness(1.1);
 	/* 选中发光效果 */
 }
 
