@@ -43,6 +43,8 @@ const onSelectCategory = (categoryKey) => {
     /* 垂直布局 */
     height: 100%;
     /* 铺满高度 */
+    user-select: none;
+    /* 禁止选中 */
 }
 
 .category-item {
@@ -95,8 +97,6 @@ const onSelectCategory = (categoryKey) => {
 .category-icon {
     width: 100%;
     /* 图标铺满 */
-    user-select: none;
-    /* 禁止拖拽 */
     pointer-events: none;
     /* 禁止点击图标 */
 }
@@ -111,7 +111,5 @@ const onSelectCategory = (categoryKey) => {
     /* 首字字号 */
     font-weight: 700;
     /* 加粗 */
-    user-select: none;
-    /* 禁止选中 */
 }
 </style>

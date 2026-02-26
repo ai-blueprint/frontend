@@ -73,7 +73,6 @@ const onMouseDown = (event) => {
 	color: rgba(255, 255, 255, 0.7); /* 半透明白色文字 */
 	padding: 0 8px; /* 左右内边距 */
 	white-space: nowrap; /* 不换行 */
-	user-select: none; /* 禁止选中 */
 }
 
 .port-handle {

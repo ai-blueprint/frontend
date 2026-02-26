@@ -97,19 +97,14 @@ const onContextMenu = (event) => {
 <style scoped>
 .blueprint {
 	flex: 1;
-	/* 占满剩余空间 */
 	position: relative;
-	/* 相对定位，用于悬浮元素 */
 	overflow: hidden;
-	/* 隐藏溢出 */
 	cursor: grab;
-	/* 默认抓取光标 */
 	transform-origin: 0 0;
-	/* 变换原点在左上角 */
+	user-select: none;
 }
 
 .blueprint:active {
 	cursor: grabbing;
-	/* 拖动时的光标样式 */
 }
 </style>

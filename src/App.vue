@@ -22,5 +22,7 @@ import WorkSpace from '@/components/WorkSpace.vue' // 引入工作区组件
     /* 纵向排列：顶部栏 + 工作区 */
     overflow: hidden;
     /* 隐藏溢出内容 */
+    user-select: none;
+    /* 禁止选中 */
 }
 </style>

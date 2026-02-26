@@ -49,6 +49,8 @@ const onDragStart = (event, opcode) => {
 <style scoped>
 /* 列表容器 */
 .node-list {
+    
+    user-select: none;
     width: 30%;
     min-width: 180px;
     max-width: 200px;
@@ -96,7 +98,6 @@ const onDragStart = (event, opcode) => {
     border-radius: 12px;
     background-color: var(--node-color);
     cursor: grab;
-    user-select: none;
     transition: opacity 0.2s, transform 0.1s;
 }
 
