@@ -47,6 +47,18 @@ const hasTensorImage = computed(() => {
 	return !!(nodeData.value && nodeData.value.tensorImage); // 节点存在且有tensorImage
 });
 
+// --- 根据节点opcode获取分类颜色 ---
+const nodeColor = computed(() => {
+	const nodeOpcode = props.data?.opcode; // 读取当前节点opcode
+	if (!nodeOpcode) return "#8992eb"; // 没有opcode时回退默认色
+
+	const categoryMap = store.registry.categories || {}; // 获取分类映射表
+	const categoryList = Object.values(categoryMap); // 转为分类数组便于遍历
+	const targetCategory = categoryList.find((category) => (category?.nodes || []).includes(nodeOpcode)); // 查找包含当前opcode的分类
+	if (!targetCategory?.color) return "#8992eb"; // 没有分类颜色时回退默认色
+	return targetCategory.color; // 返回分类颜色
+});
+
 // --- 节点被单击 ---
 const onClick = (event) => {
 	if (event.ctrlKey || event.metaKey) {
@@ -138,6 +150,7 @@ watch(isRenaming, (newVal) => {
 	<div
 		class="custom-node"
 		:class="{ selected: selected }"
+		:style="{ '--node-color': nodeColor }"
 		@click="onClick"
 		@contextmenu="onContextMenu"
 		@dblclick="onDoubleClick"
@@ -206,8 +219,8 @@ watch(isRenaming, (newVal) => {
 	/* 不换行 */
 	border-radius: 12px;
 	/* 圆角 */
-	background-color: #8992eb;
-	/* 紫蓝色节点背景 */
+	background-color: var(--node-color, #8992eb);
+	/* 节点背景色：优先分类色，回退默认色 */
 	padding: 12px 10px;
 	/* 内边距 */
 	gap: 40px;
