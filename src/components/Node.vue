@@ -180,7 +180,7 @@ watch(isRenaming, (newVal) => {
 			<input
 				v-if="isRenaming"
 				ref="renameInput"
-				class="rename-input"
+				class="rename-input nodrag"
 				:value="renameValue"
 				@input="renameValue = $event.target.value"
 				@blur="confirmRename"
