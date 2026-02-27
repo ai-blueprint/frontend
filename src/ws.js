@@ -219,7 +219,7 @@ const send = async (message) => {
 
 // --- 发送运行请求 ---
 const sendRun = () => {
-    send({ type: 'run', data: { blueprint: store.blueprint } }) // 发送运行请求
+    send({ type: 'runBlueprint', data: { blueprint: store.blueprint } }) // 发送运行请求
 }
 
 // --- 发送跑分请求 ---
