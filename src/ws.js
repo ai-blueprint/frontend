@@ -150,8 +150,8 @@ const onScoreMessage = (scoreData) => {
 }
 
 const messageHandlerMap = {
-    registry: onRegistryMessage,                             // 注册表消息处理器
-    run: onRunMessage,                                       // 运行结果消息处理器
+    getRegistry: onRegistryMessage,                             // 注册表消息处理器
+    runBlueprint: onRunMessage,                                       // 运行结果消息处理器
     score: onScoreMessage,                                   // 跑分结果消息处理器
 }
 
