@@ -14,6 +14,7 @@ const props = defineProps({
 const renameInput = ref(null); // 重命名输入框的引用
 const renameValue = ref(""); // 重命名输入框的值
 const isHoveringWithCtrl = ref(false); // 是否Ctrl+悬停状态
+const nodeElement = ref(null); // 节点DOM元素的引用
 
 // --- 获取输入端口列表 ---
 const inputPorts = computed(() => {
@@ -144,10 +145,30 @@ watch(isRenaming, (newVal) => {
 		});
 	}
 });
+
+// --- 更新节点尺寸到store ---
+const updateNodeDimensions = () => {
+	if (nodeElement.value) {
+		const rect = nodeElement.value.getBoundingClientRect();
+		const node = store.blueprint.nodes.find(n => n.id === props.id);
+		if (node) {
+    node.dimensions.width = rect.width   
+    node.dimensions.height = rect.height
+		}
+	}
+};
+
+// --- 监听节点挂载和尺寸变化 ---
+watch(() => props.id, () => {
+	nextTick(() => {
+		updateNodeDimensions();
+	});
+}, { immediate: true });
 </script>
 
 <template>
 	<div
+		ref="nodeElement"
 		class="custom-node"
 		:class="{ selected: selected }"
 		:style="{ '--node-color': nodeColor }"
