@@ -49,6 +49,7 @@ const add = (opcode, x, y) => {
         id: nodeId,                                                 // 节点唯一ID
         type: 'baseNode',                                           // 统一使用自定义节点类型
         position: { x: x || 0, y: y || 0 },                        // 节点位置，默认原点
+        dimensions: { width: 0, height: 0 },                        // 节点尺寸，初始为0
         data: {                                                     // 节点数据
             opcode: definition.opcode,                                // 节点操作码
             label: definition.label,                                  // 节点显示名称
