@@ -142,7 +142,11 @@ const onRunMessage = (runData) => {
         setNodeRunResult(node, runItem)                      // 写入节点运行结果
     })
 }
+const onNodeResultMessage = (nodeResultData) => {
+    // 结果是数组，需要可视化显示
+    
 
+}
 // --- 写入跑分消息 ---
 const onScoreMessage = (scoreData) => {
     console.log('[ws] 跑分结果:', scoreData)                 // 输出跑分结果日志
@@ -151,6 +155,7 @@ const onScoreMessage = (scoreData) => {
 
 const messageHandlerMap = {
     getRegistry: onRegistryMessage,                             // 注册表消息处理器
+    nodeResult: onNodeResultMessage,                             // 节点运行结果消息处理器
     runBlueprint: onRunMessage,                                       // 运行结果消息处理器
     score: onScoreMessage,                                   // 跑分结果消息处理器
 }
