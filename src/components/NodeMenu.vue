@@ -43,6 +43,7 @@ const onDelete = () => {
 		:style="{
 			left: store.nodeContext.x + 'px',
 			top: store.nodeContext.y - store.nodeContext.gap + 'px',
+			scale: store.viewport.zoom,
 		}">
 		<!-- 节点右键菜单 -->
 		<div class="menu-item" @click="onCopyPaste">
@@ -77,6 +78,7 @@ const onDelete = () => {
 	position: fixed;
 	/* 固定定位 */
 	transform: translate(-50%, -100%);
+	transform-origin: top left;
 	/* 居中并向上偏移 */
 	z-index: 1000;
 	/* 高层级 */

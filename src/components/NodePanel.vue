@@ -46,6 +46,7 @@ const hasParams = computed(() => {
 		:style="{
 			left: store.nodeContext.x + 'px',
 			top: store.nodeContext.y + store.nodeContext.gap + 'px',
+			scale: store.viewport.zoom,
 		}">
 		<!-- 节点参数面板 -->
 		<div class="panel-header">
@@ -64,6 +65,7 @@ const hasParams = computed(() => {
 .node-panel {
 	position: fixed;
 	transform: translate(-50%, 0%);
+	transform-origin: top left;
 	z-index: 999;
 	border-radius: 14px;
 	background: #f6f9fe;
