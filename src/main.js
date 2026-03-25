@@ -11,5 +11,12 @@ import "./ws.js"; // 导入即启动WebSocket模块
 
 const app = createApp(App); // 创建Vue应用实例
 app.use(Varlet); // 注册Varlet UI库
-StyleProvider(Themes.md3Light);
+
+const customTheme = {
+    ...Themes.md3Light,
+    '--color-primary': '#8992eb',
+    '--field-decorator-blur-color': '#8992eb',
+}
+
+StyleProvider(customTheme)
 app.mount("#app"); // 挂载Vue应用到DOM

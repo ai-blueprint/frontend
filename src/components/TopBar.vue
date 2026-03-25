@@ -260,6 +260,9 @@ const onScore = () => {
     /* 紧凑字距 */
     transition: all 0.1s ease-in-out;
     /* 过渡动画 */
+
+    white-space: nowrap;
+    /* 禁止换行 */
 }
 
 .action-button:hover {

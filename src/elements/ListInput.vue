@@ -47,7 +47,7 @@ watch(
 <template>
 	<div class="list-input">
 		<!-- 列表输入容器 -->
-		<var-input :model-value="displayValue" :placeholder="param.label" @update:model-value="onChange" />
+		<var-input variant="outlined" :model-value="displayValue" :placeholder="param.label" @update:model-value="onChange" />
 		<!-- Varlet文本输入框 -->
 	</div>
 </template>

@@ -29,7 +29,7 @@ watch(
 <template>
 	<div class="str-input">
 		<!-- 字符串输入容器 -->
-		<var-input :model-value="currentValue" :placeholder="param.label" @update:model-value="onChange" />
+		<var-input variant="outlined" :model-value="currentValue" :placeholder="param.label" @update:model-value="onChange" />
 		<!-- Varlet输入框组件 -->
 	</div>
 </template>

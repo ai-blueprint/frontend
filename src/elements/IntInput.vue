@@ -38,15 +38,7 @@ watch(
 
 <template>
 	<div class="int-input">
-		<!-- 整数输入容器 -->
-		<var-input type="number" :model-value="String(currentValue)" :placeholder="param.label" @update:model-value="onChange" />
 		<!-- Varlet数字输入框 -->
+		<var-input variant="outlined" type="number" :model-value="String(currentValue)" :placeholder="param.label" @update:model-value="onChange" />
 	</div>
 </template>
-
-<style scoped>
-.int-input {
-	margin-bottom: 8px;
-	/* 底部间距 */
-}
-</style>

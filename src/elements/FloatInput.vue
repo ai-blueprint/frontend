@@ -39,14 +39,6 @@ watch(
 <template>
 	<div class="float-input">
 		<!-- 浮点数输入容器 -->
-		<var-input type="number" step="0.01" :model-value="String(currentValue)" :placeholder="param.label" @update:model-value="onChange" />
-		<!-- Varlet数字输入框 -->
+		<var-input variant="outlined" type="number" step="0.01" :model-value="String(currentValue)" :placeholder="param.label" @update:model-value="onChange" />
 	</div>
 </template>
-
-<style scoped>
-.float-input {
-	margin-bottom: 8px;
-	/* 底部间距 */
-}
-</style>

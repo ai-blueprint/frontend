@@ -179,7 +179,7 @@ onMounted(() => {
 	align-items: center;
 	justify-content: center;
 	width: fit-content;
-	padding: 12px 20px;
+	padding: 12px 18px;
 	border-radius: 12px;
 	background-color: var(--node-color);
 	cursor: grab;
