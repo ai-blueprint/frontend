@@ -39,7 +39,7 @@ const store = reactive({
         paused: false,                          // 撤销/重做时暂停自动记录
     },
 
-    clipboard: {                              // 剪贴板
+    clipboard: {                              // 剪贴板（仅作为本地兜底缓存）
         nodes: [],                              // 复制的节点数据
         edges: [],                              // 复制的连接线数据
     },
