@@ -1,3 +1,4 @@
+/* 全局数据存储位置，便于数据的传递，注意：该文件只负责做数据存储定义，数据修改逻辑禁止写到该文件中 */
 import { reactive } from 'vue' // 引入Vue的响应式API
 
 // --- 全局状态仓库 ---
@@ -49,6 +50,7 @@ const store = reactive({
     },
 
     scoring: {},                              // 跑分状态数据（占位，格式待定）
+    mousePosition: { x: 0, y: 0 },              // 鼠标位置，方便直接被获取
 })
 
 export default store                        // 导出全局状态仓库
