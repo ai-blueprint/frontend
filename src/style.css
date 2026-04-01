@@ -1,126 +1,126 @@
 /* ========== 全局重置 ========== */
 * {
-    margin: 0;
-    /* 清除默认外边距 */
-    padding: 0;
-    /* 清除默认内边距 */
-    box-sizing: border-box;
-    /* 盒模型统一为border-box */
+	margin: 0;
+	/* 清除默认外边距 */
+	padding: 0;
+	/* 清除默认内边距 */
+	box-sizing: border-box;
+	/* 盒模型统一为border-box */
 }
 
 html,
 body,
 #app {
-    width: 100%;
-    /* 铺满整个视口宽度 */
-    height: 100%;
-    /* 铺满整个视口高度 */
-    overflow: hidden;
-    /* 禁止页面滚动 */
-    font-family: 'Microsoft YaHei', sans-serif;
-    /* 默认字体 */
-    background: #ffffff;
-    /* 白色背景 */
-    color: #333333;
-    /* 默认文字颜色 */
+	width: 100%;
+	/* 铺满整个视口宽度 */
+	height: 100%;
+	/* 铺满整个视口高度 */
+	overflow: hidden;
+	/* 禁止页面滚动 */
+	font-family: "Microsoft YaHei", sans-serif;
+	/* 默认字体 */
+	background: #ffffff;
+	/* 白色背景 */
+	color: #333333;
+	/* 默认文字颜色 */
 }
 
 /* ========== 滚动条美化 ========== */
 ::-webkit-scrollbar {
-    width: 6px;
-    /* 滚动条宽度 */
-    height: 6px;
-    /* 横向滚动条高度 */
+	width: 6px;
+	/* 滚动条宽度 */
+	height: 6px;
+	/* 横向滚动条高度 */
 }
 
 ::-webkit-scrollbar-track {
-    background: transparent;
-    /* 滚动条轨道透明 */
+	background: transparent;
+	/* 滚动条轨道透明 */
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #c0c0c0;
-    /* 滚动条滑块颜色 */
-    border-radius: 3px;
-    /* 滚动条圆角 */
+	background: #c0c0c0;
+	/* 滚动条滑块颜色 */
+	border-radius: 3px;
+	/* 滚动条圆角 */
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #8992eb;
-    /* 悬停时滑块变紫色 */
+	background: #8992eb;
+	/* 悬停时滑块变紫色 */
 }
 
 /* ========== Vue Flow 样式覆盖 ========== */
-.vue-flow__nodesselection-rect{
-    display: none;
+.vue-flow__nodesselection-rect {
+	display: none;
 }
 .vue-flow__edge-path,
 .vue-flow__connection-path {
-    fill: none;
-    /* 无填充 */
-    stroke: #ffffff;
-    /* 白色连接线 */
-    stroke-width: 4;
-    /* 连接线宽度 */
-    stroke-linecap: round;
-    /* 圆头线帽 */
+	fill: none;
+	/* 无填充 */
+	stroke: #ffffff;
+	/* 白色连接线 */
+	stroke-width: 4;
+	/* 连接线宽度 */
+	stroke-linecap: round;
+	/* 圆头线帽 */
 }
 
 .vue-flow__edge.selected .vue-flow__edge-path {
-    stroke: #ffffff;
-    /* 选中连接线保持白色 */
-    filter: drop-shadow(0 0 4px #ffffff);
-    /* 选中时发光效果 */
+	stroke: #ffffff;
+	/* 选中连接线保持白色 */
+	filter: drop-shadow(0 0 4px #ffffff);
+	/* 选中时发光效果 */
 }
 
 .vue-flow__edge:hover .vue-flow__edge-path {
-    stroke: #ffffff;
-    /* 悬停时保持白色，覆盖VueFlow默认主题的变色 */
+	stroke: #ffffff;
+	/* 悬停时保持白色，覆盖VueFlow默认主题的变色 */
 }
 
 .vue-flow__connection-line {
-    stroke: #ffffff;
-    /* 白色拖拽连线 */
-    stroke-width: 4;
-    /* 拖拽连线宽度 */
-    stroke-linecap: round;
-    /* 圆头线帽 */
+	stroke: #ffffff;
+	/* 白色拖拽连线 */
+	stroke-width: 4;
+	/* 拖拽连线宽度 */
+	stroke-linecap: round;
+	/* 圆头线帽 */
 }
 
 .vue-flow__handle {
-    width: 8px;
-    /* 端口圆点宽度 */
-    height: 8px;
-    /* 端口圆点高度 */
-    border-radius: 50%;
-    /* 端口为圆形 */
-    background: #ffffff;
-    /* 白色端口 */
-    border: none;
-    /* 无边框 */
-    transition: 0.1s ease-in-out;
-    /* 过渡动画 */
+	width: 8px;
+	/* 端口圆点宽度 */
+	height: 8px;
+	/* 端口圆点高度 */
+	border-radius: 50%;
+	/* 端口为圆形 */
+	background: #ffffff;
+	/* 白色端口 */
+	border: none;
+	/* 无边框 */
+	transition: 0.1s ease-in-out;
+	/* 过渡动画 */
 }
 
 .vue-flow__handle:hover {
-    background: #8cff00;
-    /* 端口悬停变绿 */
+	background: #8cff00;
+	/* 端口悬停变绿 */
 }
 
 .vue-flow__background {
-    background: #e2e9fa;
-    /* 工作区蓝灰背景 */
+	background: #e2e9fa;
+	/* 工作区蓝灰背景 */
 }
 
 /* ========== 通用过渡动画 ========== */
 .fade-enter-active,
 .fade-leave-active {
-    transition: opacity 0.15s ease;
-    /* 淡入淡出动画时长 */
+	transition: opacity 0.15s ease;
+	/* 淡入淡出动画时长 */
 }
 
 .fade-enter-from,
 .fade-leave-to {
-    opacity: 0;
-    /* 淡入淡出起止透明度 */
+	opacity: 0;
+	/* 淡入淡出起止透明度 */
 }

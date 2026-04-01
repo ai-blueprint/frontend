@@ -13,10 +13,10 @@ const app = createApp(App); // 创建Vue应用实例
 app.use(Varlet); // 注册Varlet UI库
 
 const customTheme = {
-    ...Themes.md3Light,
-    '--color-primary': '#8992eb',
-    '--field-decorator-blur-color': '#8992eb',
-}
+	...Themes.md3Light,
+	"--color-primary": "#8992eb",
+	"--field-decorator-blur-color": "#8992eb",
+};
 
-StyleProvider(customTheme)
+StyleProvider(customTheme);
 app.mount("#app"); // 挂载Vue应用到DOM

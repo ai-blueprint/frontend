@@ -44,7 +44,7 @@ watch(
 	/* 垂直居中 */
 	justify-content: space-between;
 	/* 两端对齐 */
-    padding: 16px 4px;
+	padding: 16px 4px;
 }
 
 .switch-label {

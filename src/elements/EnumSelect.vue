@@ -39,7 +39,7 @@ watch(
 <template>
 	<div class="enum-select">
 		<!-- 枚举选择容器 -->
-		<var-select variant="outlined"  :model-value="currentValue" :placeholder="param.label" @update:model-value="onChange">
+		<var-select variant="outlined" :model-value="currentValue" :placeholder="param.label" @update:model-value="onChange">
 			<!-- Varlet下拉选择组件 -->
 			<var-option v-for="option in optionList" :key="option.value" :label="option.label" :value="option.value" />
 			<!-- 枚举选项 -->

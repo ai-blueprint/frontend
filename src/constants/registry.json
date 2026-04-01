@@ -1,1587 +1,1389 @@
 {
-    "categories": {
-        "base": {
-            "label": "基础",
-            "color": "#8B92E5",
-            "icon": "",
-            "nodes": [
-                "input",
-                "output",
-                "debug"
-            ]
-        },
-        "transform": {
-            "label": "变换",
-            "color": "#82cbfa",
-            "icon": "",
-            "nodes": [
-                "linear",
-                "conv"
-            ]
-        },
-        "activation": {
-            "label": "激活",
-            "color": "#a073ff",
-            "icon": "",
-            "nodes": [
-                "relu",
-                "sigmoid",
-                "tanh",
-                "softmax",
-                "softplus",
-                "leakyRelu",
-                "elu",
-                "gelu"
-            ]
-        },
-        "math": {
-            "label": "运算",
-            "color": "#feae8a",
-            "icon": "",
-            "nodes": [
-                "add",
-                "sub",
-                "mul",
-                "div",
-                "matmul",
-                "bmm",
-                "einsum",
-                "lerp",
-                "dot",
-                "pow",
-                "norm",
-                "exp",
-                "sqrt",
-                "sum",
-                "abs",
-                "neg",
-                "mean"
-            ]
-        },
-        "attention": {
-            "label": "注意力",
-            "color": "#9d4edd",
-            "icon": "",
-            "nodes": [
-                "multihead_attention",
-                "scaled_dot_product_attention",
-                "cross_attention"
-            ]
-        },
-        "loss": {
-            "label": "损失函数",
-            "color": "#e44d60",
-            "icon": "",
-            "nodes": [
-                "mse_loss",
-                "cross_entropy_loss",
-                "l1_loss",
-                "bce_loss"
-            ]
-        },
-        "normalization": {
-            "label": "归一化",
-            "color": "#fdab3d",
-            "icon": "",
-            "nodes": [
-                "layer_norm",
-                "group_norm",
-                "batch_norm",
-                "instance_norm",
-                "rms_norm"
-            ]
-        },
-        "shape": {
-            "label": "形状",
-            "color": "#f1af54",
-            "icon": "",
-            "nodes": [
-                "reshape",
-                "transpose",
-                "permute",
-                "squeeze",
-                "unsqueeze",
-                "flatten",
-                "unflatten",
-                "pad",
-                "detach",
-                "clone"
-            ]
-        }
-    },
-    "nodes": {
-        "relu": {
-            "opcode": "relu",
-            "label": "负数归零",
-            "ports": {
-                "input": {
-                    "x": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {
-                "inplace": {
-                    "label": "原地操作",
-                    "type": "bool",
-                    "value": false
-                }
-            },
-            "description": "小于0变0，大于0不变"
-        },
-        "sigmoid": {
-            "opcode": "sigmoid",
-            "label": "压到0~1",
-            "ports": {
-                "input": {
-                    "x": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {},
-            "description": "把值压缩到0到1之间"
-        },
-        "tanh": {
-            "opcode": "tanh",
-            "label": "压到±1",
-            "ports": {
-                "input": {
-                    "x": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {},
-            "description": "把值压缩到-1到1之间"
-        },
-        "softmax": {
-            "opcode": "softmax",
-            "label": "转概率",
-            "ports": {
-                "input": {
-                    "x": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {
-                "dim": {
-                    "label": "维度",
-                    "type": "int",
-                    "value": -1,
-                    "range": [
-                        -10,
-                        10
-                    ]
-                }
-            },
-            "description": "转为概率分布，总和为1"
-        },
-        "softplus": {
-            "opcode": "softplus",
-            "label": "平滑归正",
-            "ports": {
-                "input": {
-                    "x": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {
-                "beta": {
-                    "label": "平滑系数",
-                    "type": "float",
-                    "value": 1,
-                    "range": [
-                        0.01,
-                        100
-                    ]
-                },
-                "threshold": {
-                    "label": "线性阈值",
-                    "type": "float",
-                    "value": 20,
-                    "range": [
-                        1,
-                        100
-                    ]
-                }
-            },
-            "description": "平滑版负数归零，输出恒为正"
-        },
-        "leakyRelu": {
-            "opcode": "leakyRelu",
-            "label": "带泄漏归正",
-            "ports": {
-                "input": {
-                    "x": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {
-                "negativeSlope": {
-                    "label": "负斜率",
-                    "type": "float",
-                    "value": 0.01,
-                    "range": [
-                        0,
-                        1
-                    ]
-                },
-                "inplace": {
-                    "label": "原地操作",
-                    "type": "bool",
-                    "value": false
-                }
-            },
-            "description": "负数乘以小斜率而非归零"
-        },
-        "elu": {
-            "opcode": "elu",
-            "label": "指数归正",
-            "ports": {
-                "input": {
-                    "x": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {
-                "alpha": {
-                    "label": "负饱和值",
-                    "type": "float",
-                    "value": 1,
-                    "range": [
-                        0,
-                        10
-                    ]
-                },
-                "inplace": {
-                    "label": "原地操作",
-                    "type": "bool",
-                    "value": false
-                }
-            },
-            "description": "负数用指数曲线平滑过渡"
-        },
-        "gelu": {
-            "opcode": "gelu",
-            "label": "高斯归正",
-            "ports": {
-                "input": {
-                    "x": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {
-                "approximate": {
-                    "label": "近似方式",
-                    "type": "str",
-                    "value": "none"
-                }
-            },
-            "description": "用高斯分布加权，Transformer常用"
-        },
-        "multihead_attention": {
-            "opcode": "multihead_attention",
-            "label": "多头注意力",
-            "ports": {
-                "input": {
-                    "q": "查询",
-                    "k": "键",
-                    "v": "值"
-                },
-                "output": {
-                    "out": "输出",
-                    "attn_weights": "注意力权重"
-                }
-            },
-            "params": {
-                "embed_dim": {
-                    "label": "嵌入维度",
-                    "type": "int",
-                    "value": 512,
-                    "range": [
-                        1,
-                        65536
-                    ]
-                },
-                "num_heads": {
-                    "label": "头数",
-                    "type": "int",
-                    "value": 8,
-                    "range": [
-                        1,
-                        256
-                    ]
-                },
-                "dropout": {
-                    "label": "Dropout率",
-                    "type": "float",
-                    "value": 0.1,
-                    "range": [
-                        0,
-                        1
-                    ]
-                },
-                "bias": {
-                    "label": "偏置",
-                    "type": "bool",
-                    "value": true
-                },
-                "add_bias_kv": {
-                    "label": "添加K/V偏置",
-                    "type": "bool",
-                    "value": false
-                },
-                "add_zero_attn": {
-                    "label": "添加零注意力",
-                    "type": "bool",
-                    "value": false
-                },
-                "kdim": {
-                    "label": "键维度",
-                    "type": "int",
-                    "value": 512,
-                    "range": [
-                        1,
-                        65536
-                    ]
-                },
-                "vdim": {
-                    "label": "值维度",
-                    "type": "int",
-                    "value": 512,
-                    "range": [
-                        1,
-                        65536
-                    ]
-                }
-            },
-            "description": "Transformer标准多头注意力机制"
-        },
-        "scaled_dot_product_attention": {
-            "opcode": "scaled_dot_product_attention",
-            "label": "缩放点积注意力",
-            "ports": {
-                "input": {
-                    "q": "查询",
-                    "k": "键",
-                    "v": "值"
-                },
-                "output": {
-                    "out": "输出",
-                    "attn_weights": "注意力权重"
-                }
-            },
-            "params": {
-                "dropout": {
-                    "label": "Dropout率",
-                    "type": "float",
-                    "value": 0.1,
-                    "range": [
-                        0,
-                        1
-                    ]
-                },
-                "is_causal": {
-                    "label": "因果注意力",
-                    "type": "bool",
-                    "value": false
-                },
-                "scale": {
-                    "label": "缩放因子",
-                    "type": "float",
-                    "value": 0,
-                    "range": [
-                        0,
-                        100
-                    ]
-                }
-            },
-            "description": "PyTorch 2.0+原生高效的缩放点积注意力"
-        },
-        "cross_attention": {
-            "opcode": "cross_attention",
-            "label": "跨注意力",
-            "ports": {
-                "input": {
-                    "q": "查询",
-                    "k": "键",
-                    "v": "值"
-                },
-                "output": {
-                    "out": "输出",
-                    "attn_weights": "注意力权重"
-                }
-            },
-            "params": {
-                "embed_dim": {
-                    "label": "嵌入维度",
-                    "type": "int",
-                    "value": 512,
-                    "range": [
-                        1,
-                        65536
-                    ]
-                },
-                "kdim": {
-                    "label": "键维度",
-                    "type": "int",
-                    "value": 512,
-                    "range": [
-                        1,
-                        65536
-                    ]
-                },
-                "vdim": {
-                    "label": "值维度",
-                    "type": "int",
-                    "value": 512,
-                    "range": [
-                        1,
-                        65536
-                    ]
-                },
-                "num_heads": {
-                    "label": "头数",
-                    "type": "int",
-                    "value": 8,
-                    "range": [
-                        1,
-                        256
-                    ]
-                },
-                "dropout": {
-                    "label": "Dropout率",
-                    "type": "float",
-                    "value": 0.1,
-                    "range": [
-                        0,
-                        1
-                    ]
-                },
-                "bias": {
-                    "label": "偏置",
-                    "type": "bool",
-                    "value": true
-                },
-                "project": {
-                    "label": "投影维度",
-                    "type": "bool",
-                    "value": true
-                }
-            },
-            "description": "跨模态/跨序列注意力，处理不同来源的查询、键、值"
-        },
-        "input": {
-            "opcode": "input",
-            "label": "输入",
-            "ports": {
-                "input": {},
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {
-                "out_shape": {
-                    "label": "输出形状",
-                    "type": "list",
-                    "value": [
-                        2,
-                        4,
-                        10
-                    ]
-                }
-            },
-            "description": "生成随机张量作为输入"
-        },
-        "output": {
-            "opcode": "output",
-            "label": "输出",
-            "ports": {
-                "input": {
-                    "in": ""
-                },
-                "output": {}
-            },
-            "params": {},
-            "description": "接收并打印最终结果"
-        },
-        "debug": {
-            "opcode": "debug",
-            "label": "调试输出",
-            "ports": {
-                "input": {
-                    "x": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {},
-            "description": "打印张量的形状和类型"
-        },
-        "mse_loss": {
-            "opcode": "mse_loss",
-            "label": "均方误差损失",
-            "ports": {
-                "input": {
-                    "input": "预测值",
-                    "target": "目标值"
-                },
-                "output": {
-                    "loss": "损失值"
-                }
-            },
-            "params": {
-                "reduction": {
-                    "label": "聚合方式",
-                    "type": "enum",
-                    "value": "mean",
-                    "options": {
-                        "mean": "平均值",
-                        "sum": "总和",
-                        "none": "无聚合"
-                    }
-                }
-            },
-            "description": "计算预测值与目标值之间的均方误差损失"
-        },
-        "cross_entropy_loss": {
-            "opcode": "cross_entropy_loss",
-            "label": "交叉熵损失",
-            "ports": {
-                "input": {
-                    "input": "预测logits",
-                    "target": "目标类别"
-                },
-                "output": {
-                    "loss": "损失值"
-                }
-            },
-            "params": {
-                "reduction": {
-                    "label": "聚合方式",
-                    "type": "enum",
-                    "value": "mean",
-                    "options": {
-                        "mean": "平均值",
-                        "sum": "总和",
-                        "none": "无聚合"
-                    }
-                },
-                "ignore_index": {
-                    "label": "忽略索引",
-                    "type": "int",
-                    "value": -100,
-                    "range": [
-                        -1,
-                        65536
-                    ]
-                },
-                "label_smoothing": {
-                    "label": "标签平滑",
-                    "type": "float",
-                    "value": 0,
-                    "range": [
-                        0,
-                        1
-                    ]
-                }
-            },
-            "description": "多分类问题的标准损失函数，输入为logits"
-        },
-        "l1_loss": {
-            "opcode": "l1_loss",
-            "label": "L1损失",
-            "ports": {
-                "input": {
-                    "input": "预测值",
-                    "target": "目标值"
-                },
-                "output": {
-                    "loss": "损失值"
-                }
-            },
-            "params": {
-                "reduction": {
-                    "label": "聚合方式",
-                    "type": "enum",
-                    "value": "mean",
-                    "options": {
-                        "mean": "平均值",
-                        "sum": "总和",
-                        "none": "无聚合"
-                    }
-                }
-            },
-            "description": "计算预测值与目标值之间的L1绝对值误差损失"
-        },
-        "bce_loss": {
-            "opcode": "bce_loss",
-            "label": "二分类交叉熵损失",
-            "ports": {
-                "input": {
-                    "input": "预测概率",
-                    "target": "目标标签"
-                },
-                "output": {
-                    "loss": "损失值"
-                }
-            },
-            "params": {
-                "reduction": {
-                    "label": "聚合方式",
-                    "type": "enum",
-                    "value": "mean",
-                    "options": {
-                        "mean": "平均值",
-                        "sum": "总和",
-                        "none": "无聚合"
-                    }
-                },
-                "weight": {
-                    "label": "类别权重",
-                    "type": "list",
-                    "value": [
-                        1
-                    ]
-                }
-            },
-            "description": "二分类问题的交叉熵损失，输入为概率（需先sigmoid）"
-        },
-        "add": {
-            "opcode": "add",
-            "label": "加法",
-            "ports": {
-                "input": {
-                    "x": "",
-                    "y": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {},
-            "description": "两个张量逐元素相加"
-        },
-        "sub": {
-            "opcode": "sub",
-            "label": "减法",
-            "ports": {
-                "input": {
-                    "x": "",
-                    "y": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {},
-            "description": "两个张量逐元素相减"
-        },
-        "mul": {
-            "opcode": "mul",
-            "label": "乘法",
-            "ports": {
-                "input": {
-                    "x": "",
-                    "y": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {},
-            "description": "两个张量逐元素相乘"
-        },
-        "div": {
-            "opcode": "div",
-            "label": "除法",
-            "ports": {
-                "input": {
-                    "x": "被除数",
-                    "y": "除数"
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {},
-            "description": "两个张量逐元素相除"
-        },
-        "matmul": {
-            "opcode": "matmul",
-            "label": "矩阵乘",
-            "ports": {
-                "input": {
-                    "x": "",
-                    "y": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {},
-            "description": "矩阵相乘，支持批量"
-        },
-        "bmm": {
-            "opcode": "bmm",
-            "label": "批量矩阵乘法",
-            "ports": {
-                "input": {
-                    "x": "",
-                    "y": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {},
-            "description": "多组矩阵同时相乘"
-        },
-        "einsum": {
-            "opcode": "einsum",
-            "label": "爱因斯坦求和",
-            "ports": {
-                "input": {
-                    "x": "",
-                    "y": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {
-                "equation": {
-                    "label": "公式",
-                    "type": "str",
-                    "value": "ij,jk->ik"
-                }
-            },
-            "description": "用公式描述任意张量运算"
-        },
-        "lerp": {
-            "opcode": "lerp",
-            "label": "插值",
-            "ports": {
-                "input": {
-                    "x": "起点",
-                    "y": "终点",
-                    "w": "权重"
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {},
-            "description": "在两个值之间按权重过渡"
-        },
-        "dot": {
-            "opcode": "dot",
-            "label": "点积",
-            "ports": {
-                "input": {
-                    "x": "",
-                    "y": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {},
-            "description": "两个向量逐元素乘再求和"
-        },
-        "pow": {
-            "opcode": "pow",
-            "label": "幂运算",
-            "ports": {
-                "input": {
-                    "x": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {
-                "exponent": {
-                    "label": "指数",
-                    "type": "float",
-                    "value": 2,
-                    "range": [
-                        -10,
-                        10
-                    ]
-                }
-            },
-            "description": "对每个元素做n次方"
-        },
-        "norm": {
-            "opcode": "norm",
-            "label": "范数",
-            "ports": {
-                "input": {
-                    "x": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {
-                "p": {
-                    "label": "范数阶数",
-                    "type": "float",
-                    "value": 2,
-                    "range": [
-                        0,
-                        10
-                    ]
-                },
-                "dim": {
-                    "label": "维度",
-                    "type": "int",
-                    "value": -1,
-                    "range": [
-                        -10,
-                        10
-                    ]
-                },
-                "keepdim": {
-                    "label": "保持维度",
-                    "type": "bool",
-                    "value": false
-                }
-            },
-            "description": "计算向量的长度大小"
-        },
-        "exp": {
-            "opcode": "exp",
-            "label": "指数",
-            "ports": {
-                "input": {
-                    "x": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {},
-            "description": "求e的x次方"
-        },
-        "sqrt": {
-            "opcode": "sqrt",
-            "label": "开方",
-            "ports": {
-                "input": {
-                    "x": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {},
-            "description": "对每个元素开平方根"
-        },
-        "sum": {
-            "opcode": "sum",
-            "label": "求和",
-            "ports": {
-                "input": {
-                    "x": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {
-                "dim": {
-                    "label": "维度",
-                    "type": "int",
-                    "value": -1,
-                    "range": [
-                        -10,
-                        10
-                    ]
-                },
-                "keepdim": {
-                    "label": "保持维度",
-                    "type": "bool",
-                    "value": false
-                }
-            },
-            "description": "沿某个维度把元素加起来"
-        },
-        "abs": {
-            "opcode": "abs",
-            "label": "绝对值",
-            "ports": {
-                "input": {
-                    "x": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {},
-            "description": "对每个元素取绝对值"
-        },
-        "neg": {
-            "opcode": "neg",
-            "label": "相反数",
-            "ports": {
-                "input": {
-                    "x": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {},
-            "description": "对每个元素取相反数"
-        },
-        "mean": {
-            "opcode": "mean",
-            "label": "均值",
-            "ports": {
-                "input": {
-                    "x": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {
-                "dim": {
-                    "label": "维度",
-                    "type": "int",
-                    "value": -1,
-                    "range": [
-                        -10,
-                        10
-                    ]
-                },
-                "keepdim": {
-                    "label": "保持维度",
-                    "type": "bool",
-                    "value": false
-                }
-            },
-            "description": "沿某个维度求平均值"
-        },
-        "layer_norm": {
-            "opcode": "layer_norm",
-            "label": "层归一化",
-            "ports": {
-                "input": {
-                    "x": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {
-                "normalized_shape": {
-                    "label": "归一化形状",
-                    "type": "list",
-                    "value": [
-                        64
-                    ]
-                },
-                "eps": {
-                    "label": "防零极小值",
-                    "type": "float",
-                    "value": 0.00001,
-                    "range": [
-                        1e-10,
-                        0.1
-                    ]
-                },
-                "elementwise_affine": {
-                    "label": "可学习缩放偏移",
-                    "type": "bool",
-                    "value": true
-                }
-            },
-            "description": "对每个样本的特征做归一化"
-        },
-        "group_norm": {
-            "opcode": "group_norm",
-            "label": "组归一化",
-            "ports": {
-                "input": {
-                    "x": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {
-                "num_groups": {
-                    "label": "分组数",
-                    "type": "int",
-                    "value": 8,
-                    "range": [
-                        1,
-                        1024
-                    ]
-                },
-                "num_channels": {
-                    "label": "通道数",
-                    "type": "int",
-                    "value": 64,
-                    "range": [
-                        1,
-                        65536
-                    ]
-                },
-                "eps": {
-                    "label": "防零极小值",
-                    "type": "float",
-                    "value": 0.00001,
-                    "range": [
-                        1e-10,
-                        0.1
-                    ]
-                },
-                "affine": {
-                    "label": "可学习缩放偏移",
-                    "type": "bool",
-                    "value": true
-                }
-            },
-            "description": "通道分组后组内归一化"
-        },
-        "batch_norm": {
-            "opcode": "batch_norm",
-            "label": "批归一化",
-            "ports": {
-                "input": {
-                    "x": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {
-                "dim": {
-                    "label": "维度",
-                    "type": "enum",
-                    "value": "2d",
-                    "options": {
-                        "1d": "1D",
-                        "2d": "2D",
-                        "3d": "3D"
-                    }
-                },
-                "num_features": {
-                    "label": "特征数",
-                    "type": "int",
-                    "value": 64
-                },
-                "eps": {
-                    "label": "防零极小值",
-                    "type": "float",
-                    "value": 0.00001
-                },
-                "momentum": {
-                    "label": "动量",
-                    "type": "float",
-                    "value": 0.1,
-                    "range": [
-                        0,
-                        1
-                    ]
-                },
-                "affine": {
-                    "label": "可学习缩放偏移",
-                    "type": "bool",
-                    "value": true
-                },
-                "track_running_stats": {
-                    "label": "跟踪运行统计",
-                    "type": "bool",
-                    "value": true
-                }
-            },
-            "description": "对每个batch的特征做归一化，CNN标配，支持1D/2D/3D"
-        },
-        "instance_norm": {
-            "opcode": "instance_norm",
-            "label": "实例归一化",
-            "ports": {
-                "input": {
-                    "x": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {
-                "dim": {
-                    "label": "维度",
-                    "type": "enum",
-                    "value": "2d",
-                    "options": {
-                        "1d": "1D",
-                        "2d": "2D",
-                        "3d": "3D"
-                    }
-                },
-                "num_features": {
-                    "label": "特征数",
-                    "type": "int",
-                    "value": 64
-                },
-                "eps": {
-                    "label": "防零极小值",
-                    "type": "float",
-                    "value": 0.00001
-                },
-                "momentum": {
-                    "label": "动量",
-                    "type": "float",
-                    "value": 0.1,
-                    "range": [
-                        0,
-                        1
-                    ]
-                },
-                "affine": {
-                    "label": "可学习缩放偏移",
-                    "type": "bool",
-                    "value": false
-                },
-                "track_running_stats": {
-                    "label": "跟踪运行统计",
-                    "type": "bool",
-                    "value": false
-                }
-            },
-            "description": "对每个样本的每个通道独立归一化，风格迁移常用，支持1D/2D/3D"
-        },
-        "rms_norm": {
-            "opcode": "rms_norm",
-            "label": "均方根归一化",
-            "ports": {
-                "input": {
-                    "x": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {
-                "normalized_shape": {
-                    "label": "归一化形状",
-                    "type": "list",
-                    "value": [
-                        64
-                    ]
-                },
-                "eps": {
-                    "label": "防零极小值",
-                    "type": "float",
-                    "value": 0.00001
-                },
-                "elementwise_affine": {
-                    "label": "可学习缩放",
-                    "type": "bool",
-                    "value": true
-                }
-            },
-            "description": "只用均方根归一化不减均值，LLaMA等大模型常用"
-        },
-        "reshape": {
-            "opcode": "reshape",
-            "label": "变形",
-            "ports": {
-                "input": {
-                    "x": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {
-                "shape": {
-                    "label": "目标形状",
-                    "type": "list",
-                    "value": [
-                        -1
-                    ]
-                },
-                "mode": {
-                    "label": "模式",
-                    "type": "enum",
-                    "value": "reshape",
-                    "options": {
-                        "reshape": "reshape",
-                        "view": "view"
-                    }
-                }
-            },
-            "description": "改变张量形状，元素不变"
-        },
-        "transpose": {
-            "opcode": "transpose",
-            "label": "交换维度",
-            "ports": {
-                "input": {
-                    "x": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {
-                "dim0": {
-                    "label": "维度1",
-                    "type": "int",
-                    "value": 0,
-                    "range": [
-                        -10,
-                        10
-                    ]
-                },
-                "dim1": {
-                    "label": "维度2",
-                    "type": "int",
-                    "value": 1,
-                    "range": [
-                        -10,
-                        10
-                    ]
-                }
-            },
-            "description": "交换指定的两个维度"
-        },
-        "permute": {
-            "opcode": "permute",
-            "label": "重排维度",
-            "ports": {
-                "input": {
-                    "x": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {
-                "dims": {
-                    "label": "维度顺序",
-                    "type": "list",
-                    "value": [
-                        0,
-                        2,
-                        1
-                    ]
-                }
-            },
-            "description": "自由调整所有维度顺序"
-        },
-        "squeeze": {
-            "opcode": "squeeze",
-            "label": "压缩维度",
-            "ports": {
-                "input": {
-                    "x": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {
-                "dim": {
-                    "label": "维度",
-                    "type": "int",
-                    "value": -1,
-                    "range": [
-                        -10,
-                        10
-                    ]
-                }
-            },
-            "description": "去掉长度为1的维度"
-        },
-        "unsqueeze": {
-            "opcode": "unsqueeze",
-            "label": "扩展维度",
-            "ports": {
-                "input": {
-                    "x": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {
-                "dim": {
-                    "label": "维度",
-                    "type": "int",
-                    "value": 0,
-                    "range": [
-                        -10,
-                        10
-                    ]
-                }
-            },
-            "description": "插入一个长度为1的维度"
-        },
-        "flatten": {
-            "opcode": "flatten",
-            "label": "压平",
-            "ports": {
-                "input": {
-                    "x": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {
-                "start_dim": {
-                    "label": "起始维度",
-                    "type": "int",
-                    "value": 1,
-                    "range": [
-                        -10,
-                        10
-                    ]
-                },
-                "end_dim": {
-                    "label": "结束维度",
-                    "type": "int",
-                    "value": -1,
-                    "range": [
-                        -10,
-                        10
-                    ]
-                }
-            },
-            "description": "多个维度合并成一个"
-        },
-        "unflatten": {
-            "opcode": "unflatten",
-            "label": "展开",
-            "ports": {
-                "input": {
-                    "x": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {
-                "dim": {
-                    "label": "维度",
-                    "type": "int",
-                    "value": 1,
-                    "range": [
-                        -10,
-                        10
-                    ]
-                },
-                "sizes": {
-                    "label": "展开形状",
-                    "type": "list",
-                    "value": [
-                        8,
-                        64
-                    ]
-                }
-            },
-            "description": "一个维度拆成多个"
-        },
-        "pad": {
-            "opcode": "pad",
-            "label": "填充",
-            "ports": {
-                "input": {
-                    "x": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {
-                "padding": {
-                    "label": "填充量",
-                    "type": "list",
-                    "value": [
-                        0,
-                        0,
-                        0,
-                        0
-                    ]
-                },
-                "mode": {
-                    "label": "填充模式",
-                    "type": "enum",
-                    "value": "constant",
-                    "options": {
-                        "constant": "常数填充",
-                        "reflect": "反射填充",
-                        "replicate": "复制填充",
-                        "circular": "循环填充"
-                    }
-                },
-                "value": {
-                    "label": "填充值",
-                    "type": "float",
-                    "value": 0,
-                    "range": [
-                        -1000000,
-                        1000000
-                    ]
-                }
-            },
-            "description": "在边缘补值，用于对齐"
-        },
-        "detach": {
-            "opcode": "detach",
-            "label": "断梯度",
-            "ports": {
-                "input": {
-                    "x": "输入"
-                },
-                "output": {
-                    "out": "输出"
-                }
-            },
-            "params": {},
-            "description": "切断梯度，不再反向传播"
-        },
-        "clone": {
-            "opcode": "clone",
-            "label": "克隆",
-            "ports": {
-                "input": {
-                    "x": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {},
-            "description": "复制一份完全独立的副本"
-        },
-        "linear": {
-            "opcode": "linear",
-            "label": "全连接层",
-            "ports": {
-                "input": {
-                    "x": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {
-                "in_features": {
-                    "label": "输入特征数",
-                    "type": "int",
-                    "value": 64
-                },
-                "out_features": {
-                    "label": "输出特征数",
-                    "type": "int",
-                    "value": 64
-                },
-                "bias": {
-                    "label": "偏置",
-                    "type": "bool",
-                    "value": false
-                }
-            },
-            "description": "输入乘权重加偏置，最基础层"
-        },
-        "conv": {
-            "opcode": "conv",
-            "label": "卷积层",
-            "ports": {
-                "input": {
-                    "x": ""
-                },
-                "output": {
-                    "out": ""
-                }
-            },
-            "params": {
-                "dim": {
-                    "label": "维度",
-                    "type": "enum",
-                    "value": "2d",
-                    "options": {
-                        "1d": "1D卷积",
-                        "2d": "2D卷积",
-                        "3d": "3D卷积"
-                    }
-                },
-                "in_channels": {
-                    "label": "输入通道数",
-                    "type": "int",
-                    "value": 3
-                },
-                "out_channels": {
-                    "label": "输出通道数",
-                    "type": "int",
-                    "value": 64
-                },
-                "kernel_size": {
-                    "label": "卷积核大小",
-                    "type": "list",
-                    "value": "3"
-                },
-                "stride": {
-                    "label": "步幅",
-                    "type": "list",
-                    "value": "1"
-                },
-                "padding": {
-                    "label": "填充",
-                    "type": "list",
-                    "value": "0"
-                },
-                "dilation": {
-                    "label": "膨胀",
-                    "type": "list",
-                    "value": "1"
-                },
-                "groups": {
-                    "label": "分组数",
-                    "type": "int",
-                    "value": 1
-                },
-                "bias": {
-                    "label": "偏置",
-                    "type": "bool",
-                    "value": true
-                },
-                "padding_mode": {
-                    "label": "填充模式",
-                    "type": "enum",
-                    "value": "zeros",
-                    "options": {
-                        "zeros": "零填充",
-                        "reflect": "反射填充",
-                        "replicate": "复制填充",
-                        "circular": "循环填充"
-                    }
-                }
-            },
-            "description": "对输入做卷积运算，支持1D/2D/3D"
-        }
-    }
+	"categories": {
+		"base": {
+			"label": "基础",
+			"color": "#8B92E5",
+			"icon": "",
+			"nodes": ["input", "output", "debug"]
+		},
+		"transform": {
+			"label": "变换",
+			"color": "#82cbfa",
+			"icon": "",
+			"nodes": ["linear", "conv"]
+		},
+		"activation": {
+			"label": "激活",
+			"color": "#a073ff",
+			"icon": "",
+			"nodes": ["relu", "sigmoid", "tanh", "softmax", "softplus", "leakyRelu", "elu", "gelu"]
+		},
+		"math": {
+			"label": "运算",
+			"color": "#feae8a",
+			"icon": "",
+			"nodes": ["add", "sub", "mul", "div", "matmul", "bmm", "einsum", "lerp", "dot", "pow", "norm", "exp", "sqrt", "sum", "abs", "neg", "mean"]
+		},
+		"attention": {
+			"label": "注意力",
+			"color": "#9d4edd",
+			"icon": "",
+			"nodes": ["multihead_attention", "scaled_dot_product_attention", "cross_attention"]
+		},
+		"loss": {
+			"label": "损失函数",
+			"color": "#e44d60",
+			"icon": "",
+			"nodes": ["mse_loss", "cross_entropy_loss", "l1_loss", "bce_loss"]
+		},
+		"normalization": {
+			"label": "归一化",
+			"color": "#fdab3d",
+			"icon": "",
+			"nodes": ["layer_norm", "group_norm", "batch_norm", "instance_norm", "rms_norm"]
+		},
+		"shape": {
+			"label": "形状",
+			"color": "#f1af54",
+			"icon": "",
+			"nodes": ["reshape", "transpose", "permute", "squeeze", "unsqueeze", "flatten", "unflatten", "pad", "detach", "clone"]
+		}
+	},
+	"nodes": {
+		"relu": {
+			"opcode": "relu",
+			"label": "负数归零",
+			"ports": {
+				"input": {
+					"x": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {
+				"inplace": {
+					"label": "原地操作",
+					"type": "bool",
+					"value": false
+				}
+			},
+			"description": "小于0变0，大于0不变"
+		},
+		"sigmoid": {
+			"opcode": "sigmoid",
+			"label": "压到0~1",
+			"ports": {
+				"input": {
+					"x": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {},
+			"description": "把值压缩到0到1之间"
+		},
+		"tanh": {
+			"opcode": "tanh",
+			"label": "压到±1",
+			"ports": {
+				"input": {
+					"x": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {},
+			"description": "把值压缩到-1到1之间"
+		},
+		"softmax": {
+			"opcode": "softmax",
+			"label": "转概率",
+			"ports": {
+				"input": {
+					"x": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {
+				"dim": {
+					"label": "维度",
+					"type": "int",
+					"value": -1,
+					"range": [-10, 10]
+				}
+			},
+			"description": "转为概率分布，总和为1"
+		},
+		"softplus": {
+			"opcode": "softplus",
+			"label": "平滑归正",
+			"ports": {
+				"input": {
+					"x": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {
+				"beta": {
+					"label": "平滑系数",
+					"type": "float",
+					"value": 1,
+					"range": [0.01, 100]
+				},
+				"threshold": {
+					"label": "线性阈值",
+					"type": "float",
+					"value": 20,
+					"range": [1, 100]
+				}
+			},
+			"description": "平滑版负数归零，输出恒为正"
+		},
+		"leakyRelu": {
+			"opcode": "leakyRelu",
+			"label": "带泄漏归正",
+			"ports": {
+				"input": {
+					"x": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {
+				"negativeSlope": {
+					"label": "负斜率",
+					"type": "float",
+					"value": 0.01,
+					"range": [0, 1]
+				},
+				"inplace": {
+					"label": "原地操作",
+					"type": "bool",
+					"value": false
+				}
+			},
+			"description": "负数乘以小斜率而非归零"
+		},
+		"elu": {
+			"opcode": "elu",
+			"label": "指数归正",
+			"ports": {
+				"input": {
+					"x": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {
+				"alpha": {
+					"label": "负饱和值",
+					"type": "float",
+					"value": 1,
+					"range": [0, 10]
+				},
+				"inplace": {
+					"label": "原地操作",
+					"type": "bool",
+					"value": false
+				}
+			},
+			"description": "负数用指数曲线平滑过渡"
+		},
+		"gelu": {
+			"opcode": "gelu",
+			"label": "高斯归正",
+			"ports": {
+				"input": {
+					"x": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {
+				"approximate": {
+					"label": "近似方式",
+					"type": "str",
+					"value": "none"
+				}
+			},
+			"description": "用高斯分布加权，Transformer常用"
+		},
+		"multihead_attention": {
+			"opcode": "multihead_attention",
+			"label": "多头注意力",
+			"ports": {
+				"input": {
+					"q": "查询",
+					"k": "键",
+					"v": "值"
+				},
+				"output": {
+					"out": "输出",
+					"attn_weights": "注意力权重"
+				}
+			},
+			"params": {
+				"embed_dim": {
+					"label": "嵌入维度",
+					"type": "int",
+					"value": 512,
+					"range": [1, 65536]
+				},
+				"num_heads": {
+					"label": "头数",
+					"type": "int",
+					"value": 8,
+					"range": [1, 256]
+				},
+				"dropout": {
+					"label": "Dropout率",
+					"type": "float",
+					"value": 0.1,
+					"range": [0, 1]
+				},
+				"bias": {
+					"label": "偏置",
+					"type": "bool",
+					"value": true
+				},
+				"add_bias_kv": {
+					"label": "添加K/V偏置",
+					"type": "bool",
+					"value": false
+				},
+				"add_zero_attn": {
+					"label": "添加零注意力",
+					"type": "bool",
+					"value": false
+				},
+				"kdim": {
+					"label": "键维度",
+					"type": "int",
+					"value": 512,
+					"range": [1, 65536]
+				},
+				"vdim": {
+					"label": "值维度",
+					"type": "int",
+					"value": 512,
+					"range": [1, 65536]
+				}
+			},
+			"description": "Transformer标准多头注意力机制"
+		},
+		"scaled_dot_product_attention": {
+			"opcode": "scaled_dot_product_attention",
+			"label": "缩放点积注意力",
+			"ports": {
+				"input": {
+					"q": "查询",
+					"k": "键",
+					"v": "值"
+				},
+				"output": {
+					"out": "输出",
+					"attn_weights": "注意力权重"
+				}
+			},
+			"params": {
+				"dropout": {
+					"label": "Dropout率",
+					"type": "float",
+					"value": 0.1,
+					"range": [0, 1]
+				},
+				"is_causal": {
+					"label": "因果注意力",
+					"type": "bool",
+					"value": false
+				},
+				"scale": {
+					"label": "缩放因子",
+					"type": "float",
+					"value": 0,
+					"range": [0, 100]
+				}
+			},
+			"description": "PyTorch 2.0+原生高效的缩放点积注意力"
+		},
+		"cross_attention": {
+			"opcode": "cross_attention",
+			"label": "跨注意力",
+			"ports": {
+				"input": {
+					"q": "查询",
+					"k": "键",
+					"v": "值"
+				},
+				"output": {
+					"out": "输出",
+					"attn_weights": "注意力权重"
+				}
+			},
+			"params": {
+				"embed_dim": {
+					"label": "嵌入维度",
+					"type": "int",
+					"value": 512,
+					"range": [1, 65536]
+				},
+				"kdim": {
+					"label": "键维度",
+					"type": "int",
+					"value": 512,
+					"range": [1, 65536]
+				},
+				"vdim": {
+					"label": "值维度",
+					"type": "int",
+					"value": 512,
+					"range": [1, 65536]
+				},
+				"num_heads": {
+					"label": "头数",
+					"type": "int",
+					"value": 8,
+					"range": [1, 256]
+				},
+				"dropout": {
+					"label": "Dropout率",
+					"type": "float",
+					"value": 0.1,
+					"range": [0, 1]
+				},
+				"bias": {
+					"label": "偏置",
+					"type": "bool",
+					"value": true
+				},
+				"project": {
+					"label": "投影维度",
+					"type": "bool",
+					"value": true
+				}
+			},
+			"description": "跨模态/跨序列注意力，处理不同来源的查询、键、值"
+		},
+		"input": {
+			"opcode": "input",
+			"label": "输入",
+			"ports": {
+				"input": {},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {
+				"out_shape": {
+					"label": "输出形状",
+					"type": "list",
+					"value": [2, 4, 10]
+				}
+			},
+			"description": "生成随机张量作为输入"
+		},
+		"output": {
+			"opcode": "output",
+			"label": "输出",
+			"ports": {
+				"input": {
+					"in": ""
+				},
+				"output": {}
+			},
+			"params": {},
+			"description": "接收并打印最终结果"
+		},
+		"debug": {
+			"opcode": "debug",
+			"label": "调试输出",
+			"ports": {
+				"input": {
+					"x": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {},
+			"description": "打印张量的形状和类型"
+		},
+		"mse_loss": {
+			"opcode": "mse_loss",
+			"label": "均方误差损失",
+			"ports": {
+				"input": {
+					"input": "预测值",
+					"target": "目标值"
+				},
+				"output": {
+					"loss": "损失值"
+				}
+			},
+			"params": {
+				"reduction": {
+					"label": "聚合方式",
+					"type": "enum",
+					"value": "mean",
+					"options": {
+						"mean": "平均值",
+						"sum": "总和",
+						"none": "无聚合"
+					}
+				}
+			},
+			"description": "计算预测值与目标值之间的均方误差损失"
+		},
+		"cross_entropy_loss": {
+			"opcode": "cross_entropy_loss",
+			"label": "交叉熵损失",
+			"ports": {
+				"input": {
+					"input": "预测logits",
+					"target": "目标类别"
+				},
+				"output": {
+					"loss": "损失值"
+				}
+			},
+			"params": {
+				"reduction": {
+					"label": "聚合方式",
+					"type": "enum",
+					"value": "mean",
+					"options": {
+						"mean": "平均值",
+						"sum": "总和",
+						"none": "无聚合"
+					}
+				},
+				"ignore_index": {
+					"label": "忽略索引",
+					"type": "int",
+					"value": -100,
+					"range": [-1, 65536]
+				},
+				"label_smoothing": {
+					"label": "标签平滑",
+					"type": "float",
+					"value": 0,
+					"range": [0, 1]
+				}
+			},
+			"description": "多分类问题的标准损失函数，输入为logits"
+		},
+		"l1_loss": {
+			"opcode": "l1_loss",
+			"label": "L1损失",
+			"ports": {
+				"input": {
+					"input": "预测值",
+					"target": "目标值"
+				},
+				"output": {
+					"loss": "损失值"
+				}
+			},
+			"params": {
+				"reduction": {
+					"label": "聚合方式",
+					"type": "enum",
+					"value": "mean",
+					"options": {
+						"mean": "平均值",
+						"sum": "总和",
+						"none": "无聚合"
+					}
+				}
+			},
+			"description": "计算预测值与目标值之间的L1绝对值误差损失"
+		},
+		"bce_loss": {
+			"opcode": "bce_loss",
+			"label": "二分类交叉熵损失",
+			"ports": {
+				"input": {
+					"input": "预测概率",
+					"target": "目标标签"
+				},
+				"output": {
+					"loss": "损失值"
+				}
+			},
+			"params": {
+				"reduction": {
+					"label": "聚合方式",
+					"type": "enum",
+					"value": "mean",
+					"options": {
+						"mean": "平均值",
+						"sum": "总和",
+						"none": "无聚合"
+					}
+				},
+				"weight": {
+					"label": "类别权重",
+					"type": "list",
+					"value": [1]
+				}
+			},
+			"description": "二分类问题的交叉熵损失，输入为概率（需先sigmoid）"
+		},
+		"add": {
+			"opcode": "add",
+			"label": "加法",
+			"ports": {
+				"input": {
+					"x": "",
+					"y": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {},
+			"description": "两个张量逐元素相加"
+		},
+		"sub": {
+			"opcode": "sub",
+			"label": "减法",
+			"ports": {
+				"input": {
+					"x": "",
+					"y": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {},
+			"description": "两个张量逐元素相减"
+		},
+		"mul": {
+			"opcode": "mul",
+			"label": "乘法",
+			"ports": {
+				"input": {
+					"x": "",
+					"y": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {},
+			"description": "两个张量逐元素相乘"
+		},
+		"div": {
+			"opcode": "div",
+			"label": "除法",
+			"ports": {
+				"input": {
+					"x": "被除数",
+					"y": "除数"
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {},
+			"description": "两个张量逐元素相除"
+		},
+		"matmul": {
+			"opcode": "matmul",
+			"label": "矩阵乘",
+			"ports": {
+				"input": {
+					"x": "",
+					"y": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {},
+			"description": "矩阵相乘，支持批量"
+		},
+		"bmm": {
+			"opcode": "bmm",
+			"label": "批量矩阵乘法",
+			"ports": {
+				"input": {
+					"x": "",
+					"y": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {},
+			"description": "多组矩阵同时相乘"
+		},
+		"einsum": {
+			"opcode": "einsum",
+			"label": "爱因斯坦求和",
+			"ports": {
+				"input": {
+					"x": "",
+					"y": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {
+				"equation": {
+					"label": "公式",
+					"type": "str",
+					"value": "ij,jk->ik"
+				}
+			},
+			"description": "用公式描述任意张量运算"
+		},
+		"lerp": {
+			"opcode": "lerp",
+			"label": "插值",
+			"ports": {
+				"input": {
+					"x": "起点",
+					"y": "终点",
+					"w": "权重"
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {},
+			"description": "在两个值之间按权重过渡"
+		},
+		"dot": {
+			"opcode": "dot",
+			"label": "点积",
+			"ports": {
+				"input": {
+					"x": "",
+					"y": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {},
+			"description": "两个向量逐元素乘再求和"
+		},
+		"pow": {
+			"opcode": "pow",
+			"label": "幂运算",
+			"ports": {
+				"input": {
+					"x": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {
+				"exponent": {
+					"label": "指数",
+					"type": "float",
+					"value": 2,
+					"range": [-10, 10]
+				}
+			},
+			"description": "对每个元素做n次方"
+		},
+		"norm": {
+			"opcode": "norm",
+			"label": "范数",
+			"ports": {
+				"input": {
+					"x": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {
+				"p": {
+					"label": "范数阶数",
+					"type": "float",
+					"value": 2,
+					"range": [0, 10]
+				},
+				"dim": {
+					"label": "维度",
+					"type": "int",
+					"value": -1,
+					"range": [-10, 10]
+				},
+				"keepdim": {
+					"label": "保持维度",
+					"type": "bool",
+					"value": false
+				}
+			},
+			"description": "计算向量的长度大小"
+		},
+		"exp": {
+			"opcode": "exp",
+			"label": "指数",
+			"ports": {
+				"input": {
+					"x": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {},
+			"description": "求e的x次方"
+		},
+		"sqrt": {
+			"opcode": "sqrt",
+			"label": "开方",
+			"ports": {
+				"input": {
+					"x": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {},
+			"description": "对每个元素开平方根"
+		},
+		"sum": {
+			"opcode": "sum",
+			"label": "求和",
+			"ports": {
+				"input": {
+					"x": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {
+				"dim": {
+					"label": "维度",
+					"type": "int",
+					"value": -1,
+					"range": [-10, 10]
+				},
+				"keepdim": {
+					"label": "保持维度",
+					"type": "bool",
+					"value": false
+				}
+			},
+			"description": "沿某个维度把元素加起来"
+		},
+		"abs": {
+			"opcode": "abs",
+			"label": "绝对值",
+			"ports": {
+				"input": {
+					"x": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {},
+			"description": "对每个元素取绝对值"
+		},
+		"neg": {
+			"opcode": "neg",
+			"label": "相反数",
+			"ports": {
+				"input": {
+					"x": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {},
+			"description": "对每个元素取相反数"
+		},
+		"mean": {
+			"opcode": "mean",
+			"label": "均值",
+			"ports": {
+				"input": {
+					"x": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {
+				"dim": {
+					"label": "维度",
+					"type": "int",
+					"value": -1,
+					"range": [-10, 10]
+				},
+				"keepdim": {
+					"label": "保持维度",
+					"type": "bool",
+					"value": false
+				}
+			},
+			"description": "沿某个维度求平均值"
+		},
+		"layer_norm": {
+			"opcode": "layer_norm",
+			"label": "层归一化",
+			"ports": {
+				"input": {
+					"x": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {
+				"normalized_shape": {
+					"label": "归一化形状",
+					"type": "list",
+					"value": [64]
+				},
+				"eps": {
+					"label": "防零极小值",
+					"type": "float",
+					"value": 0.00001,
+					"range": [1e-10, 0.1]
+				},
+				"elementwise_affine": {
+					"label": "可学习缩放偏移",
+					"type": "bool",
+					"value": true
+				}
+			},
+			"description": "对每个样本的特征做归一化"
+		},
+		"group_norm": {
+			"opcode": "group_norm",
+			"label": "组归一化",
+			"ports": {
+				"input": {
+					"x": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {
+				"num_groups": {
+					"label": "分组数",
+					"type": "int",
+					"value": 8,
+					"range": [1, 1024]
+				},
+				"num_channels": {
+					"label": "通道数",
+					"type": "int",
+					"value": 64,
+					"range": [1, 65536]
+				},
+				"eps": {
+					"label": "防零极小值",
+					"type": "float",
+					"value": 0.00001,
+					"range": [1e-10, 0.1]
+				},
+				"affine": {
+					"label": "可学习缩放偏移",
+					"type": "bool",
+					"value": true
+				}
+			},
+			"description": "通道分组后组内归一化"
+		},
+		"batch_norm": {
+			"opcode": "batch_norm",
+			"label": "批归一化",
+			"ports": {
+				"input": {
+					"x": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {
+				"dim": {
+					"label": "维度",
+					"type": "enum",
+					"value": "2d",
+					"options": {
+						"1d": "1D",
+						"2d": "2D",
+						"3d": "3D"
+					}
+				},
+				"num_features": {
+					"label": "特征数",
+					"type": "int",
+					"value": 64
+				},
+				"eps": {
+					"label": "防零极小值",
+					"type": "float",
+					"value": 0.00001
+				},
+				"momentum": {
+					"label": "动量",
+					"type": "float",
+					"value": 0.1,
+					"range": [0, 1]
+				},
+				"affine": {
+					"label": "可学习缩放偏移",
+					"type": "bool",
+					"value": true
+				},
+				"track_running_stats": {
+					"label": "跟踪运行统计",
+					"type": "bool",
+					"value": true
+				}
+			},
+			"description": "对每个batch的特征做归一化，CNN标配，支持1D/2D/3D"
+		},
+		"instance_norm": {
+			"opcode": "instance_norm",
+			"label": "实例归一化",
+			"ports": {
+				"input": {
+					"x": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {
+				"dim": {
+					"label": "维度",
+					"type": "enum",
+					"value": "2d",
+					"options": {
+						"1d": "1D",
+						"2d": "2D",
+						"3d": "3D"
+					}
+				},
+				"num_features": {
+					"label": "特征数",
+					"type": "int",
+					"value": 64
+				},
+				"eps": {
+					"label": "防零极小值",
+					"type": "float",
+					"value": 0.00001
+				},
+				"momentum": {
+					"label": "动量",
+					"type": "float",
+					"value": 0.1,
+					"range": [0, 1]
+				},
+				"affine": {
+					"label": "可学习缩放偏移",
+					"type": "bool",
+					"value": false
+				},
+				"track_running_stats": {
+					"label": "跟踪运行统计",
+					"type": "bool",
+					"value": false
+				}
+			},
+			"description": "对每个样本的每个通道独立归一化，风格迁移常用，支持1D/2D/3D"
+		},
+		"rms_norm": {
+			"opcode": "rms_norm",
+			"label": "均方根归一化",
+			"ports": {
+				"input": {
+					"x": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {
+				"normalized_shape": {
+					"label": "归一化形状",
+					"type": "list",
+					"value": [64]
+				},
+				"eps": {
+					"label": "防零极小值",
+					"type": "float",
+					"value": 0.00001
+				},
+				"elementwise_affine": {
+					"label": "可学习缩放",
+					"type": "bool",
+					"value": true
+				}
+			},
+			"description": "只用均方根归一化不减均值，LLaMA等大模型常用"
+		},
+		"reshape": {
+			"opcode": "reshape",
+			"label": "变形",
+			"ports": {
+				"input": {
+					"x": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {
+				"shape": {
+					"label": "目标形状",
+					"type": "list",
+					"value": [-1]
+				},
+				"mode": {
+					"label": "模式",
+					"type": "enum",
+					"value": "reshape",
+					"options": {
+						"reshape": "reshape",
+						"view": "view"
+					}
+				}
+			},
+			"description": "改变张量形状，元素不变"
+		},
+		"transpose": {
+			"opcode": "transpose",
+			"label": "交换维度",
+			"ports": {
+				"input": {
+					"x": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {
+				"dim0": {
+					"label": "维度1",
+					"type": "int",
+					"value": 0,
+					"range": [-10, 10]
+				},
+				"dim1": {
+					"label": "维度2",
+					"type": "int",
+					"value": 1,
+					"range": [-10, 10]
+				}
+			},
+			"description": "交换指定的两个维度"
+		},
+		"permute": {
+			"opcode": "permute",
+			"label": "重排维度",
+			"ports": {
+				"input": {
+					"x": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {
+				"dims": {
+					"label": "维度顺序",
+					"type": "list",
+					"value": [0, 2, 1]
+				}
+			},
+			"description": "自由调整所有维度顺序"
+		},
+		"squeeze": {
+			"opcode": "squeeze",
+			"label": "压缩维度",
+			"ports": {
+				"input": {
+					"x": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {
+				"dim": {
+					"label": "维度",
+					"type": "int",
+					"value": -1,
+					"range": [-10, 10]
+				}
+			},
+			"description": "去掉长度为1的维度"
+		},
+		"unsqueeze": {
+			"opcode": "unsqueeze",
+			"label": "扩展维度",
+			"ports": {
+				"input": {
+					"x": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {
+				"dim": {
+					"label": "维度",
+					"type": "int",
+					"value": 0,
+					"range": [-10, 10]
+				}
+			},
+			"description": "插入一个长度为1的维度"
+		},
+		"flatten": {
+			"opcode": "flatten",
+			"label": "压平",
+			"ports": {
+				"input": {
+					"x": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {
+				"start_dim": {
+					"label": "起始维度",
+					"type": "int",
+					"value": 1,
+					"range": [-10, 10]
+				},
+				"end_dim": {
+					"label": "结束维度",
+					"type": "int",
+					"value": -1,
+					"range": [-10, 10]
+				}
+			},
+			"description": "多个维度合并成一个"
+		},
+		"unflatten": {
+			"opcode": "unflatten",
+			"label": "展开",
+			"ports": {
+				"input": {
+					"x": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {
+				"dim": {
+					"label": "维度",
+					"type": "int",
+					"value": 1,
+					"range": [-10, 10]
+				},
+				"sizes": {
+					"label": "展开形状",
+					"type": "list",
+					"value": [8, 64]
+				}
+			},
+			"description": "一个维度拆成多个"
+		},
+		"pad": {
+			"opcode": "pad",
+			"label": "填充",
+			"ports": {
+				"input": {
+					"x": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {
+				"padding": {
+					"label": "填充量",
+					"type": "list",
+					"value": [0, 0, 0, 0]
+				},
+				"mode": {
+					"label": "填充模式",
+					"type": "enum",
+					"value": "constant",
+					"options": {
+						"constant": "常数填充",
+						"reflect": "反射填充",
+						"replicate": "复制填充",
+						"circular": "循环填充"
+					}
+				},
+				"value": {
+					"label": "填充值",
+					"type": "float",
+					"value": 0,
+					"range": [-1000000, 1000000]
+				}
+			},
+			"description": "在边缘补值，用于对齐"
+		},
+		"detach": {
+			"opcode": "detach",
+			"label": "断梯度",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "输出"
+				}
+			},
+			"params": {},
+			"description": "切断梯度，不再反向传播"
+		},
+		"clone": {
+			"opcode": "clone",
+			"label": "克隆",
+			"ports": {
+				"input": {
+					"x": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {},
+			"description": "复制一份完全独立的副本"
+		},
+		"linear": {
+			"opcode": "linear",
+			"label": "全连接层",
+			"ports": {
+				"input": {
+					"x": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {
+				"in_features": {
+					"label": "输入特征数",
+					"type": "int",
+					"value": 64
+				},
+				"out_features": {
+					"label": "输出特征数",
+					"type": "int",
+					"value": 64
+				},
+				"bias": {
+					"label": "偏置",
+					"type": "bool",
+					"value": false
+				}
+			},
+			"description": "输入乘权重加偏置，最基础层"
+		},
+		"conv": {
+			"opcode": "conv",
+			"label": "卷积层",
+			"ports": {
+				"input": {
+					"x": ""
+				},
+				"output": {
+					"out": ""
+				}
+			},
+			"params": {
+				"dim": {
+					"label": "维度",
+					"type": "enum",
+					"value": "2d",
+					"options": {
+						"1d": "1D卷积",
+						"2d": "2D卷积",
+						"3d": "3D卷积"
+					}
+				},
+				"in_channels": {
+					"label": "输入通道数",
+					"type": "int",
+					"value": 3
+				},
+				"out_channels": {
+					"label": "输出通道数",
+					"type": "int",
+					"value": 64
+				},
+				"kernel_size": {
+					"label": "卷积核大小",
+					"type": "list",
+					"value": "3"
+				},
+				"stride": {
+					"label": "步幅",
+					"type": "list",
+					"value": "1"
+				},
+				"padding": {
+					"label": "填充",
+					"type": "list",
+					"value": "0"
+				},
+				"dilation": {
+					"label": "膨胀",
+					"type": "list",
+					"value": "1"
+				},
+				"groups": {
+					"label": "分组数",
+					"type": "int",
+					"value": 1
+				},
+				"bias": {
+					"label": "偏置",
+					"type": "bool",
+					"value": true
+				},
+				"padding_mode": {
+					"label": "填充模式",
+					"type": "enum",
+					"value": "zeros",
+					"options": {
+						"zeros": "零填充",
+						"reflect": "反射填充",
+						"replicate": "复制填充",
+						"circular": "循环填充"
+					}
+				}
+			},
+			"description": "对输入做卷积运算，支持1D/2D/3D"
+		}
+	}
 }
