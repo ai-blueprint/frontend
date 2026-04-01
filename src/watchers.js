@@ -2,13 +2,13 @@ import { watch } from "vue"; // 引入Vue的watch
 import store from "@/store.js"; // 引入全局状态
 import { updateFloatingPosition } from "@/utils/floatingPosition.js"; // 引入位置更新工具
 
-let hasStarted = false; // 标记是否已完成初始化
+let hasStarted = false; // 标记是否已完成初始化，这个主要是防止被多次import时重复监听导致的性能问题
 
 // --- 初始化数据维护监听 ---
 const initWatchers = () => {
 	if (hasStarted) return; // 已初始化直接返回
 
-	// --- 监听节点数量变化，清理失效的菜单和面板 ---
+	// --- 监听节点数量变化，清理失效的菜单和面板，防止节点被删除后节点菜单和节点面板还存在 ---
 	watch(
 		() => store.blueprint.nodes.length, // 监听节点数组长度
 		() => {
