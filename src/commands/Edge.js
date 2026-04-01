@@ -52,7 +52,9 @@ const getByInputPort = (nodeId, portKey) => {
 const checkConnection = (connection) => {
     const sourceNode = store.blueprint.nodes.find(node => node.id === connection.source) // 查找来源节点
     const targetNode = store.blueprint.nodes.find(node => node.id === connection.target) // 查找目标节点
-    if (!sourceNode || !targetNode) return false                                       // 节点不存在就拒绝
+    if (!sourceNode || !targetNode || sourceNode.id == targetNode.id) return false                                       // 节点不存在就拒绝
+
+    if (!sourceNode || !targetNode ) return false                                       // 节点不存在就拒绝
 
     const isSourceOutput = connection.sourceHandle in (sourceNode.data?.ports?.output || {}) // 来源端口必须是输出端口
     const isTargetInput = connection.targetHandle in (targetNode.data?.ports?.input || {})   // 目标端口必须是输入端口
