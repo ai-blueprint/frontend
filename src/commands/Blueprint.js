@@ -2,6 +2,7 @@ import store from '@/store.js'                     // 引入全局状态
 import { calculateLayout } from '@/utils/arrange.js' // 引入布局计算
 import { toCanvas } from '@/utils/position.js'     // 引入坐标转换
 import History from '@/commands/History.js'         // 引入历史记录命令
+import { createBlueprintFile, readBlueprintFile } from '@/utils/blueprintSerialization.js' // 引入安全版本化序列化工具
 
 let vueFlowInstance = null                                      // 存储vueflow实例引用
 
@@ -60,32 +61,41 @@ const setViewport = (x, y, zoom) => {
 
 // --- 导入蓝图 ---
 const importBlueprint = (jsonData) => {
-    const data = typeof jsonData === 'string' ? JSON.parse(jsonData) : jsonData // 兼容字符串和对象
-    if (!data) return                                             // 数据为空直接返回
-
-    store.blueprint.name = data.name || '我的架构'                 // 恢复蓝图名称
-    store.blueprint.nodes = data.nodes || []                      // 恢复节点数据
-    store.blueprint.edges = data.edges || []                      // 恢复连接线数据
-
-    // --- 确保每个节点都有tensorImage和error字段 ---
-    store.blueprint.nodes.forEach(node => {
-        if (!('tensorImage' in node)) node.tensorImage = null       // 补全tensorImage字段
-        if (!('error' in node)) node.error = null                   // 补全error字段
-    })
-
-    History.clear()                                                 // 清空历史记录并记录当前状态
+    try {
+        const data = readBlueprintFile(jsonData)                    // 校验版本、结构和连线引用并剥离临时字段
+        store.blueprint.name = data.name                            // 恢复蓝图名称
+        store.blueprint.nodes = data.nodes                          // 恢复已清理节点
+        store.blueprint.edges = data.edges                          // 恢复已清理连接线
+        store.runtime.execution.requestId = null                    // 导入后旧运行消息全部视为过期
+        store.runtime.execution.status = 'idle'                     // 新蓝图从未运行状态开始
+        store.runtime.execution.nodeResults = {}                    // 清除旧蓝图节点结果
+        store.runtime.execution.nodeErrors = {}                     // 清除旧蓝图节点错误
+        store.workspace.feedback = { type: 'success', message: '蓝图导入成功' } // 显示导入反馈
+        History.clear()                                             // 新蓝图作为撤销历史起点
+        return true                                                 // 告知文件入口导入成功
+    } catch (error) {
+        store.workspace.feedback = { type: 'error', message: `导入失败：${error.message}` } // 保留原蓝图并显示原因
+        return false                                                // 告知文件入口导入失败
+    }
 }
 
 // --- 导出蓝图 ---
 const exportBlueprint = () => {
-    const data = JSON.stringify(store.blueprint, null, 2)         // 将蓝图数据转为JSON字符串
-    const blob = new Blob([data], { type: 'application/json' })   // 创建Blob对象
-    const url = URL.createObjectURL(blob)                         // 创建临时下载链接
-    const link = document.createElement('a')                      // 创建a标签
-    link.href = url                                               // 设置下载链接
-    link.download = `${store.blueprint.name || '蓝图'}.json`      // 设置文件名
-    link.click()                                                  // 触发下载
-    URL.revokeObjectURL(url)                                      // 释放临时链接
+    try {
+        const data = JSON.stringify(createBlueprintFile(store.blueprint), null, 2) // 生成带版本且无运行时字段的文件
+        const blob = new Blob([data], { type: 'application/json' })   // 创建JSON下载内容
+        const url = URL.createObjectURL(blob)                         // 创建短期下载地址
+        const link = document.createElement('a')                      // 创建一次性下载入口
+        link.href = url                                               // 绑定刚生成的内容地址
+        link.download = `${(store.blueprint.name || '蓝图').replace(/[\\/:*?"<>|]/g, '_')}.json` // 清理文件名中的路径字符
+        link.click()                                                  // 触发浏览器下载
+        URL.revokeObjectURL(url)                                      // 下载触发后释放内存
+        store.workspace.feedback = { type: 'success', message: '已导出版本1蓝图文件' } // 显示导出反馈
+        return true                                                   // 告知顶部栏操作成功
+    } catch (error) {
+        store.workspace.feedback = { type: 'error', message: `导出失败：${error.message}` } // 显示结构校验错误
+        return false                                                  // 告知顶部栏操作失败
+    }
 }
 
 // --- 设置蓝图名称 ---

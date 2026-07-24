@@ -57,7 +57,60 @@ const store = reactive({
 		nodes: {}, // 节点表
 	},
 
-	scoring: {}, // 跑分状态数据（占位，格式待定）
+	workspace: {
+		// 运行工作台只保存界面开关，不混入蓝图业务数据
+		visible: false, // 是否显示右侧工作台
+		activeTab: "execution", // 当前查看的工作台页签
+		feedback: null, // 最近一次导入导出或远端操作反馈
+	},
+
+	transport: {
+		// WebSocket传输状态，连接错误会直接显示在界面中
+		status: "connecting", // connecting、connected或disconnected
+		error: null, // 最近一次可见的连接或协议错误
+	},
+
+	runtime: {
+		// 蓝图执行结果独立保存，避免污染蓝图和撤销历史
+		execution: {
+			requestId: null, // 当前运行请求ID，用于拒绝过期消息
+			status: "idle", // idle、running、succeeded、failed或sendFailed
+			durationMs: null, // 整张蓝图运行耗时
+			outputNodeIds: [], // 后端确认的输出节点ID
+			errorCount: 0, // 本次运行错误节点数量
+			nodeResults: {}, // 按节点ID保存结构化输出
+			nodeErrors: {}, // 按节点ID保存结构化错误
+		},
+		scoring: {
+			requestId: null, // 当前跑分请求ID
+			status: "idle", // idle、loading、succeeded、failed或sendFailed
+			result: null, // 延迟、吞吐量、参数量、设备和节点耗时
+			error: null, // 跑分错误
+		},
+		training: {
+			requestId: null, // 当前训练请求ID
+			cancelRequestId: null, // 当前取消请求ID
+			status: "idle", // idle、running、succeeded、failed或sendFailed
+			config: { epochs: 10, batchSize: 32, sampleCount: 1024, optimizer: "adam", learningRate: 0.001, lossNodeId: "" }, // 安全合成数据训练配置
+			progress: null, // 最近一个训练进度快照
+			result: null, // 训练完成数据
+			error: null, // 训练错误
+		},
+		artifacts: {
+			artifactName: "model", // 仅允许使用产物名称，不接收任意路径
+			status: "idle", // idle、loading、succeeded、failed或sendFailed
+			action: null, // save、load或export
+			requestId: null, // 当前产物请求ID
+			result: null, // 后端返回的保存、加载或导出结果
+			error: null, // 产物操作错误
+		},
+		plugins: {
+			requestId: null, // 当前插件请求ID
+			status: "idle", // idle、loading、succeeded、failed或sendFailed
+			items: [], // 后端返回的插件状态列表
+			error: null, // 获取、重载或热更新错误
+		},
+	},
 	mousePosition: { x: 0, y: 0 }, // 鼠标位置，方便直接被获取
 });
 

@@ -1,6 +1,7 @@
 import { watch } from "vue"; // 引入Vue的watch
 import store from "@/store.js"; // 引入全局状态
 import { updateFloatingPosition } from "@/utils/floatingPosition.js"; // 引入位置更新工具
+import Runtime from "@/commands/Runtime.js"; // 引入运行结果作废指令
 
 let hasStarted = false; // 标记是否已完成初始化，这个主要是防止被多次import时重复监听导致的性能问题
 
@@ -22,6 +23,15 @@ const initWatchers = () => {
 				}
 			}
 		},
+	);
+
+	// --- 监听可执行蓝图变化，立即作废旧运行、跑分和训练结果，防止界面展示不属于当前图的数据 ---
+	watch(
+		() => JSON.stringify({
+			nodes: store.blueprint.nodes.map((node) => ({ id: node.id, opcode: node.data?.opcode, params: node.data?.params })), // 节点身份、操作码和参数决定执行结果
+			edges: store.blueprint.edges.map((edge) => ({ source: edge.source, sourceHandle: edge.sourceHandle, target: edge.target, targetHandle: edge.targetHandle })), // 端口连接决定数据流
+		}),
+		() => Runtime.invalidateBlueprintRuntime(), // 业务图变化后拒绝所有在途旧响应
 	);
 
 	// --- 监听菜单绑定节点的位置变化，更新菜单位置 ---

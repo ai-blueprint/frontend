@@ -55,9 +55,7 @@ const add = (opcode, x, y) => {
             ports: JSON.parse(JSON.stringify(definition.ports)),      // 深拷贝端口定义
             params,                                                   // 参数对象
         },
-        selected: false,                                            // 默认未选中
-        tensorImage: null,                                          // 默认无可视化图
-        error: null,                                                // 默认无错误
+        selected: false,                                            // 默认未选中，选择属于VueFlow编辑状态
     }
 
     store.blueprint.nodes.push(newNode)                           // 将新节点加入蓝图

@@ -57,8 +57,6 @@ const paste = (offsetX = 20, offsetY = 20) => { // 粘贴节点与连线。
         const currentOffset = activeOffsets?.[oldNode.id] // 读取该节点偏移信息。
         if (currentOffset) { newNode.position.x = mouseCanvasPosition.x + currentOffset.x; newNode.position.y = mouseCanvasPosition.y + currentOffset.y } else { newNode.position.x += offsetX; newNode.position.y += offsetY } // 优先按偏移粘贴，否则使用默认偏移。
         newNode.selected = true // 新粘贴节点默认选中。
-        newNode.tensorImage = null // 清理历史可视化缓存。
-        newNode.error = null // 清理历史错误状态。
         store.blueprint.nodes.push(newNode) // 把新节点加入蓝图。
     }) // 结束节点粘贴循环。
 

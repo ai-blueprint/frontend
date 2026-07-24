@@ -2,6 +2,7 @@
 import TopBar from "@/components/TopBar.vue"; // 引入顶部栏组件
 import WorkSpace from "@/components/WorkSpace.vue"; // 引入工作区组件
 import store from "@/store.js"; // 引入全局状态
+import WorkspacePanel from "@/components/WorkspacePanel.vue"; // 引入右侧运行工作台
 // 更新鼠标位置，用于给其他地方直接获取鼠标位置
 function updateMousePosition(e) {
 	const { x, y } = e;
@@ -13,7 +14,10 @@ function updateMousePosition(e) {
 <template>
 	<div class="app" @mousemove="updateMousePosition">
 		<TopBar />
-		<WorkSpace />
+		<div class="app-body">
+			<WorkSpace />
+			<WorkspacePanel />
+		</div>
 	</div>
 </template>
 
@@ -25,5 +29,12 @@ function updateMousePosition(e) {
 	flex-direction: column;
 	overflow: hidden;
 	user-select: none;
+}
+
+.app-body {
+	position: relative;
+	display: flex;
+	flex: 1;
+	min-height: 0;
 }
 </style>

@@ -3,6 +3,7 @@ import { ref, computed, nextTick, watch } from "vue"; // 引入Vue组合式API
 import store from "@/store.js"; // 引入全局状态
 import Node from "@/commands/Node.js"; // 引入节点命令
 import Port from "@/components/Port.vue"; // 引入端口组件
+import TensorResult from "@/components/TensorResult.vue"; // 引入结构化结果预览组件
 
 const props = defineProps({
 	// 接收vueflow传入的节点属性
@@ -32,20 +33,11 @@ const isRenaming = computed(() => {
 	return store.renaming.nodeId === props.id; // 比较重命名目标和自身ID
 });
 
-// --- 获取当前节点对象（用于读取error和tensorImage）---
-const nodeData = computed(() => {
-	return store.blueprint.nodes.find((n) => n.id === props.id) || null; // 从store中查找自身
-});
-
-// --- 是否有错误 ---
-const hasError = computed(() => {
-	return !!(nodeData.value && nodeData.value.error); // 节点存在且有error字段
-});
-
-// --- 是否有tensorImage ---
-const hasTensorImage = computed(() => {
-	return !!(nodeData.value && nodeData.value.tensorImage); // 节点存在且有tensorImage
-});
+// --- 获取独立运行时结果 ---
+const nodeResult = computed(() => store.runtime.execution.nodeResults[props.id] || null); // 按节点ID读取当前运行结果
+const nodeError = computed(() => store.runtime.execution.nodeErrors[props.id] || null); // 按节点ID读取当前运行错误
+const hasError = computed(() => !!nodeError.value); // 有结构化错误时显示失败状态
+const hasResult = computed(() => !!nodeResult.value); // 有结构化结果时显示成功状态
 
 // --- 根据节点opcode获取分类颜色 ---
 const nodeColor = computed(() => {
@@ -113,8 +105,8 @@ const onRenameKeydown = (event) => {
 
 // --- 鼠标进入节点（检测Ctrl悬停）---
 const onMouseEnter = (event) => {
-	if (event.ctrlKey && hasTensorImage.value) {
-		// Ctrl按下且有tensorImage
+	if (event.ctrlKey && hasResult.value) {
+		// Ctrl按下且当前运行有结构化结果
 		isHoveringWithCtrl.value = true; // 显示tensor图
 	}
 };
@@ -126,8 +118,8 @@ const onMouseLeave = () => {
 
 // --- 鼠标在节点上移动（检测Ctrl状态变化）---
 const onMouseMove = (event) => {
-	if (event.ctrlKey && hasTensorImage.value) {
-		// Ctrl按下且有tensorImage
+	if (event.ctrlKey && hasResult.value) {
+		// Ctrl按下且当前运行有结构化结果
 		isHoveringWithCtrl.value = true; // 显示tensor图
 	} else {
 		isHoveringWithCtrl.value = false; // 隐藏tensor图
@@ -149,7 +141,7 @@ watch(isRenaming, (newVal) => {
 <template>
 	<div
 		class="custom-node"
-		:class="{ selected: selected }"
+		:class="{ selected: selected, 'run-success': hasResult, 'run-error': hasError }"
 		:style="{ '--node-color': nodeColor }"
 		@click="onClick"
 		@contextmenu="onContextMenu"
@@ -160,10 +152,10 @@ watch(isRenaming, (newVal) => {
 		<!-- 节点主容器 -->
 
 		<!-- 警告图标（节点有error时显示在正上方）-->
-		<div v-if="hasError" class="warning-icon" :title="nodeData.error">
+		<div v-if="hasError" class="warning-icon" :title="nodeError.message">
 			<img src="@/assets/warning.svg" alt="warning" class="warning-img" />
 			<!-- 警告图标 -->
-			<div class="warning-tooltip">{{ nodeData.error }}</div>
+			<div class="warning-tooltip">{{ nodeError.code ? `${nodeError.code} · ` : "" }}{{ nodeError.message }}</div>
 			<!-- 悬停时显示错误内容 -->
 		</div>
 
@@ -198,9 +190,12 @@ watch(isRenaming, (newVal) => {
 		</div>
 
 		<!-- 张量可视化图（Ctrl+悬停时显示在节点正右方）-->
-		<div v-if="isHoveringWithCtrl && hasTensorImage" class="tensor-tooltip">
-			<img :src="nodeData.tensorImage" alt="tensor" class="tensor-image" />
-			<!-- 显示tensor图 -->
+		<div v-if="isHoveringWithCtrl && hasResult" class="tensor-tooltip nodrag">
+			<div class="result-title">{{ nodeResult.opcode }} · {{ nodeResult.durationMs }}ms</div>
+			<div v-for="(output, port) in nodeResult.outputs" :key="port" class="output-result">
+				<div class="output-port">{{ port }}</div>
+				<TensorResult :value="output" />
+			</div>
 		</div>
 	</div>
 </template>
@@ -263,6 +258,9 @@ watch(isRenaming, (newVal) => {
 	filter: drop-shadow(0 0 3px var(--node-color)) drop-shadow(0 0 15px var(--node-color)) brightness(1.1);
 	/* 选中发光效果 */
 }
+
+.custom-node.run-success { box-shadow: 0 0 0 3px rgba(50, 173, 104, 0.78); }
+.custom-node.run-error { box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.85); }
 
 .ports {
 	display: flex;
@@ -369,8 +367,9 @@ watch(isRenaming, (newVal) => {
 	/* 圆角 */
 	font-size: 12px;
 	/* 字号 */
-	white-space: nowrap;
-	/* 不换行 */
+	max-width: 280px;
+	white-space: normal;
+	word-break: break-word;
 	margin-bottom: 4px;
 	/* 与图标间距 */
 }
@@ -395,7 +394,7 @@ watch(isRenaming, (newVal) => {
 	/* 浅色边框 */
 	border-radius: 6px;
 	/* 圆角 */
-	padding: 4px;
+	padding: 10px;
 	/* 内边距 */
 	z-index: 100;
 	/* 层级 */
@@ -403,12 +402,7 @@ watch(isRenaming, (newVal) => {
 	/* 阴影 */
 }
 
-.tensor-image {
-	max-width: 200px;
-	/* 最大宽度 */
-	max-height: 200px;
-	/* 最大高度 */
-	display: block;
-	/* 块级显示 */
-}
+.result-title { margin-bottom: 8px; color: #615e70; font-size: 12px; }
+.output-result + .output-result { margin-top: 10px; padding-top: 10px; border-top: 1px solid #ececf1; }
+.output-port { margin-bottom: 5px; color: #5f38df; font-size: 12px; font-weight: 700; }
 </style>
