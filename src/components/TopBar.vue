@@ -2,11 +2,10 @@
 import { ref } from "vue"; // 引入Vue响应式引用
 import store from "@/store.js"; // 引入全局状态
 import Blueprint from "@/commands/Blueprint.js"; // 引入蓝图命令
-import Runtime from "@/commands/Runtime.js"; // 引入运行工作台指令
+import Experiment from "@/commands/Experiment.js"; // 引入实验运行指令
 
 import textLogo from "@/assets/TopBar/text-logo.svg"; // LOGO图标
 import settingIcon from "@/assets/TopBar/setting.svg"; // 设置图标
-import pluginIcon from "@/assets/TopBar/plugin.svg"; // 插件图标
 
 const fileInput = ref(null); // 文件输入框引用
 
@@ -38,20 +37,10 @@ const onExport = () => {
 	Blueprint.exportBlueprint(); // 执行导出
 };
 
-// --- 运行蓝图 ---
-const onRun = () => {
-	Runtime.setWorkspace(true, "execution"); // 打开运行结果页
-	Runtime.runBlueprint(); // 发送蓝图到后端运行
+// --- 切换实时传播 ---
+const onRunningChange = (running) => {
+	Experiment.setRunning(running); // 开启后持续生成随机输入并逐节点反馈
 };
-
-// --- 跑分 ---
-const onScore = () => {
-	Runtime.setWorkspace(true, "scoring"); // 打开跑分结果页
-	Runtime.scoreBlueprint(); // 发送蓝图到后端跑分
-};
-
-// --- 打开插件工作台 ---
-const onPlugins = () => Runtime.setWorkspace(true, "plugins"); // 插件图标直接进入插件状态页
 </script>
 
 <template>
@@ -74,7 +63,10 @@ const onPlugins = () => Runtime.setWorkspace(true, "plugins"); // 插件图标�
 					</template>
 				</var-menu>
 
-				<button class="function-button" title="插件工作台" aria-label="插件工作台" @click="onPlugins"><img :src="pluginIcon" alt="" class="function-icon" /></button><!-- 插件图标 -->
+				<div class="monitor-switch" title="持续运行蓝图">
+					<span>运行</span>
+					<var-switch :model-value="store.experiment.running" @update:model-value="onRunningChange" />
+				</div>
 			</div>
 		</div>
 
@@ -88,10 +80,10 @@ const onPlugins = () => Runtime.setWorkspace(true, "plugins"); // 插件图标�
 		<!-- 右侧区域 -->
 		<div class="topbar-right">
 			<!-- 右侧区域 -->
-			<button class="action-button run-button" :disabled="store.runtime.execution.status === 'running'" @click="onRun">运行</button>
-			<!-- 运行按钮 -->
-			<button class="action-button score-button" :disabled="store.runtime.scoring.status === 'loading'" @click="onScore">跑分</button>
-			<!-- 跑分按钮 -->
+			<button class="action-button run-button" @click="onImport">导入</button>
+			<!-- 导入按钮 -->
+			<button class="action-button score-button" @click="onExport">导出</button>
+			<!-- 导出按钮 -->
 		</div>
 
 		<!-- 隐藏的文件输入框（用于导入）-->
@@ -152,17 +144,6 @@ const onPlugins = () => Runtime.setWorkspace(true, "plugins"); // 插件图标�
 	/* 图标高度 */
 	opacity: 0.8;
 	/* 默认透明度 */
-}
-
-.function-button {
-	display: grid;
-	place-items: center;
-	width: 32px;
-	height: 32px;
-	padding: 0;
-	border: 0;
-	background: transparent;
-	cursor: pointer;
 }
 
 .function-icon:hover {
@@ -279,8 +260,8 @@ const onPlugins = () => Runtime.setWorkspace(true, "plugins"); // 插件图标�
 	/* 白色文字 */
 	cursor: pointer;
 	/* 鼠标指针 */
-	letter-spacing: 0;
-	/* 保持文字自然间距 */
+	letter-spacing: -1px;
+	/* 紧凑字距 */
 	transition: all 0.1s ease-in-out;
 	/* 过渡动画 */
 
@@ -298,12 +279,6 @@ const onPlugins = () => Runtime.setWorkspace(true, "plugins"); // 插件图标�
 	/* 点击缩小效果 */
 }
 
-.action-button:disabled {
-	opacity: 0.55;
-	cursor: not-allowed;
-	scale: 1;
-}
-
 .run-button {
 	background-color: #7dc7f5;
 	/* 运行按钮天蓝色背景 */
@@ -311,20 +286,14 @@ const onPlugins = () => Runtime.setWorkspace(true, "plugins"); // 插件图标�
 
 .score-button {
 	background-color: #e1b86b;
-	/* 跑分按钮金色背景 */
+	/* 导出按钮金色背景 */
 }
 
-@media (max-width: 700px) {
-	.topbar { padding: 7px 10px; }
-	.text-logo { width: 92px; height: auto; }
-	.topbar-left, .function-group, .topbar-right { gap: 8px; }
-	.topbar-center { flex: 1; min-width: 64px; margin: 0 5px; }
-	.name-input { min-width: 0; padding: 7px 8px; }
-	.action-button { padding: 6px 9px; font-size: 13px; }
-}
-
-@media (max-width: 460px) {
-	.text-logo { display: none; }
-	.topbar-center { margin-left: 0; }
+.monitor-switch {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 13px;
+	white-space: nowrap;
 }
 </style>

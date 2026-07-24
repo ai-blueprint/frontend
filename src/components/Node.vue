@@ -3,7 +3,7 @@ import { ref, computed, nextTick, watch } from "vue"; // 引入Vue组合式API
 import store from "@/store.js"; // 引入全局状态
 import Node from "@/commands/Node.js"; // 引入节点命令
 import Port from "@/components/Port.vue"; // 引入端口组件
-import TensorResult from "@/components/TensorResult.vue"; // 引入结构化结果预览组件
+import TensorResult from "@/components/TensorResult.vue"; // 引入节点下方张量热力图
 
 const props = defineProps({
 	// 接收vueflow传入的节点属性
@@ -14,7 +14,6 @@ const props = defineProps({
 
 const renameInput = ref(null); // 重命名输入框的引用
 const renameValue = ref(""); // 重命名输入框的值
-const isHoveringWithCtrl = ref(false); // 是否Ctrl+悬停状态
 
 // --- 获取输入端口列表 ---
 const inputPorts = computed(() => {
@@ -33,11 +32,21 @@ const isRenaming = computed(() => {
 	return store.renaming.nodeId === props.id; // 比较重命名目标和自身ID
 });
 
-// --- 获取独立运行时结果 ---
-const nodeResult = computed(() => store.runtime.execution.nodeResults[props.id] || null); // 按节点ID读取当前运行结果
-const nodeError = computed(() => store.runtime.execution.nodeErrors[props.id] || null); // 按节点ID读取当前运行错误
-const hasError = computed(() => !!nodeError.value); // 有结构化错误时显示失败状态
-const hasResult = computed(() => !!nodeResult.value); // 有结构化结果时显示成功状态
+// --- 获取当前节点对象（用于读取error和tensorImage）---
+const nodeData = computed(() => {
+	return store.blueprint.nodes.find((n) => n.id === props.id) || null; // 从store中查找自身
+});
+
+// --- 是否有错误 ---
+const hasError = computed(() => {
+	return !!(nodeData.value && nodeData.value.error); // 节点存在且有error字段
+});
+
+// --- 获取当前节点的张量输出 ---
+const tensorOutputs = computed(() => {
+	const outputs = store.runtime.execution.nodeResults[props.id]?.outputs || {}; // 读取当前轮次已经返回的全部端口
+	return Object.values(outputs).filter((output) => output?.kind === "tensor"); // 节点下方只显示张量图，不显示其他信息
+});
 
 // --- 根据节点opcode获取分类颜色 ---
 const nodeColor = computed(() => {
@@ -103,29 +112,6 @@ const onRenameKeydown = (event) => {
 	if (event.key === "Escape") cancelRename(); // Esc取消
 };
 
-// --- 鼠标进入节点（检测Ctrl悬停）---
-const onMouseEnter = (event) => {
-	if (event.ctrlKey && hasResult.value) {
-		// Ctrl按下且当前运行有结构化结果
-		isHoveringWithCtrl.value = true; // 显示tensor图
-	}
-};
-
-// --- 鼠标离开节点 ---
-const onMouseLeave = () => {
-	isHoveringWithCtrl.value = false; // 隐藏tensor图
-};
-
-// --- 鼠标在节点上移动（检测Ctrl状态变化）---
-const onMouseMove = (event) => {
-	if (event.ctrlKey && hasResult.value) {
-		// Ctrl按下且当前运行有结构化结果
-		isHoveringWithCtrl.value = true; // 显示tensor图
-	} else {
-		isHoveringWithCtrl.value = false; // 隐藏tensor图
-	}
-};
-
 // --- 监听重命名状态，自动聚焦输入框 ---
 watch(isRenaming, (newVal) => {
 	if (newVal) {
@@ -139,23 +125,21 @@ watch(isRenaming, (newVal) => {
 </script>
 
 <template>
-	<div
-		class="custom-node"
-		:class="{ selected: selected, 'run-success': hasResult, 'run-error': hasError }"
-		:style="{ '--node-color': nodeColor }"
-		@click="onClick"
-		@contextmenu="onContextMenu"
-		@dblclick="onDoubleClick"
-		@mouseenter="onMouseEnter"
-		@mouseleave="onMouseLeave"
-		@mousemove="onMouseMove">
+	<div class="node-visualizer">
+		<div
+			class="custom-node"
+			:class="{ selected: selected }"
+			:style="{ '--node-color': nodeColor }"
+			@click="onClick"
+			@contextmenu="onContextMenu"
+			@dblclick="onDoubleClick">
 		<!-- 节点主容器 -->
 
 		<!-- 警告图标（节点有error时显示在正上方）-->
-		<div v-if="hasError" class="warning-icon" :title="nodeError.message">
+		<div v-if="hasError" class="warning-icon" :title="nodeData.error">
 			<img src="@/assets/warning.svg" alt="warning" class="warning-img" />
 			<!-- 警告图标 -->
-			<div class="warning-tooltip">{{ nodeError.code ? `${nodeError.code} · ` : "" }}{{ nodeError.message }}</div>
+			<div class="warning-tooltip">{{ nodeData.error }}</div>
 			<!-- 悬停时显示错误内容 -->
 		</div>
 
@@ -189,18 +173,31 @@ watch(isRenaming, (newVal) => {
 			<!-- 渲染每个输出端口 -->
 		</div>
 
-		<!-- 张量可视化图（Ctrl+悬停时显示在节点正右方）-->
-		<div v-if="isHoveringWithCtrl && hasResult" class="tensor-tooltip nodrag">
-			<div class="result-title">{{ nodeResult.opcode }} · {{ nodeResult.durationMs }}ms</div>
-			<div v-for="(output, port) in nodeResult.outputs" :key="port" class="output-result">
-				<div class="output-port">{{ port }}</div>
-				<TensorResult :value="output" />
-			</div>
+		</div>
+
+		<div v-if="store.experiment.running && tensorOutputs.length" class="node-tensors nodrag nowheel">
+			<TensorResult v-for="(output, index) in tensorOutputs" :key="index" :value="output" :max-width="180" :max-height="130" />
 		</div>
 	</div>
 </template>
 
 <style scoped>
+.node-visualizer {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	min-width: 180px;
+	gap: 8px;
+}
+
+.node-tensors {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 4px;
+	pointer-events: none;
+}
+
 .custom-node {
 	display: flex;
 	/* 横向排列：输入端口 | 名称 | 输出端口 */
@@ -258,9 +255,6 @@ watch(isRenaming, (newVal) => {
 	filter: drop-shadow(0 0 3px var(--node-color)) drop-shadow(0 0 15px var(--node-color)) brightness(1.1);
 	/* 选中发光效果 */
 }
-
-.custom-node.run-success { box-shadow: 0 0 0 3px rgba(50, 173, 104, 0.78); }
-.custom-node.run-error { box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.85); }
 
 .ports {
 	display: flex;
@@ -329,7 +323,7 @@ watch(isRenaming, (newVal) => {
 .warning-icon {
 	position: absolute;
 	/* 绝对定位 */
-	top: -28px;
+	top: -38px;
 	/* 在节点正上方 */
 	left: 50%;
 	/* 水平居中 */
@@ -340,9 +334,9 @@ watch(isRenaming, (newVal) => {
 }
 
 .warning-img {
-	width: 20px;
+	width: 30px;
 	/* 图标宽度 */
-	height: 20px;
+	height: 30px;
 	/* 图标高度 */
 }
 
@@ -367,9 +361,8 @@ watch(isRenaming, (newVal) => {
 	/* 圆角 */
 	font-size: 12px;
 	/* 字号 */
-	max-width: 280px;
-	white-space: normal;
-	word-break: break-word;
+	white-space: nowrap;
+	/* 不换行 */
 	margin-bottom: 4px;
 	/* 与图标间距 */
 }
@@ -379,30 +372,4 @@ watch(isRenaming, (newVal) => {
 	/* 悬停时显示 */
 }
 
-.tensor-tooltip {
-	position: absolute;
-	/* 绝对定位 */
-	left: calc(100% + 10px);
-	/* 在节点正右方 */
-	top: 50%;
-	/* 垂直居中 */
-	transform: translateY(-50%);
-	/* 精确居中 */
-	background: #ffffff;
-	/* 白色背景 */
-	border: 1px solid #d0d0d0;
-	/* 浅色边框 */
-	border-radius: 6px;
-	/* 圆角 */
-	padding: 10px;
-	/* 内边距 */
-	z-index: 100;
-	/* 层级 */
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-	/* 阴影 */
-}
-
-.result-title { margin-bottom: 8px; color: #615e70; font-size: 12px; }
-.output-result + .output-result { margin-top: 10px; padding-top: 10px; border-top: 1px solid #ececf1; }
-.output-port { margin-bottom: 5px; color: #5f38df; font-size: 12px; font-weight: 700; }
 </style>

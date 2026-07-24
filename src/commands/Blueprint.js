@@ -70,11 +70,11 @@ const importBlueprint = (jsonData) => {
         store.runtime.execution.status = 'idle'                     // 新蓝图从未运行状态开始
         store.runtime.execution.nodeResults = {}                    // 清除旧蓝图节点结果
         store.runtime.execution.nodeErrors = {}                     // 清除旧蓝图节点错误
-        store.workspace.feedback = { type: 'success', message: '蓝图导入成功' } // 显示导入反馈
+        store.experiment.feedback = { type: 'success', message: '蓝图导入成功' } // 显示导入反馈
         History.clear()                                             // 新蓝图作为撤销历史起点
         return true                                                 // 告知文件入口导入成功
     } catch (error) {
-        store.workspace.feedback = { type: 'error', message: `导入失败：${error.message}` } // 保留原蓝图并显示原因
+        store.experiment.feedback = { type: 'error', message: `导入失败：${error.message}` } // 保留原蓝图并显示原因
         return false                                                // 告知文件入口导入失败
     }
 }
@@ -90,10 +90,10 @@ const exportBlueprint = () => {
         link.download = `${(store.blueprint.name || '蓝图').replace(/[\\/:*?"<>|]/g, '_')}.json` // 清理文件名中的路径字符
         link.click()                                                  // 触发浏览器下载
         URL.revokeObjectURL(url)                                      // 下载触发后释放内存
-        store.workspace.feedback = { type: 'success', message: '已导出版本1蓝图文件' } // 显示导出反馈
+        store.experiment.feedback = { type: 'success', message: '已导出版本1蓝图文件' } // 显示导出反馈
         return true                                                   // 告知顶部栏操作成功
     } catch (error) {
-        store.workspace.feedback = { type: 'error', message: `导出失败：${error.message}` } // 显示结构校验错误
+        store.experiment.feedback = { type: 'error', message: `导出失败：${error.message}` } // 显示结构校验错误
         return false                                                  // 告知顶部栏操作失败
     }
 }
