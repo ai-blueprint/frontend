@@ -1,5 +1,5 @@
 <script setup>
-/* 这个组件只显示无文字的负黄、零白、正蓝张量方块图，并保持张量真实末两维形状。 */
+/* 这个组件只显示无文字的负蓝、零白、正黄张量方块图，并保持张量真实末两维形状。 */
 import { computed } from "vue"; // 引入切片排列和方块尺寸派生能力
 import { createResultPreview, getSliceColumns } from "@/utils/resultPreview.js"; // 引入真实形状切片工具
 import { getTensorColorStyle } from "@/utils/tensorColor.js"; // 引入按正负号区分的固定颜色映射
