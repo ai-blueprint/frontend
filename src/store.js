@@ -61,6 +61,7 @@ const store = reactive({
 	experiment: {
 		// 实时传播开关独立于蓝图数据，不进入保存文件和撤销历史
 		running: false, // 是否持续生成随机输入并逐节点传播
+		showTensor: true, // 是否在节点下方显示Tensor和训练梯度
 		feedback: null, // 最近一次导入导出或远端操作反馈
 	},
 
@@ -80,14 +81,6 @@ const store = reactive({
 			errorCount: 0, // 本次运行错误节点数量
 			nodeResults: {}, // 按节点ID保存结构化输出
 			nodeErrors: {}, // 按节点ID保存结构化错误
-		},
-		scan: {
-			// 保存Block可堆叠静态扫描结论
-			requestId: null, // 当前扫描请求ID，用于拒绝过期响应
-			status: "idle", // idle、scanning、stackable、notStackable或unknown
-			issues: [], // 影响结论的结构化问题
-			inputShapes: {}, // 输入节点探测形状
-			outputShapes: {}, // 输出节点接收形状
 		},
 		training: {
 			// 保存单步训练结果和曲线，不进入蓝图文件或撤销历史

@@ -1,6 +1,7 @@
 <script setup>
 import TopBar from "@/components/TopBar.vue"; // 引入顶部栏组件
 import WorkSpace from "@/components/WorkSpace.vue"; // 引入工作区组件
+import FeedbackSnackbar from "@/components/FeedbackSnackbar.vue"; // 引入全局错误和操作反馈消息条
 import store from "@/store.js"; // 引入全局状态
 // 更新鼠标位置，用于给其他地方直接获取鼠标位置
 function updateMousePosition(e) {
@@ -14,6 +15,7 @@ function updateMousePosition(e) {
 	<div class="app" @mousemove="updateMousePosition">
 		<TopBar />
 		<WorkSpace />
+		<FeedbackSnackbar />
 	</div>
 </template>
 

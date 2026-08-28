@@ -181,11 +181,11 @@ watch(isRenaming, (newVal) => {
 
 		</div>
 
-		<div v-if="store.experiment.running && tensorOutputs.length" class="node-tensors nodrag nowheel">
+		<div v-if="store.experiment.showTensor && tensorOutputs.length" class="node-tensors nodrag nowheel">
 			<TensorResult v-for="(output, index) in tensorOutputs" :key="index" :value="output" :max-width="180" :max-height="130" />
 		</div>
 
-		<div v-if="store.runtime.training.status === 'succeeded' && parameterGradients.length" class="node-gradients nodrag nowheel">
+		<div v-if="store.experiment.showTensor && store.runtime.training.status === 'succeeded' && parameterGradients.length" class="node-gradients nodrag nowheel">
 			<div class="gradient-title">梯度</div>
 			<div v-for="parameter in parameterGradients" :key="parameter.name" class="parameter-gradient">
 				<div class="parameter-name">{{ parameter.name }}</div>

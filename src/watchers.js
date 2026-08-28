@@ -2,7 +2,6 @@ import { watch } from "vue"; // 引入Vue的watch
 import store from "@/store.js"; // 引入全局状态
 import { updateFloatingPosition } from "@/utils/floatingPosition.js"; // 引入位置更新工具
 import Experiment from "@/commands/Experiment.js"; // 引入实验结果作废指令
-import Scan from "@/commands/Scan.js"; // 引入Block扫描结论作废指令
 import Train from "@/commands/Train.js"; // 引入训练结果作废指令
 
 let hasStarted = false; // 标记是否已完成初始化，这个主要是防止被多次import时重复监听导致的性能问题
@@ -36,7 +35,6 @@ const initWatchers = () => {
 		}),
 		() => {
 			Experiment.invalidate(); // 业务图变化后拒绝所有在途旧响应
-			Scan.clear(); // 结构变化后旧扫描结论不再可信，需要重新扫描
 			Train.reset(); // 结构或参数变化后停止连续训练并重置后端模型
 		},
 	);

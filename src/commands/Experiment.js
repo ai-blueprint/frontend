@@ -54,8 +54,8 @@ const scheduleNextCycle = (token) => {
 
 
 // --- 发送一轮蓝图传播 ---
-const runCycle = (token = cycleToken) => {
-	if (!store.experiment.running || token !== cycleToken) return null; // 开关关闭或轮次过期时直接停止
+const runCycle = (token = cycleToken, isContinuous = store.experiment.running) => {
+	if (token !== cycleToken || (isContinuous && !store.experiment.running)) return null; // 轮次过期或持续模式已停止时直接停止
 	let blueprint; // 校验成功后保存纯业务蓝图
 	try {
 		blueprint = serializeBlueprint(store.blueprint); // 运行数据不进入后端蓝图
@@ -94,6 +94,24 @@ const setRunning = (running) => {
 };
 
 
+// --- 执行一次蓝图传播 ---
+const runOnce = () => {
+	store.experiment.running = false; // 单次运行不进入持续循环
+	cycleToken += 1; // 让上一轮持续运行立即失效
+	clearTimeout(cycleTimer); // 清除尚未开始的持续运行轮次
+	clearResults(); // 单次运行前清除旧结果
+	return runCycle(cycleToken, false); // 执行一轮后由终态消息自然结束
+};
+
+
+// --- 开始持续运行 ---
+const startContinuous = () => setRunning(true); // 复用现有持续运行命令
+
+
+// --- 停止持续运行 ---
+const stop = () => setRunning(false); // 复用现有停止命令
+
+
 // --- 蓝图变化后重新开始全部输入下游传播 ---
 const invalidate = () => {
 	const shouldRestart = store.experiment.running; // 记录修改前是否正在实时观察
@@ -111,7 +129,7 @@ const registerHandlers = () => {
 
 	ws.registerHandler("nodeResult", (envelope) => {
 		const execution = store.runtime.execution; // 获取当前轮次状态
-		if (!store.experiment.running || !isEnvelopeCurrent(execution.requestId, envelope) || envelope.error) return; // 忽略停止后和过期消息
+		if (execution.status !== "running" || !isEnvelopeCurrent(execution.requestId, envelope) || envelope.error) return; // 单次和持续运行都接收当前轮次结果
 		const result = envelope.data; // 节点结果包含全部输出端口
 		if (!result?.nodeId) return; // 无节点ID无法关联画布
 		cycleResultIDs.add(result.nodeId); // 标记节点在本轮确实收到了上游值并完成计算
@@ -123,7 +141,7 @@ const registerHandlers = () => {
 
 	ws.registerHandler("nodeError", (envelope) => {
 		const execution = store.runtime.execution; // 获取当前轮次状态
-		if (!store.experiment.running || !isEnvelopeCurrent(execution.requestId, envelope)) return; // 旧错误不能污染新轮次
+		if (execution.status !== "running" || !isEnvelopeCurrent(execution.requestId, envelope)) return; // 单次和持续运行都接收当前轮次错误
 		const error = envelope.error; // 读取结构化节点错误
 		if (!error?.nodeId) return; // 无节点ID的错误由全局状态保存
 		cycleErrorIDs.add(error.nodeId); // 只记录真正执行出错的节点，下游跳过不显示错误
@@ -161,4 +179,4 @@ const registerHandlers = () => {
 
 registerHandlers(); // 导入指令模块即建立实时传播链
 
-export default { setRunning, runCycle, invalidate, registerHandlers }; // 导出Switch和蓝图监听可触发的指令
+export default { setRunning, runOnce, startContinuous, stop, runCycle, invalidate, registerHandlers }; // 导出运行控制命令
