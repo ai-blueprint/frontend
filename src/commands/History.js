@@ -13,6 +13,7 @@ const record = () => {
     // 如果后续蓝图规模明显增大导致记录性能下降，再升级为增量快照。
     // --- 深拷贝当前蓝图状态 ---
     const snapshot = {
+        variables: JSON.parse(JSON.stringify(store.blueprint.variables)), // 深拷贝变量数据，表达式引用依赖它
         nodes: JSON.parse(JSON.stringify(store.blueprint.nodes)),   // 深拷贝节点数据
         edges: JSON.parse(JSON.stringify(store.blueprint.edges)),   // 深拷贝连接线数据
     }
@@ -40,6 +41,7 @@ const undo = () => {
     store.history.currentIndex--                                  // 回退一步
     const snapshot = store.history.snapshots[store.history.currentIndex] // 获取目标快照
 
+    store.blueprint.variables = JSON.parse(JSON.stringify(snapshot.variables || [])) // 恢复变量数据，旧快照缺失时用空列表
     store.blueprint.nodes = JSON.parse(JSON.stringify(snapshot.nodes))   // 恢复节点数据
     store.blueprint.edges = JSON.parse(JSON.stringify(snapshot.edges))   // 恢复连接线数据
 
@@ -56,6 +58,7 @@ const redo = () => {
     store.history.currentIndex++                                  // 前进一步
     const snapshot = store.history.snapshots[store.history.currentIndex] // 获取目标快照
 
+    store.blueprint.variables = JSON.parse(JSON.stringify(snapshot.variables || [])) // 恢复变量数据，旧快照缺失时用空列表
     store.blueprint.nodes = JSON.parse(JSON.stringify(snapshot.nodes))   // 恢复节点数据
     store.blueprint.edges = JSON.parse(JSON.stringify(snapshot.edges))   // 恢复连接线数据
 

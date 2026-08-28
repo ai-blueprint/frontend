@@ -1,5 +1,4 @@
 <script setup>
-import { nextTick } from "vue"; // 引入nextTick等待DOM更新
 import { Handle } from "@vue-flow/core"; // 引入vueflow端口组件
 import Edge from "@/commands/Edge.js"; // 引入连接线命令
 
@@ -15,6 +14,7 @@ const props = defineProps({
 // --- 输入端口被按下时，检查是否需要拔线重连 ---
 const onMouseDown = (event) => {
 	if (props.type !== "target") return; // 只处理输入端口
+	if (!event.target.classList.contains("port-handle")) return; // 只在端口圆点上触发拔线，点击标签保持普通节点交互
 
 	const existingEdge = Edge.getByInputPort(props.nodeId, props.portKey); // 检查该输入端口是否已有连线
 	if (!existingEdge) return; // 没有连线就让VueFlow正常处理新建连接
@@ -25,23 +25,20 @@ const onMouseDown = (event) => {
 	// --- 记录原输出端口信息 ---
 	const sourceNodeId = existingEdge.source; // 原输出端口所在节点ID
 	const sourcePortKey = existingEdge.sourceHandle; // 原输出端口标识
+	const sourceHandle = document.querySelector(`.vue-flow__handle[data-handleid="${sourcePortKey}"][data-nodeid="${sourceNodeId}"]`); // 找到原输出端口的DOM元素
+	if (!sourceHandle) return; // 找不到原输出端口时保留旧连接，避免拔线变成误删除
 
-	Edge.remove(existingEdge.id); // 断开旧连接
-
-	// --- 在DOM更新后，从原输出端口发起新连接到鼠标位置 ---
-	nextTick(() => {
-		const sourceHandle = document.querySelector(`.vue-flow__handle[data-handleid="${sourcePortKey}"][data-nodeid="${sourceNodeId}"]`); // 找到原输出端口的DOM元素
-		if (!sourceHandle) return; // 找不到就放弃
-
-		const mouseEvent = new MouseEvent("mousedown", {
-			// 构造模拟的鼠标按下事件
-			bubbles: true, // 允许冒泡
-			cancelable: true, // 允许取消
-			clientX: event.clientX, // 使用原始鼠标X坐标
-			clientY: event.clientY, // 使用原始鼠标Y坐标
-		});
-		sourceHandle.dispatchEvent(mouseEvent); // 触发输出端口的连接拖拽
+	// --- 同步从原输出端口发起新连接，让真实鼠标后续移动继续驱动拖线 ---
+	const mouseEvent = new MouseEvent("mousedown", {
+		bubbles: true, // 允许事件到达Vue Flow的Handle监听器
+		cancelable: true, // 保持普通鼠标按下事件语义
+		button: 0, // Vue Flow只接受鼠标左键发起连接
+		buttons: 1, // 表示左键仍处于按住状态
+		clientX: event.clientX, // 新连接线末端从当前鼠标位置开始
+		clientY: event.clientY, // 新连接线末端从当前鼠标位置开始
 	});
+	sourceHandle.dispatchEvent(mouseEvent); // Vue Flow在此同步注册document的mousemove和mouseup监听器
+	Edge.remove(existingEdge.id); // 新拖线已经启动后再断开旧连接，避免只删除而没有拖线
 };
 </script>
 

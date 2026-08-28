@@ -11,7 +11,7 @@ const init = () => {
     if (hasStarted) return                                       // 已初始化直接返回
 
     stopWatcher = watch(
-        () => [store.blueprint.nodes, store.blueprint.edges],    // 只监听蓝图核心数据
+        () => [store.blueprint.variables, store.blueprint.nodes, store.blueprint.edges], // 监听蓝图核心数据，变量也进入撤销历史
         () => {
             if (store.history.paused) return                     // 暂停期间跳过记录
 

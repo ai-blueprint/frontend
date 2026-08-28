@@ -64,6 +64,7 @@ const importBlueprint = (jsonData) => {
     try {
         const data = readBlueprintFile(jsonData)                    // 校验版本、结构和连线引用并剥离临时字段
         store.blueprint.name = data.name                            // 恢复蓝图名称
+        store.blueprint.variables = data.variables || []            // 恢复蓝图变量，旧文件缺失时使用空列表
         store.blueprint.nodes = data.nodes                          // 恢复已清理节点
         store.blueprint.edges = data.edges                          // 恢复已清理连接线
         store.runtime.execution.requestId = null                    // 导入后旧运行消息全部视为过期

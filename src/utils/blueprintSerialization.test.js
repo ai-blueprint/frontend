@@ -28,4 +28,25 @@ describe("蓝图序列化", () => {
 		invalid.edges.push({ id: "e1", source: "n1", sourceHandle: "out", target: "missing", targetHandle: "x" }); // 添加悬空连接
 		expect(() => serializeBlueprint(invalid)).toThrow("引用了不存在的节点"); // 非法结构不能写入store或发给后端
 	});
+
+	it("序列化并校验蓝图变量", () => {
+		const withVariables = structuredClone(blueprint); // 复制蓝图避免污染其他测试
+		withVariables.variables = [{ id: "var-d", name: "D", value: 8, temp: "剥离" }]; // 变量携带临时字段
+		const result = serializeBlueprint(withVariables); // 清理后端请求数据
+		expect(result.variables).toEqual([{ id: "var-d", name: "D", value: 8 }]); // 只保留白名单变量字段
+	});
+
+	it("缺失变量的旧蓝图仍可序列化", () => {
+		expect(serializeBlueprint(blueprint).variables).toEqual([]); // 旧文件缺失variables时补空列表
+	});
+
+	it("拒绝结构非法的变量列表", () => {
+		const badType = structuredClone(blueprint); // 复制蓝图避免污染其他测试
+		badType.variables = { D: 8 }; // 变量必须是数组
+		expect(() => serializeBlueprint(badType)).toThrow("变量必须是数组");
+
+		const duplicated = structuredClone(blueprint); // 复制蓝图避免污染其他测试
+		duplicated.variables = [{ id: "v1", name: "D", value: 8 }, { id: "v2", name: "D", value: 4 }]; // 变量重名
+		expect(() => serializeBlueprint(duplicated)).toThrow("变量名重复");
+	});
 });

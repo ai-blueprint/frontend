@@ -6,6 +6,7 @@ const store = reactive({
 	blueprint: {
 		// 蓝图基础数据
 		name: "我的架构", // 蓝图名称
+		variables: [], // 蓝图变量列表，每项{id, name, value}，节点参数可用名称引用
 		nodes: [], // 节点数组
 		edges: [], // 连接线数组
 	},
@@ -79,6 +80,28 @@ const store = reactive({
 			errorCount: 0, // 本次运行错误节点数量
 			nodeResults: {}, // 按节点ID保存结构化输出
 			nodeErrors: {}, // 按节点ID保存结构化错误
+		},
+		scan: {
+			// 保存Block可堆叠静态扫描结论
+			requestId: null, // 当前扫描请求ID，用于拒绝过期响应
+			status: "idle", // idle、scanning、stackable、notStackable或unknown
+			issues: [], // 影响结论的结构化问题
+			inputShapes: {}, // 输入节点探测形状
+			outputShapes: {}, // 输出节点接收形状
+		},
+		training: {
+			// 保存单步训练结果和曲线，不进入蓝图文件或撤销历史
+			requestId: null, // 当前训练请求ID
+			status: "idle", // idle、training、succeeded或failed
+			step: 0, // 已完成训练步数
+			loss: null, // 最近一次损失值
+			curve: [], // 按训练步保存损失曲线
+			nodes: {}, // 按节点保存最近一次权重、梯度和变化量
+			error: null, // 最近一次训练错误
+			continuous: false, // 是否自动连续训练
+			optimizer: "sgd", // 当前优化器名称
+			learningRate: 0.01, // 当前学习率
+			gradientClip: 0, // 梯度裁剪阈值，0表示关闭
 		},
 	},
 	mousePosition: { x: 0, y: 0 }, // 鼠标位置，方便直接被获取

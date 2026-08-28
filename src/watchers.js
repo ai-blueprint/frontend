@@ -2,6 +2,8 @@ import { watch } from "vue"; // 引入Vue的watch
 import store from "@/store.js"; // 引入全局状态
 import { updateFloatingPosition } from "@/utils/floatingPosition.js"; // 引入位置更新工具
 import Experiment from "@/commands/Experiment.js"; // 引入实验结果作废指令
+import Scan from "@/commands/Scan.js"; // 引入Block扫描结论作废指令
+import Train from "@/commands/Train.js"; // 引入训练结果作废指令
 
 let hasStarted = false; // 标记是否已完成初始化，这个主要是防止被多次import时重复监听导致的性能问题
 
@@ -28,10 +30,15 @@ const initWatchers = () => {
 	// --- 监听可执行蓝图变化，立即作废旧传播结果并使用新图继续运行 ---
 	watch(
 		() => JSON.stringify({
+			variables: store.blueprint.variables.map((variable) => ({ name: variable.name, value: variable.value })), // 变量名称和值决定所有引用参数的展开结果
 			nodes: store.blueprint.nodes.map((node) => ({ id: node.id, opcode: node.data?.opcode, params: node.data?.params })), // 节点身份、操作码和参数决定执行结果
 			edges: store.blueprint.edges.map((edge) => ({ source: edge.source, sourceHandle: edge.sourceHandle, target: edge.target, targetHandle: edge.targetHandle })), // 端口连接决定数据流
 		}),
-		() => Experiment.invalidate(), // 业务图变化后拒绝所有在途旧响应
+		() => {
+			Experiment.invalidate(); // 业务图变化后拒绝所有在途旧响应
+			Scan.clear(); // 结构变化后旧扫描结论不再可信，需要重新扫描
+			Train.reset(); // 结构或参数变化后停止连续训练并重置后端模型
+		},
 	);
 
 	// --- 监听菜单绑定节点的位置变化，更新菜单位置 ---

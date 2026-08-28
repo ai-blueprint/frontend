@@ -11,6 +11,9 @@ import CustomNode from "@/components/Node.vue"; // 引入自定义节点组件
 import ToolBar from "@/components/ToolBar.vue"; // 引入工具栏组件
 import NodeMenu from "@/components/NodeMenu.vue"; // 引入节点菜单组件
 import NodePanel from "@/components/NodePanel.vue"; // 引入节点面板组件
+import VariablePanel from "@/components/VariablePanel.vue"; // 引入蓝图变量面板组件
+import TrainingPanel from "@/components/TrainingPanel.vue"; // 引入单步训练和损失曲线面板
+import DraggablePanel from "@/components/DraggablePanel.vue"; // 引入通用可拖拽面板包裹层
 
 // --- 用markRaw标记组件，避免被reactive包裹导致性能警告 ---
 const nodeTypes = { baseNode: markRaw(CustomNode) }; // 节点类型映射
@@ -87,6 +90,14 @@ const onContextMenu = (event) => {
 
 		<ToolBar />
 		<!-- 底部工具栏 -->
+		<DraggablePanel :initial-left="12" :initial-bottom="12">
+			<VariablePanel />
+		</DraggablePanel>
+		<!-- 蓝图变量面板 -->
+		<DraggablePanel :initial-left="12" :initial-bottom="184">
+			<TrainingPanel />
+		</DraggablePanel>
+		<!-- 训练面板 -->
 		<NodeMenu />
 		<!-- 节点右键菜单 -->
 		<NodePanel />

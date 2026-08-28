@@ -8,6 +8,7 @@ import "./commands/AutoRecord.js"; // 导入即启动自动历史记录
 import "./commands/Shortcut.js"; // 导入即启动快捷键监听
 import "./commands/History.js"; // 导入即启动历史初始快照
 import "./ws.js"; // 导入即启动WebSocket模块
+import "./commands/Train.js"; // 导入即建立训练响应处理器
 
 const app = createApp(App); // 创建Vue应用实例
 app.use(Varlet); // 注册Varlet UI库

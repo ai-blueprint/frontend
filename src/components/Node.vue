@@ -48,6 +48,12 @@ const tensorOutputs = computed(() => {
 	return Object.values(outputs).filter((output) => output?.kind === "tensor"); // 节点下方只显示张量图，不显示其他信息
 });
 
+// --- 获取训练模式下当前节点的参数梯度 ---
+const parameterGradients = computed(() => {
+	if (!store.runtime.training.nodes[props.id]) return []; // 没有可学习参数时不显示训练图
+	return (store.runtime.training.nodes[props.id].parameters || []).filter((parameter) => parameter.nodeId === props.id); // 再按参数归属过滤，防止错误快照显示到其他节点
+});
+
 // --- 根据节点opcode获取分类颜色 ---
 const nodeColor = computed(() => {
 	const nodeOpcode = props.data?.opcode; // 读取当前节点opcode
@@ -178,6 +184,14 @@ watch(isRenaming, (newVal) => {
 		<div v-if="store.experiment.running && tensorOutputs.length" class="node-tensors nodrag nowheel">
 			<TensorResult v-for="(output, index) in tensorOutputs" :key="index" :value="output" :max-width="180" :max-height="130" />
 		</div>
+
+		<div v-if="store.runtime.training.status === 'succeeded' && parameterGradients.length" class="node-gradients nodrag nowheel">
+			<div class="gradient-title">梯度</div>
+			<div v-for="parameter in parameterGradients" :key="parameter.name" class="parameter-gradient">
+				<div class="parameter-name">{{ parameter.name }}</div>
+				<TensorResult :value="parameter.gradient" :max-width="180" :max-height="130" />
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -196,6 +210,35 @@ watch(isRenaming, (newVal) => {
 	align-items: center;
 	gap: 4px;
 	pointer-events: none;
+}
+
+.node-gradients {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 4px;
+}
+
+.gradient-title {
+	color: #8992eb;
+	font-size: 11px;
+	font-weight: 600;
+}
+
+.parameter-gradient {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 2px;
+}
+
+.parameter-name {
+	max-width: 180px;
+	color: #7f89b2;
+	font-size: 10px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .custom-node {

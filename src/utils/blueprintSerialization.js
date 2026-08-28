@@ -33,11 +33,28 @@ const cleanEdge = (edge) => ({
 });
 
 
+// --- 清理单个变量 ---
+const cleanVariable = (variable) => ({
+	id: variable.id, // 变量ID保持稳定，表达式重命名同步依赖它
+	name: variable.name, // 表达式通过名称引用变量
+	value: JSON.parse(JSON.stringify(variable.value)), // 只保留可JSON序列化的数字或数字列表
+});
+
+
 // --- 校验蓝图核心结构 ---
 const validateBlueprint = (blueprint) => {
 	if (!blueprint || typeof blueprint !== "object") throw new Error("蓝图内容必须是对象"); // 根结构错误时停止导入
 	if (typeof blueprint.name !== "string") throw new Error("蓝图缺少名称"); // 名称必须可直接显示
 	if (!Array.isArray(blueprint.nodes) || !Array.isArray(blueprint.edges)) throw new Error("蓝图必须包含节点和连接线数组"); // 两个集合缺一不可
+	if (blueprint.variables != null && !Array.isArray(blueprint.variables)) throw new Error("蓝图变量必须是数组"); // 旧文件允许缺失，存在时必须是列表
+
+	const variableNames = new Set(); // 收集变量名并检查重复
+	(blueprint.variables || []).forEach((variable, index) => {
+		if (!variable || typeof variable.id !== "string" || !variable.id) throw new Error(`第${index + 1}个变量缺少ID`); // 引用同步依赖稳定ID
+		if (typeof variable.name !== "string" || !variable.name) throw new Error(`变量${variable.id}缺少名称`); // 表达式按名称查表
+		if (variableNames.has(variable.name)) throw new Error(`变量名重复：${variable.name}`); // 重名会让引用歧义
+		variableNames.add(variable.name); // 当前变量通过校验后加入索引
+	});
 
 	const nodeIds = new Set(); // 收集节点ID并检查重复
 	blueprint.nodes.forEach((node, index) => {
@@ -59,7 +76,7 @@ const validateBlueprint = (blueprint) => {
 // --- 生成后端可执行蓝图 ---
 const serializeBlueprint = (blueprint) => {
 	validateBlueprint(blueprint); // 发送前先阻止不完整蓝图
-	return { name: blueprint.name, nodes: blueprint.nodes.map(cleanNode), edges: blueprint.edges.map(cleanEdge) }; // 白名单重建业务数据
+	return { name: blueprint.name, variables: (blueprint.variables || []).map(cleanVariable), nodes: blueprint.nodes.map(cleanNode), edges: blueprint.edges.map(cleanEdge) }; // 白名单重建业务数据
 };
 
 
@@ -76,4 +93,4 @@ const readBlueprintFile = (input) => {
 	return serializeBlueprint(blueprint); // 再次白名单清理可能夹带的临时字段
 };
 
-export { schemaVersion, cleanNode, cleanEdge, validateBlueprint, serializeBlueprint, createBlueprintFile, readBlueprintFile }; // 导出序列化工具供命令和测试使用
+export { schemaVersion, cleanNode, cleanEdge, cleanVariable, validateBlueprint, serializeBlueprint, createBlueprintFile, readBlueprintFile }; // 导出序列化工具供命令和测试使用
