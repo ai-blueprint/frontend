@@ -1,6 +1,16 @@
 <script setup>
 import { computed } from "vue"; // 引入Vue计算属性
 import store from "@/store.js"; // 引入全局状态
+import mathIcon from "@/assets/category/math.svg"; // 数学运算分类图标
+import baseIcon from "@/assets/category/base.svg"; // 基础分类图标
+import transformIcon from "@/assets/category/transform.svg"; // 变换分类图标
+import activationIcon from "@/assets/category/activation.svg"; // 激活分类图标
+import attentionIcon from "@/assets/category/attention.svg"; // 注意力分类图标
+import lossIcon from "@/assets/category/loss.svg"; // 损失函数分类图标
+import normalizationIcon from "@/assets/category/normalization.svg"; // 归一化分类图标
+import shapeIcon from "@/assets/category/shape.svg"; // 形状分类图标
+
+const categoryIcons = { base: baseIcon, transform: transformIcon, activation: activationIcon, attention: attentionIcon, loss: lossIcon, normalization: normalizationIcon, shape: shapeIcon, math: mathIcon }; // 每个分类使用一个Hugeicons线性图标
 
 // --- 获取分类列表 ---
 const categoryList = computed(() => {
@@ -10,7 +20,7 @@ const categoryList = computed(() => {
 		key, // 分类标识
 		label: category.label, // 分类名称
 		color: category.color, // 分类颜色
-		icon: category.icon, // 分类图标
+		icon: categoryIcons[key] || category.icon, // 分类优先使用本地图标，未知分类使用注册表图标
 	}));
 });
 
@@ -21,6 +31,9 @@ const selectedCategory = computed(() => store.selected.category); // 获取选�
 const onSelectCategory = (categoryKey) => {
 	store.selected.category = categoryKey; // 切换选中分类
 };
+
+// --- 生成分类图标样式 ---
+const getIconStyle = (category) => ({ backgroundColor: selectedCategory.value === category.key ? "#fff" : category.color, WebkitMaskImage: `url("${category.icon}")`, maskImage: `url("${category.icon}")` }); // 用分类颜色填充图标遮罩
 </script>
 
 <template>
@@ -35,7 +48,7 @@ const onSelectCategory = (categoryKey) => {
 			@click="onSelectCategory(category.key)"
 			:title="category.label">
 			<!-- 每个分类项 -->
-			<img v-if="category.icon" :src="category.icon" alt="" class="category-icon" :class="{ 'icon-active': selectedCategory === category.key }" />
+			<span v-if="category.icon" class="category-icon" :style="getIconStyle(category)" aria-hidden="true"></span>
 			<!-- 有图标时显示分类图标 -->
 			<span v-else class="category-letter" :style="selectedCategory === category.key ? { color: '#fff' } : { color: category.color }">{{ category.label.charAt(0) }}</span>
 			<!-- 无图标时显示首字作为图标 -->
@@ -45,8 +58,10 @@ const onSelectCategory = (categoryKey) => {
 
 <style scoped>
 .category-bar {
-	width: fit-content;
-	/* 自适应宽度 */
+	flex: 0 0 58px;
+	/* 分类栏固定宽度，分类增加时只使用滚动区域 */
+	min-width: 58px;
+	/* 防止工作区压缩分类栏 */
 	background-color: #f6f9fe;
 	/* 浅蓝灰背景 */
 	display: flex;
@@ -55,8 +70,19 @@ const onSelectCategory = (categoryKey) => {
 	/* 垂直布局 */
 	height: 100%;
 	/* 铺满高度 */
+	overflow-y: auto;
+	/* 分类过多时沿纵向滚动 */
+	overflow-x: hidden;
+	/* 防止悬停放大产生横向滚动 */
+	 scrollbar-width: none;
+	/* Firefox隐藏滚动条但保留滚动能力 */
 	user-select: none;
 	/* 禁止选中 */
+}
+
+.category-bar::-webkit-scrollbar {
+	display: none;
+	/* Chromium和WebView隐藏滚动条但保留滚轮和触控滚动 */
 }
 
 .category-item {
@@ -80,6 +106,8 @@ const onSelectCategory = (categoryKey) => {
 	/* 相对定位 */
 	transition: all 0.1s ease-in-out;
 	/* 过渡动画 */
+	flex: 0 0 50px;
+	/* 分类项保持固定高度，不被Flex压缩 */
 }
 
 .category-item:hover {
@@ -107,16 +135,25 @@ const onSelectCategory = (categoryKey) => {
 }
 
 .category-icon {
+	display: block;
 	width: 100%;
-	/* 图标铺满 */
+	/* 恢复旧版图标占满分类项的宽度 */
+	height: 100%;
+	/* 恢复旧版图标占满分类项的高度 */
+	transform: scale(0.62);
+	/* 统一缩小Hugeicons图形，保持分类项尺寸不变 */
+	background: var(--icon-color);
+	/* 颜色由分类注册表自动提供 */
+	-webkit-mask-position: center;
+	-webkit-mask-size: contain;
+	-webkit-mask-repeat: no-repeat;
+	mask-position: center;
+	mask-size: contain;
+	mask-repeat: no-repeat;
 	pointer-events: none;
 	/* 禁止点击图标 */
 }
 
-.category-icon.icon-active {
-	filter: brightness(10);
-	/* 激活态图标变白 */
-}
 
 .category-letter {
 	font-size: 16px;

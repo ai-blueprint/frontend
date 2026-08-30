@@ -7,7 +7,10 @@
 			"nodes": [
 				"input",
 				"output",
-				"debug"
+				"debug",
+				"zeros_like",
+				"ones_like",
+				"rand_like"
 			]
 		},
 		"transform": {
@@ -15,13 +18,46 @@
 			"color": "#82cbfa",
 			"icon": "",
 			"nodes": [
+				"pooling",
+				"dropout",
+				"embedding",
+				"rnn",
+				"lstm",
+				"gru",
+				"transformer_encoder_layer",
+				"transformer_decoder_layer",
+				"bilinear",
+				"conv_transpose",
+				"upsample",
+				"channel_shuffle",
+				"pixel_shuffle",
+				"pixel_unshuffle",
+				"reflection_pad1d",
+				"local_response_norm",
+				"dropout1d",
+				"alpha_dropout",
+				"feature_alpha_dropout",
+				"identity",
+				"cosine_similarity",
+				"pairwise_distance",
+				"transformer_encoder",
+				"transformer_decoder",
+				"max_pool1d",
+				"avg_pool1d",
+				"adaptive_avg_pool1d",
+				"dropout2d",
+				"dropout3d",
+				"scan",
+				"fold",
+				"cumulative_max",
+				"cumulative_min",
 				"linear",
 				"conv"
 			]
 		},
 		"activation": {
 			"label": "激活",
-			"color": "#a073ff",
+			"color": "#8f67df",
 			"icon": "",
 			"nodes": [
 				"relu",
@@ -31,38 +67,7 @@
 				"softplus",
 				"leakyRelu",
 				"elu",
-				"gelu"
-			]
-		},
-		"math": {
-			"label": "运算",
-			"color": "#feae8a",
-			"icon": "",
-			"nodes": [
-				"add",
-				"sub",
-				"mul",
-				"div",
-				"matmul",
-				"bmm",
-				"einsum",
-				"lerp",
-				"dot",
-				"pow",
-				"norm",
-				"exp",
-				"sqrt",
-				"sum",
-				"abs",
-				"neg",
-				"mean"
-			]
-		},
-		"activation_extra": {
-			"label": "更多激活",
-			"color": "#8f67df",
-			"icon": "",
-			"nodes": [
+				"gelu",
 				"relu6",
 				"rrelu",
 				"selu",
@@ -92,44 +97,6 @@
 				"cross_attention"
 			]
 		},
-		"common": {
-			"label": "常用层",
-			"color": "#57b8a6",
-			"icon": "",
-			"nodes": [
-				"pooling",
-				"dropout",
-				"embedding",
-				"rnn",
-				"lstm",
-				"gru",
-				"transformer_encoder_layer",
-				"transformer_decoder_layer"
-			]
-		},
-		"layers_extra": {
-			"label": "更多网络层",
-			"color": "#45a99a",
-			"icon": "",
-			"nodes": [
-				"bilinear",
-				"conv_transpose",
-				"upsample",
-				"channel_shuffle",
-				"pixel_shuffle",
-				"pixel_unshuffle",
-				"reflection_pad1d",
-				"local_response_norm",
-				"dropout1d",
-				"alpha_dropout",
-				"feature_alpha_dropout",
-				"identity",
-				"cosine_similarity",
-				"pairwise_distance",
-				"transformer_encoder",
-				"transformer_decoder"
-			]
-		},
 		"loss": {
 			"label": "损失函数",
 			"color": "#e44d60",
@@ -138,14 +105,7 @@
 				"mse_loss",
 				"cross_entropy_loss",
 				"l1_loss",
-				"bce_loss"
-			]
-		},
-		"loss_extra": {
-			"label": "更多损失",
-			"color": "#d85a73",
-			"icon": "",
-			"nodes": [
+				"bce_loss",
 				"smooth_l1_loss",
 				"huber_loss",
 				"poisson_nll_loss",
@@ -173,6 +133,9 @@
 			"color": "#f1af54",
 			"icon": "",
 			"nodes": [
+				"roll",
+				"flip",
+				"repeat_interleave",
 				"reshape",
 				"transpose",
 				"permute",
@@ -181,15 +144,86 @@
 				"flatten",
 				"unflatten",
 				"pad",
+				"slice",
+				"select",
+				"cat",
+				"stack",
+				"expand",
+				"time_shift",
 				"detach",
-				"clone"
+				"clone",
+				"chunk"
+			]
+		},
+		"math": {
+			"label": "运算",
+			"color": "#a8c4e8",
+			"icon": "",
+			"nodes": [
+				"add",
+				"sub",
+				"mul",
+				"div",
+				"matmul",
+				"bmm",
+				"einsum",
+				"lerp",
+				"dot",
+				"pow",
+				"norm",
+				"exp",
+				"sqrt",
+				"sum",
+				"abs",
+				"neg",
+				"mean",
+				"log",
+				"log10",
+				"log2",
+				"log1p",
+				"expm1",
+				"exp2",
+				"square",
+				"signbit",
+				"trunc",
+				"maximum",
+				"minimum",
+				"remainder",
+				"fmod",
+				"hypot",
+				"clamp",
+				"sign",
+				"floor",
+				"ceil",
+				"round",
+				"frac",
+				"reciprocal",
+				"rsqrt",
+				"sin",
+				"cos",
+				"tan",
+				"atan",
+				"sinh",
+				"cosh",
+				"erf",
+				"amax",
+				"amin",
+				"prod",
+				"var",
+				"std",
+				"argmax",
+				"greater",
+				"greater_equal",
+				"less",
+				"less_equal",
+				"equal"
 			]
 		}
 	},
 	"nodes": {
 		"relu": {
 			"opcode": "relu",
-			"label": "负数归零",
+			"label": "负数变零",
 			"ports": {
 				"input": {
 					"x": ""
@@ -209,7 +243,7 @@
 		},
 		"sigmoid": {
 			"opcode": "sigmoid",
-			"label": "压到0~1",
+			"label": "压到0和1",
 			"ports": {
 				"input": {
 					"x": ""
@@ -223,7 +257,7 @@
 		},
 		"tanh": {
 			"opcode": "tanh",
-			"label": "压到±1",
+			"label": "压到负1和1",
 			"ports": {
 				"input": {
 					"x": ""
@@ -237,7 +271,7 @@
 		},
 		"softmax": {
 			"opcode": "softmax",
-			"label": "转概率",
+			"label": "变成概率",
 			"ports": {
 				"input": {
 					"x": ""
@@ -261,7 +295,7 @@
 		},
 		"softplus": {
 			"opcode": "softplus",
-			"label": "平滑归正",
+			"label": "平滑变正",
 			"ports": {
 				"input": {
 					"x": ""
@@ -294,7 +328,7 @@
 		},
 		"leakyRelu": {
 			"opcode": "leakyRelu",
-			"label": "带泄漏归正",
+			"label": "负数保留一点",
 			"ports": {
 				"input": {
 					"x": ""
@@ -323,7 +357,7 @@
 		},
 		"elu": {
 			"opcode": "elu",
-			"label": "指数归正",
+			"label": "负数平滑变换",
 			"ports": {
 				"input": {
 					"x": ""
@@ -352,7 +386,7 @@
 		},
 		"gelu": {
 			"opcode": "gelu",
-			"label": "高斯归正",
+			"label": "平滑门控",
 			"ports": {
 				"input": {
 					"x": ""
@@ -964,7 +998,7 @@
 		},
 		"pooling": {
 			"opcode": "pooling",
-			"label": "池化",
+			"label": "池化层",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -1020,7 +1054,7 @@
 		},
 		"dropout": {
 			"opcode": "dropout",
-			"label": "随机失活",
+			"label": "随机丢弃",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -1044,7 +1078,7 @@
 		},
 		"embedding": {
 			"opcode": "embedding",
-			"label": "嵌入",
+			"label": "数字变向量",
 			"ports": {
 				"input": {
 					"indices": "索引"
@@ -2028,7 +2062,7 @@
 		},
 		"mse_loss": {
 			"opcode": "mse_loss",
-			"label": "均方误差损失",
+			"label": "平均平方误差",
 			"ports": {
 				"input": {
 					"input": "预测值",
@@ -2054,7 +2088,7 @@
 		},
 		"cross_entropy_loss": {
 			"opcode": "cross_entropy_loss",
-			"label": "交叉熵损失",
+			"label": "分类误差",
 			"ports": {
 				"input": {
 					"input": "预测logits",
@@ -2098,7 +2132,7 @@
 		},
 		"l1_loss": {
 			"opcode": "l1_loss",
-			"label": "L1损失",
+			"label": "绝对值误差",
 			"ports": {
 				"input": {
 					"input": "预测值",
@@ -2124,7 +2158,7 @@
 		},
 		"bce_loss": {
 			"opcode": "bce_loss",
-			"label": "二分类交叉熵损失",
+			"label": "二分类误差",
 			"ports": {
 				"input": {
 					"input": "预测logits",
@@ -2478,7 +2512,7 @@
 		},
 		"add": {
 			"opcode": "add",
-			"label": "加法",
+			"label": "相加",
 			"ports": {
 				"input": {
 					"x": "",
@@ -2493,7 +2527,7 @@
 		},
 		"sub": {
 			"opcode": "sub",
-			"label": "减法",
+			"label": "相减",
 			"ports": {
 				"input": {
 					"x": "",
@@ -2508,7 +2542,7 @@
 		},
 		"mul": {
 			"opcode": "mul",
-			"label": "乘法",
+			"label": "相乘",
 			"ports": {
 				"input": {
 					"x": "",
@@ -2523,7 +2557,7 @@
 		},
 		"div": {
 			"opcode": "div",
-			"label": "除法",
+			"label": "相除",
 			"ports": {
 				"input": {
 					"x": "被除数",
@@ -2553,7 +2587,7 @@
 		},
 		"matmul": {
 			"opcode": "matmul",
-			"label": "矩阵乘",
+			"label": "矩阵相乘",
 			"ports": {
 				"input": {
 					"x": "",
@@ -2574,7 +2608,7 @@
 		},
 		"bmm": {
 			"opcode": "bmm",
-			"label": "批量矩阵乘法",
+			"label": "批量矩阵相乘",
 			"ports": {
 				"input": {
 					"x": "",
@@ -2595,7 +2629,7 @@
 		},
 		"einsum": {
 			"opcode": "einsum",
-			"label": "爱因斯坦求和",
+			"label": "按公式计算",
 			"ports": {
 				"input": {
 					"x": "",
@@ -2616,7 +2650,7 @@
 		},
 		"lerp": {
 			"opcode": "lerp",
-			"label": "插值",
+			"label": "线性插值",
 			"ports": {
 				"input": {
 					"x": "起点",
@@ -2677,7 +2711,7 @@
 		},
 		"norm": {
 			"opcode": "norm",
-			"label": "范数",
+			"label": "计算长度",
 			"ports": {
 				"input": {
 					"x": ""
@@ -2715,7 +2749,7 @@
 		},
 		"exp": {
 			"opcode": "exp",
-			"label": "自然指数",
+			"label": "指数",
 			"ports": {
 				"input": {
 					"x": ""
@@ -2729,7 +2763,7 @@
 		},
 		"sqrt": {
 			"opcode": "sqrt",
-			"label": "开方",
+			"label": "平方根",
 			"ports": {
 				"input": {
 					"x": ""
@@ -2778,7 +2812,7 @@
 		},
 		"abs": {
 			"opcode": "abs",
-			"label": "绝对值",
+			"label": "取绝对值",
 			"ports": {
 				"input": {
 					"x": ""
@@ -2792,7 +2826,7 @@
 		},
 		"neg": {
 			"opcode": "neg",
-			"label": "相反数",
+			"label": "取相反数",
 			"ports": {
 				"input": {
 					"x": ""
@@ -2806,7 +2840,7 @@
 		},
 		"mean": {
 			"opcode": "mean",
-			"label": "均值",
+			"label": "求平均值",
 			"ports": {
 				"input": {
 					"x": ""
@@ -2833,9 +2867,438 @@
 			},
 			"description": "沿某个维度求平均值"
 		},
+		"log": {
+			"opcode": "log",
+			"label": "自然对数",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "输出"
+				}
+			},
+			"params": {},
+			"description": "计算每个元素的自然对数"
+		},
+		"log10": {
+			"opcode": "log10",
+			"label": "常用对数",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "输出"
+				}
+			},
+			"params": {},
+			"description": "计算每个元素的以10为底对数"
+		},
+		"log2": {
+			"opcode": "log2",
+			"label": "二进制对数",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "输出"
+				}
+			},
+			"params": {},
+			"description": "计算每个元素的以2为底对数"
+		},
+		"log1p": {
+			"opcode": "log1p",
+			"label": "加一对数",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "输出"
+				}
+			},
+			"params": {},
+			"description": "计算log(1+x)，适合小数值"
+		},
+		"expm1": {
+			"opcode": "expm1",
+			"label": "减一指数",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "输出"
+				}
+			},
+			"params": {},
+			"description": "计算每个元素的e的x次方减一"
+		},
+		"exp2": {
+			"opcode": "exp2",
+			"label": "二进制指数",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "输出"
+				}
+			},
+			"params": {},
+			"description": "计算每个元素的2的x次方"
+		},
+		"square": {
+			"opcode": "square",
+			"label": "平方",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "输出"
+				}
+			},
+			"params": {},
+			"description": "计算每个元素的平方"
+		},
+		"signbit": {
+			"opcode": "signbit",
+			"label": "负号判断",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "输出"
+				}
+			},
+			"params": {},
+			"description": "判断每个元素是否为负数"
+		},
+		"trunc": {
+			"opcode": "trunc",
+			"label": "截断取整",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "输出"
+				}
+			},
+			"params": {},
+			"description": "去掉每个元素的小数部分"
+		},
+		"maximum": {
+			"opcode": "maximum",
+			"label": "逐元素最大",
+			"ports": {
+				"input": {
+					"x": "输入1",
+					"y": "输入2"
+				},
+				"output": {
+					"out": "输出"
+				}
+			},
+			"params": {},
+			"description": "逐元素选择两个输入中较大的值"
+		},
+		"minimum": {
+			"opcode": "minimum",
+			"label": "逐元素最小",
+			"ports": {
+				"input": {
+					"x": "输入1",
+					"y": "输入2"
+				},
+				"output": {
+					"out": "输出"
+				}
+			},
+			"params": {},
+			"description": "逐元素选择两个输入中较小的值"
+		},
+		"remainder": {
+			"opcode": "remainder",
+			"label": "取余",
+			"ports": {
+				"input": {
+					"x": "输入1",
+					"y": "输入2"
+				},
+				"output": {
+					"out": "输出"
+				}
+			},
+			"params": {},
+			"description": "计算两个输入逐元素相除后的余数"
+		},
+		"fmod": {
+			"opcode": "fmod",
+			"label": "浮点取余",
+			"ports": {
+				"input": {
+					"x": "输入1",
+					"y": "输入2"
+				},
+				"output": {
+					"out": "输出"
+				}
+			},
+			"params": {},
+			"description": "计算两个输入逐元素相除后的浮点余数"
+		},
+		"hypot": {
+			"opcode": "hypot",
+			"label": "直角距离",
+			"ports": {
+				"input": {
+					"x": "输入1",
+					"y": "输入2"
+				},
+				"output": {
+					"out": "输出"
+				}
+			},
+			"params": {},
+			"description": "计算两个输入作为直角边时的斜边长度"
+		},
+		"roll": {
+			"opcode": "roll",
+			"label": "循环移位",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "移位结果"
+				}
+			},
+			"params": {
+				"shifts": {
+					"label": "移位步数",
+					"type": "int",
+					"value": 1,
+					"range": [
+						-65536,
+						65536
+					]
+				},
+				"dim": {
+					"label": "移位维度",
+					"type": "int",
+					"value": 1,
+					"range": [
+						-10,
+						10
+					]
+				}
+			},
+			"description": "沿指定维度循环移动元素"
+		},
+		"flip": {
+			"opcode": "flip",
+			"label": "反转维度",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "反转结果"
+				}
+			},
+			"params": {
+				"dim": {
+					"label": "反转维度",
+					"type": "int",
+					"value": 1,
+					"range": [
+						-10,
+						10
+					]
+				}
+			},
+			"description": "沿指定维度反转元素顺序"
+		},
+		"repeat_interleave": {
+			"opcode": "repeat_interleave",
+			"label": "重复元素",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "重复结果"
+				}
+			},
+			"params": {
+				"repeats": {
+					"label": "重复次数",
+					"type": "int",
+					"value": 2,
+					"range": [
+						1,
+						64
+					]
+				},
+				"dim": {
+					"label": "重复维度",
+					"type": "int",
+					"value": 1,
+					"range": [
+						-10,
+						10
+					]
+				}
+			},
+			"description": "沿指定维度重复每个元素"
+		},
+		"max_pool1d": {
+			"opcode": "max_pool1d",
+			"label": "一维最大池化",
+			"ports": {
+				"input": {
+					"x": "序列"
+				},
+				"output": {
+					"out": "池化结果"
+				}
+			},
+			"params": {
+				"kernel_size": {
+					"label": "窗口大小",
+					"type": "int",
+					"value": 2,
+					"range": [
+						1,
+						64
+					]
+				},
+				"stride": {
+					"label": "步幅",
+					"type": "int",
+					"value": 2,
+					"range": [
+						1,
+						64
+					]
+				}
+			},
+			"description": "沿一维序列窗口取最大值"
+		},
+		"avg_pool1d": {
+			"opcode": "avg_pool1d",
+			"label": "一维平均池化",
+			"ports": {
+				"input": {
+					"x": "序列"
+				},
+				"output": {
+					"out": "池化结果"
+				}
+			},
+			"params": {
+				"kernel_size": {
+					"label": "窗口大小",
+					"type": "int",
+					"value": 2,
+					"range": [
+						1,
+						64
+					]
+				},
+				"stride": {
+					"label": "步幅",
+					"type": "int",
+					"value": 2,
+					"range": [
+						1,
+						64
+					]
+				}
+			},
+			"description": "沿一维序列窗口取平均值"
+		},
+		"adaptive_avg_pool1d": {
+			"opcode": "adaptive_avg_pool1d",
+			"label": "自适应一维平均池化",
+			"ports": {
+				"input": {
+					"x": "序列"
+				},
+				"output": {
+					"out": "池化结果"
+				}
+			},
+			"params": {
+				"output_size": {
+					"label": "输出长度",
+					"type": "int",
+					"value": 4,
+					"range": [
+						1,
+						256
+					]
+				}
+			},
+			"description": "把一维序列池化到指定长度"
+		},
+		"dropout2d": {
+			"opcode": "dropout2d",
+			"label": "二维随机失活",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "输出"
+				}
+			},
+			"params": {
+				"p": {
+					"label": "失活概率",
+					"type": "float",
+					"value": 0.5,
+					"range": [
+						0,
+						1
+					]
+				}
+			},
+			"description": "按通道随机丢弃特征，适合图像和特征图"
+		},
+		"dropout3d": {
+			"opcode": "dropout3d",
+			"label": "三维随机失活",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "输出"
+				}
+			},
+			"params": {
+				"p": {
+					"label": "失活概率",
+					"type": "float",
+					"value": 0.5,
+					"range": [
+						0,
+						1
+					]
+				}
+			},
+			"description": "按通道随机丢弃三维特征"
+		},
 		"layer_norm": {
 			"opcode": "layer_norm",
-			"label": "层归一化",
+			"label": "按特征归一化",
 			"ports": {
 				"input": {
 					"x": ""
@@ -2871,7 +3334,7 @@
 		},
 		"group_norm": {
 			"opcode": "group_norm",
-			"label": "组归一化",
+			"label": "分组归一化",
 			"ports": {
 				"input": {
 					"x": ""
@@ -2918,7 +3381,7 @@
 		},
 		"batch_norm": {
 			"opcode": "batch_norm",
-			"label": "批归一化",
+			"label": "按批归一化",
 			"ports": {
 				"input": {
 					"x": ""
@@ -2972,7 +3435,7 @@
 		},
 		"instance_norm": {
 			"opcode": "instance_norm",
-			"label": "实例归一化",
+			"label": "按样本归一化",
 			"ports": {
 				"input": {
 					"x": ""
@@ -3058,7 +3521,7 @@
 		},
 		"reshape": {
 			"opcode": "reshape",
-			"label": "变形",
+			"label": "改变形状",
 			"ports": {
 				"input": {
 					"x": ""
@@ -3089,7 +3552,7 @@
 		},
 		"transpose": {
 			"opcode": "transpose",
-			"label": "交换维度",
+			"label": "交换两个维度",
 			"ports": {
 				"input": {
 					"x": ""
@@ -3122,7 +3585,7 @@
 		},
 		"permute": {
 			"opcode": "permute",
-			"label": "重排维度",
+			"label": "重排列维度",
 			"ports": {
 				"input": {
 					"x": ""
@@ -3146,7 +3609,7 @@
 		},
 		"squeeze": {
 			"opcode": "squeeze",
-			"label": "压缩维度",
+			"label": "去掉单维度",
 			"ports": {
 				"input": {
 					"x": ""
@@ -3170,7 +3633,7 @@
 		},
 		"unsqueeze": {
 			"opcode": "unsqueeze",
-			"label": "扩展维度",
+			"label": "增加单维度",
 			"ports": {
 				"input": {
 					"x": ""
@@ -3194,7 +3657,7 @@
 		},
 		"flatten": {
 			"opcode": "flatten",
-			"label": "压平",
+			"label": "压平成一维",
 			"ports": {
 				"input": {
 					"x": ""
@@ -3227,7 +3690,7 @@
 		},
 		"unflatten": {
 			"opcode": "unflatten",
-			"label": "展开",
+			"label": "拆开一个维度",
 			"ports": {
 				"input": {
 					"x": ""
@@ -3259,7 +3722,7 @@
 		},
 		"pad": {
 			"opcode": "pad",
-			"label": "填充",
+			"label": "边缘补值",
 			"ports": {
 				"input": {
 					"x": ""
@@ -3302,9 +3765,207 @@
 			},
 			"description": "在边缘补值，用于对齐"
 		},
+		"slice": {
+			"opcode": "slice",
+			"label": "截取一段",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "切片"
+				}
+			},
+			"params": {
+				"dim": {
+					"label": "切片维度",
+					"type": "int",
+					"value": 1,
+					"range": [
+						-10,
+						10
+					]
+				},
+				"start": {
+					"label": "开始位置",
+					"type": "int",
+					"value": 0,
+					"range": [
+						-65536,
+						65536
+					]
+				},
+				"end": {
+					"label": "结束位置",
+					"type": "int",
+					"value": -1,
+					"range": [
+						-65536,
+						65536
+					]
+				},
+				"step": {
+					"label": "步长",
+					"type": "int",
+					"value": 1,
+					"range": [
+						1,
+						65536
+					]
+				}
+			},
+			"description": "沿指定维度截取一段序列"
+		},
+		"select": {
+			"opcode": "select",
+			"label": "选择一个位置",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "位置"
+				}
+			},
+			"params": {
+				"dim": {
+					"label": "选择维度",
+					"type": "int",
+					"value": 1,
+					"range": [
+						-10,
+						10
+					]
+				},
+				"index": {
+					"label": "位置索引",
+					"type": "int",
+					"value": -1,
+					"range": [
+						-65536,
+						65536
+					]
+				}
+			},
+			"description": "从序列指定维度选择一个位置"
+		},
+		"cat": {
+			"opcode": "cat",
+			"label": "连接张量",
+			"ports": {
+				"input": {
+					"x": "张量1",
+					"y": "张量2"
+				},
+				"output": {
+					"out": "拼接结果"
+				}
+			},
+			"params": {
+				"dim": {
+					"label": "拼接维度",
+					"type": "int",
+					"value": 1,
+					"range": [
+						-10,
+						10
+					]
+				}
+			},
+			"description": "沿指定维度连接两个张量"
+		},
+		"stack": {
+			"opcode": "stack",
+			"label": "叠起张量",
+			"ports": {
+				"input": {
+					"x": "张量1",
+					"y": "张量2"
+				},
+				"output": {
+					"out": "堆叠结果"
+				}
+			},
+			"params": {
+				"dim": {
+					"label": "插入维度",
+					"type": "int",
+					"value": 1,
+					"range": [
+						-10,
+						10
+					]
+				}
+			},
+			"description": "沿新维度组合两个同形张量"
+		},
+		"expand": {
+			"opcode": "expand",
+			"label": "扩大尺寸",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "扩展结果"
+				}
+			},
+			"params": {
+				"sizes": {
+					"label": "目标尺寸",
+					"type": "list",
+					"value": [
+						-1
+					]
+				}
+			},
+			"description": "按广播规则扩展张量尺寸，-1表示保留原尺寸"
+		},
+		"time_shift": {
+			"opcode": "time_shift",
+			"label": "向前移位",
+			"ports": {
+				"input": {
+					"x": "序列"
+				},
+				"output": {
+					"out": "移位序列"
+				}
+			},
+			"params": {
+				"dim": {
+					"label": "序列维度",
+					"type": "int",
+					"value": 1,
+					"range": [
+						-10,
+						10
+					]
+				},
+				"shift": {
+					"label": "移位步数",
+					"type": "int",
+					"value": 1,
+					"range": [
+						1,
+						65536
+					]
+				},
+				"fill": {
+					"label": "首位填充值",
+					"type": "float",
+					"value": 0.0,
+					"range": [
+						-65536,
+						65536
+					]
+				}
+			},
+			"description": "把序列中每个位置替换为前面位置的值，开头使用填充值"
+		},
 		"detach": {
 			"opcode": "detach",
-			"label": "断梯度",
+			"label": "切断梯度",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -3318,7 +3979,7 @@
 		},
 		"clone": {
 			"opcode": "clone",
-			"label": "克隆",
+			"label": "复制张量",
 			"ports": {
 				"input": {
 					"x": ""
@@ -3330,9 +3991,646 @@
 			"params": {},
 			"description": "复制一份完全独立的副本"
 		},
+		"clamp": {
+			"opcode": "clamp",
+			"label": "限制范围",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "输出"
+				}
+			},
+			"params": {
+				"min": {
+					"label": "最小值",
+					"type": "float",
+					"value": -1.0
+				},
+				"max": {
+					"label": "最大值",
+					"type": "float",
+					"value": 1.0
+				}
+			},
+			"description": "把每个元素限制在指定范围内"
+		},
+		"sign": {
+			"opcode": "sign",
+			"label": "取符号",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "符号"
+				}
+			},
+			"params": {},
+			"description": "把每个元素变成负一、零或正一"
+		},
+		"floor": {
+			"opcode": "floor",
+			"label": "向下取整",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "输出"
+				}
+			},
+			"params": {},
+			"description": "每个元素向负无穷取整"
+		},
+		"ceil": {
+			"opcode": "ceil",
+			"label": "向上取整",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "输出"
+				}
+			},
+			"params": {},
+			"description": "每个元素向正无穷取整"
+		},
+		"round": {
+			"opcode": "round",
+			"label": "四舍五入",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "输出"
+				}
+			},
+			"params": {},
+			"description": "每个元素四舍五入到最近整数"
+		},
+		"frac": {
+			"opcode": "frac",
+			"label": "取小数",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "小数"
+				}
+			},
+			"params": {},
+			"description": "保留每个元素的小数部分"
+		},
+		"reciprocal": {
+			"opcode": "reciprocal",
+			"label": "倒数",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "输出"
+				}
+			},
+			"params": {},
+			"description": "计算每个元素的倒数"
+		},
+		"rsqrt": {
+			"opcode": "rsqrt",
+			"label": "倒数平方根",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "输出"
+				}
+			},
+			"params": {},
+			"description": "计算每个正元素的倒数平方根"
+		},
+		"sin": {
+			"opcode": "sin",
+			"label": "正弦",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "输出"
+				}
+			},
+			"params": {},
+			"description": "计算每个元素的正弦"
+		},
+		"cos": {
+			"opcode": "cos",
+			"label": "余弦",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "输出"
+				}
+			},
+			"params": {},
+			"description": "计算每个元素的余弦"
+		},
+		"tan": {
+			"opcode": "tan",
+			"label": "正切",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "输出"
+				}
+			},
+			"params": {},
+			"description": "计算每个元素的正切"
+		},
+		"atan": {
+			"opcode": "atan",
+			"label": "反正切",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "输出"
+				}
+			},
+			"params": {},
+			"description": "计算每个元素的反正切"
+		},
+		"sinh": {
+			"opcode": "sinh",
+			"label": "双曲正弦",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "输出"
+				}
+			},
+			"params": {},
+			"description": "计算每个元素的双曲正弦"
+		},
+		"cosh": {
+			"opcode": "cosh",
+			"label": "双曲余弦",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "输出"
+				}
+			},
+			"params": {},
+			"description": "计算每个元素的双曲余弦"
+		},
+		"erf": {
+			"opcode": "erf",
+			"label": "误差函数",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "输出"
+				}
+			},
+			"params": {},
+			"description": "计算每个元素的误差函数"
+		},
+		"amax": {
+			"opcode": "amax",
+			"label": "最大值归约",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "统计值"
+				}
+			},
+			"params": {
+				"dim": {
+					"label": "统计维度",
+					"type": "int",
+					"value": -1,
+					"range": [
+						-10,
+						10
+					]
+				},
+				"keepdim": {
+					"label": "保留维度",
+					"type": "bool",
+					"value": false
+				}
+			},
+			"description": "沿指定维度取最大值"
+		},
+		"amin": {
+			"opcode": "amin",
+			"label": "最小值归约",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "统计值"
+				}
+			},
+			"params": {
+				"dim": {
+					"label": "统计维度",
+					"type": "int",
+					"value": -1,
+					"range": [
+						-10,
+						10
+					]
+				},
+				"keepdim": {
+					"label": "保留维度",
+					"type": "bool",
+					"value": false
+				}
+			},
+			"description": "沿指定维度取最小值"
+		},
+		"prod": {
+			"opcode": "prod",
+			"label": "乘积归约",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "统计值"
+				}
+			},
+			"params": {
+				"dim": {
+					"label": "统计维度",
+					"type": "int",
+					"value": -1,
+					"range": [
+						-10,
+						10
+					]
+				},
+				"keepdim": {
+					"label": "保留维度",
+					"type": "bool",
+					"value": false
+				}
+			},
+			"description": "沿指定维度计算元素乘积"
+		},
+		"var": {
+			"opcode": "var",
+			"label": "方差",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "统计值"
+				}
+			},
+			"params": {
+				"dim": {
+					"label": "统计维度",
+					"type": "int",
+					"value": -1,
+					"range": [
+						-10,
+						10
+					]
+				},
+				"keepdim": {
+					"label": "保留维度",
+					"type": "bool",
+					"value": false
+				}
+			},
+			"description": "沿指定维度计算方差"
+		},
+		"std": {
+			"opcode": "std",
+			"label": "标准差",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "统计值"
+				}
+			},
+			"params": {
+				"dim": {
+					"label": "统计维度",
+					"type": "int",
+					"value": -1,
+					"range": [
+						-10,
+						10
+					]
+				},
+				"keepdim": {
+					"label": "保留维度",
+					"type": "bool",
+					"value": false
+				}
+			},
+			"description": "沿指定维度计算标准差"
+		},
+		"argmax": {
+			"opcode": "argmax",
+			"label": "最大值位置",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"out": "位置"
+				}
+			},
+			"params": {
+				"dim": {
+					"label": "查找维度",
+					"type": "int",
+					"value": -1,
+					"range": [
+						-10,
+						10
+					]
+				}
+			},
+			"description": "返回指定维度最大值的位置"
+		},
+		"greater": {
+			"opcode": "greater",
+			"label": "大于",
+			"ports": {
+				"input": {
+					"x": "输入1",
+					"y": "输入2"
+				},
+				"output": {
+					"out": "布尔结果"
+				}
+			},
+			"params": {},
+			"description": "逐元素判断输入1是否大于输入2"
+		},
+		"greater_equal": {
+			"opcode": "greater_equal",
+			"label": "大于等于",
+			"ports": {
+				"input": {
+					"x": "输入1",
+					"y": "输入2"
+				},
+				"output": {
+					"out": "布尔结果"
+				}
+			},
+			"params": {},
+			"description": "逐元素判断输入1是否大于等于输入2"
+		},
+		"less": {
+			"opcode": "less",
+			"label": "小于",
+			"ports": {
+				"input": {
+					"x": "输入1",
+					"y": "输入2"
+				},
+				"output": {
+					"out": "布尔结果"
+				}
+			},
+			"params": {},
+			"description": "逐元素判断输入1是否小于输入2"
+		},
+		"less_equal": {
+			"opcode": "less_equal",
+			"label": "小于等于",
+			"ports": {
+				"input": {
+					"x": "输入1",
+					"y": "输入2"
+				},
+				"output": {
+					"out": "布尔结果"
+				}
+			},
+			"params": {},
+			"description": "逐元素判断输入1是否小于等于输入2"
+		},
+		"equal": {
+			"opcode": "equal",
+			"label": "相等",
+			"ports": {
+				"input": {
+					"x": "输入1",
+					"y": "输入2"
+				},
+				"output": {
+					"out": "布尔结果"
+				}
+			},
+			"params": {},
+			"description": "逐元素判断两个输入是否相等"
+		},
+		"chunk": {
+			"opcode": "chunk",
+			"label": "均分序列",
+			"ports": {
+				"input": {
+					"x": "输入"
+				},
+				"output": {
+					"first": "前半段",
+					"second": "后半段"
+				}
+			},
+			"params": {
+				"chunks": {
+					"label": "分块数量",
+					"type": "int",
+					"value": 2,
+					"range": [
+						2,
+						2
+					]
+				},
+				"dim": {
+					"label": "分块维度",
+					"type": "int",
+					"value": 1,
+					"range": [
+						-10,
+						10
+					]
+				}
+			},
+			"description": "把序列均分成两段，适合构造前后位置分支"
+		},
+		"scan": {
+			"opcode": "scan",
+			"label": "序列扫描",
+			"ports": {
+				"input": {
+					"x": "序列"
+				},
+				"output": {
+					"out": "扫描结果"
+				}
+			},
+			"params": {
+				"dim": {
+					"label": "扫描维度",
+					"type": "int",
+					"value": 1,
+					"range": [
+						-10,
+						10
+					]
+				}
+			},
+			"description": "沿序列累计求和，每个位置都保留到当前位置的累计结果"
+		},
+		"fold": {
+			"opcode": "fold",
+			"label": "序列折叠",
+			"ports": {
+				"input": {
+					"x": "序列"
+				},
+				"output": {
+					"out": "折叠结果"
+				}
+			},
+			"params": {
+				"dim": {
+					"label": "折叠维度",
+					"type": "int",
+					"value": 1,
+					"range": [
+						-10,
+						10
+					]
+				}
+			},
+			"description": "沿序列累计求积，把序列折叠成一个最终结果"
+		},
+		"cumulative_max": {
+			"opcode": "cumulative_max",
+			"label": "累计最大值",
+			"ports": {
+				"input": {
+					"x": "序列"
+				},
+				"output": {
+					"out": "最大值"
+				}
+			},
+			"params": {
+				"dim": {
+					"label": "累计维度",
+					"type": "int",
+					"value": 1,
+					"range": [
+						-10,
+						10
+					]
+				}
+			},
+			"description": "沿序列保留截至当前位置的最大值"
+		},
+		"cumulative_min": {
+			"opcode": "cumulative_min",
+			"label": "累计最小值",
+			"ports": {
+				"input": {
+					"x": "序列"
+				},
+				"output": {
+					"out": "最小值"
+				}
+			},
+			"params": {
+				"dim": {
+					"label": "累计维度",
+					"type": "int",
+					"value": 1,
+					"range": [
+						-10,
+						10
+					]
+				}
+			},
+			"description": "沿序列保留截至当前位置的最小值"
+		},
+		"zeros_like": {
+			"opcode": "zeros_like",
+			"label": "同形全零",
+			"ports": {
+				"input": {
+					"x": "参考张量"
+				},
+				"output": {
+					"out": "全零张量"
+				}
+			},
+			"params": {},
+			"description": "创建一个与输入形状和类型相同的全零张量"
+		},
+		"ones_like": {
+			"opcode": "ones_like",
+			"label": "同形全一",
+			"ports": {
+				"input": {
+					"x": "参考张量"
+				},
+				"output": {
+					"out": "全一张量"
+				}
+			},
+			"params": {},
+			"description": "创建一个与输入形状和类型相同的全一张量"
+		},
+		"rand_like": {
+			"opcode": "rand_like",
+			"label": "同形随机",
+			"ports": {
+				"input": {
+					"x": "参考张量"
+				},
+				"output": {
+					"out": "随机张量"
+				}
+			},
+			"params": {},
+			"description": "创建一个与输入形状和类型相同的随机张量"
+		},
 		"linear": {
 			"opcode": "linear",
-			"label": "全连接层",
+			"label": "线性层",
 			"ports": {
 				"input": {
 					"x": ""
