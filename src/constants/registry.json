@@ -8,9 +8,7 @@
 				"input",
 				"output",
 				"debug",
-				"zeros_like",
-				"ones_like",
-				"rand_like"
+				"tensor_like"
 			]
 		},
 		"transform": {
@@ -18,39 +16,24 @@
 			"color": "#82cbfa",
 			"icon": "",
 			"nodes": [
+				"multihead_attention",
+				"scaled_dot_product_attention",
+				"cross_attention",
 				"pooling",
 				"dropout",
 				"embedding",
-				"rnn",
-				"lstm",
-				"gru",
-				"transformer_encoder_layer",
-				"transformer_decoder_layer",
 				"bilinear",
 				"conv_transpose",
 				"upsample",
 				"channel_shuffle",
-				"pixel_shuffle",
-				"pixel_unshuffle",
+				"pixel_rearrange",
 				"reflection_pad1d",
 				"local_response_norm",
-				"dropout1d",
-				"alpha_dropout",
-				"feature_alpha_dropout",
-				"identity",
 				"cosine_similarity",
 				"pairwise_distance",
-				"transformer_encoder",
-				"transformer_decoder",
 				"max_pool1d",
 				"avg_pool1d",
 				"adaptive_avg_pool1d",
-				"dropout2d",
-				"dropout3d",
-				"scan",
-				"fold",
-				"cumulative_max",
-				"cumulative_min",
 				"linear",
 				"conv"
 			]
@@ -87,18 +70,8 @@
 				"log_softmax"
 			]
 		},
-		"attention": {
-			"label": "注意力",
-			"color": "#9d4edd",
-			"icon": "",
-			"nodes": [
-				"multihead_attention",
-				"scaled_dot_product_attention",
-				"cross_attention"
-			]
-		},
 		"loss": {
-			"label": "损失函数",
+			"label": "损失",
 			"color": "#e44d60",
 			"icon": "",
 			"nodes": [
@@ -185,7 +158,6 @@
 				"exp2",
 				"square",
 				"signbit",
-				"trunc",
 				"maximum",
 				"minimum",
 				"remainder",
@@ -193,9 +165,7 @@
 				"hypot",
 				"clamp",
 				"sign",
-				"floor",
-				"ceil",
-				"round",
+				"rounding",
 				"frac",
 				"reciprocal",
 				"rsqrt",
@@ -243,7 +213,7 @@
 		},
 		"sigmoid": {
 			"opcode": "sigmoid",
-			"label": "压到0和1",
+			"label": "压到零和一",
 			"ports": {
 				"input": {
 					"x": ""
@@ -257,7 +227,7 @@
 		},
 		"tanh": {
 			"opcode": "tanh",
-			"label": "压到负1和1",
+			"label": "压到负一和一",
 			"ports": {
 				"input": {
 					"x": ""
@@ -357,7 +327,7 @@
 		},
 		"elu": {
 			"opcode": "elu",
-			"label": "负数平滑变换",
+			"label": "负数平滑变化",
 			"ports": {
 				"input": {
 					"x": ""
@@ -410,7 +380,7 @@
 		},
 		"relu6": {
 			"opcode": "relu6",
-			"label": "ReLU6",
+			"label": "限制在零到六",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -430,7 +400,7 @@
 		},
 		"rrelu": {
 			"opcode": "rrelu",
-			"label": "随机泄漏归正",
+			"label": "随机负数斜率",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -463,7 +433,7 @@
 		},
 		"selu": {
 			"opcode": "selu",
-			"label": "SELU",
+			"label": "自归一化激活",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -477,7 +447,7 @@
 		},
 		"celu": {
 			"opcode": "celu",
-			"label": "CELU",
+			"label": "连续指数激活",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -501,7 +471,7 @@
 		},
 		"silu": {
 			"opcode": "silu",
-			"label": "SiLU",
+			"label": "平滑门控激活",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -515,7 +485,7 @@
 		},
 		"mish": {
 			"opcode": "mish",
-			"label": "Mish",
+			"label": "平滑自门控",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -529,7 +499,7 @@
 		},
 		"hardsigmoid": {
 			"opcode": "hardsigmoid",
-			"label": "硬Sigmoid",
+			"label": "快速压到零和一",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -543,7 +513,7 @@
 		},
 		"hardswish": {
 			"opcode": "hardswish",
-			"label": "硬Swish",
+			"label": "快速平滑门控",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -557,7 +527,7 @@
 		},
 		"log_sigmoid": {
 			"opcode": "log_sigmoid",
-			"label": "对数Sigmoid",
+			"label": "对数概率",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -571,7 +541,7 @@
 		},
 		"prelu": {
 			"opcode": "prelu",
-			"label": "参数化ReLU",
+			"label": "可学习负数斜率",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -595,7 +565,7 @@
 		},
 		"hardshrink": {
 			"opcode": "hardshrink",
-			"label": "硬收缩",
+			"label": "硬收缩小数",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -619,7 +589,7 @@
 		},
 		"softshrink": {
 			"opcode": "softshrink",
-			"label": "软收缩",
+			"label": "软收缩小数",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -643,7 +613,7 @@
 		},
 		"tanhshrink": {
 			"opcode": "tanhshrink",
-			"label": "Tanh收缩",
+			"label": "减去双曲正切",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -657,7 +627,7 @@
 		},
 		"threshold": {
 			"opcode": "threshold",
-			"label": "阈值替换",
+			"label": "低于阈值替换",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -690,7 +660,7 @@
 		},
 		"glu": {
 			"opcode": "glu",
-			"label": "门控线性单元",
+			"label": "门控分成两半",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -714,7 +684,7 @@
 		},
 		"softmin": {
 			"opcode": "softmin",
-			"label": "Softmin",
+			"label": "小值变大概率",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -738,7 +708,7 @@
 		},
 		"log_softmax": {
 			"opcode": "log_softmax",
-			"label": "对数Softmax",
+			"label": "对数概率分布",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -881,7 +851,7 @@
 		},
 		"cross_attention": {
 			"opcode": "cross_attention",
-			"label": "跨注意力",
+			"label": "交叉注意力",
 			"ports": {
 				"input": {
 					"q": "查询",
@@ -984,7 +954,7 @@
 		},
 		"debug": {
 			"opcode": "debug",
-			"label": "调试输出",
+			"label": "调试",
 			"ports": {
 				"input": {
 					"x": ""
@@ -998,7 +968,7 @@
 		},
 		"pooling": {
 			"opcode": "pooling",
-			"label": "池化层",
+			"label": "池化",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -1064,6 +1034,19 @@
 				}
 			},
 			"params": {
+				"mode": {
+					"label": "模式",
+					"type": "enum",
+					"value": "element",
+					"options": {
+						"element": "按元素丢弃",
+						"channel1d": "按一维通道丢弃",
+						"channel2d": "按二维通道丢弃",
+						"channel3d": "按三维通道丢弃",
+						"alpha": "Alpha丢弃",
+						"feature_alpha": "按特征Alpha丢弃"
+					}
+				},
 				"p": {
 					"label": "失活率",
 					"type": "float",
@@ -1074,11 +1057,11 @@
 					]
 				}
 			},
-			"description": "训练时随机将部分元素置零，推理时保持原值"
+			"description": "训练时随机隐藏部分数据，可在属性中选择按元素、通道或Alpha模式；推理时保持原值"
 		},
 		"embedding": {
 			"opcode": "embedding",
-			"label": "数字变向量",
+			"label": "嵌入",
 			"ports": {
 				"input": {
 					"indices": "索引"
@@ -1118,331 +1101,9 @@
 			},
 			"description": "把整数索引映射为可学习向量"
 		},
-		"rnn": {
-			"opcode": "rnn",
-			"label": "RNN",
-			"ports": {
-				"input": {
-					"x": "输入",
-					"state": "初始状态"
-				},
-				"output": {
-					"out": "序列",
-					"hidden": "隐藏状态"
-				}
-			},
-			"params": {
-				"input_size": {
-					"label": "输入维度",
-					"type": "int",
-					"value": 8,
-					"range": [
-						1,
-						65536
-					]
-				},
-				"hidden_size": {
-					"label": "隐藏维度",
-					"type": "int",
-					"value": 8,
-					"range": [
-						1,
-						65536
-					]
-				},
-				"num_layers": {
-					"label": "层数",
-					"type": "int",
-					"value": 1,
-					"range": [
-						1,
-						128
-					]
-				},
-				"bias": {
-					"label": "偏置",
-					"type": "bool",
-					"value": true
-				},
-				"dropout": {
-					"label": "层间失活率",
-					"type": "float",
-					"value": 0.0,
-					"range": [
-						0,
-						1
-					]
-				},
-				"bidirectional": {
-					"label": "双向",
-					"type": "bool",
-					"value": false
-				}
-			},
-			"description": "批优先的基础循环神经网络"
-		},
-		"lstm": {
-			"opcode": "lstm",
-			"label": "LSTM",
-			"ports": {
-				"input": {
-					"x": "输入",
-					"hidden": "初始隐藏状态",
-					"cell": "初始记忆状态"
-				},
-				"output": {
-					"out": "序列",
-					"hidden": "隐藏状态",
-					"cell": "记忆状态"
-				}
-			},
-			"params": {
-				"input_size": {
-					"label": "输入维度",
-					"type": "int",
-					"value": 8,
-					"range": [
-						1,
-						65536
-					]
-				},
-				"hidden_size": {
-					"label": "隐藏维度",
-					"type": "int",
-					"value": 8,
-					"range": [
-						1,
-						65536
-					]
-				},
-				"num_layers": {
-					"label": "层数",
-					"type": "int",
-					"value": 1,
-					"range": [
-						1,
-						128
-					]
-				},
-				"bias": {
-					"label": "偏置",
-					"type": "bool",
-					"value": true
-				},
-				"dropout": {
-					"label": "层间失活率",
-					"type": "float",
-					"value": 0.0,
-					"range": [
-						0,
-						1
-					]
-				},
-				"bidirectional": {
-					"label": "双向",
-					"type": "bool",
-					"value": false
-				}
-			},
-			"description": "批优先的长短期记忆网络"
-		},
-		"gru": {
-			"opcode": "gru",
-			"label": "GRU",
-			"ports": {
-				"input": {
-					"x": "输入",
-					"state": "初始状态"
-				},
-				"output": {
-					"out": "序列",
-					"hidden": "隐藏状态"
-				}
-			},
-			"params": {
-				"input_size": {
-					"label": "输入维度",
-					"type": "int",
-					"value": 8,
-					"range": [
-						1,
-						65536
-					]
-				},
-				"hidden_size": {
-					"label": "隐藏维度",
-					"type": "int",
-					"value": 8,
-					"range": [
-						1,
-						65536
-					]
-				},
-				"num_layers": {
-					"label": "层数",
-					"type": "int",
-					"value": 1,
-					"range": [
-						1,
-						128
-					]
-				},
-				"bias": {
-					"label": "偏置",
-					"type": "bool",
-					"value": true
-				},
-				"dropout": {
-					"label": "层间失活率",
-					"type": "float",
-					"value": 0.0,
-					"range": [
-						0,
-						1
-					]
-				},
-				"bidirectional": {
-					"label": "双向",
-					"type": "bool",
-					"value": false
-				}
-			},
-			"description": "批优先的门控循环单元"
-		},
-		"transformer_encoder_layer": {
-			"opcode": "transformer_encoder_layer",
-			"label": "Transformer编码层",
-			"ports": {
-				"input": {
-					"x": "输入"
-				},
-				"output": {
-					"out": "输出"
-				}
-			},
-			"params": {
-				"d_model": {
-					"label": "特征维度",
-					"type": "int",
-					"value": 8,
-					"range": [
-						1,
-						65536
-					]
-				},
-				"nhead": {
-					"label": "注意力头数",
-					"type": "int",
-					"value": 2,
-					"range": [
-						1,
-						256
-					]
-				},
-				"dim_feedforward": {
-					"label": "前馈维度",
-					"type": "int",
-					"value": 8,
-					"range": [
-						1,
-						262144
-					]
-				},
-				"dropout": {
-					"label": "失活率",
-					"type": "float",
-					"value": 0.1,
-					"range": [
-						0,
-						1
-					]
-				},
-				"activation": {
-					"label": "激活函数",
-					"type": "enum",
-					"value": "relu",
-					"options": {
-						"relu": "ReLU",
-						"gelu": "GELU"
-					}
-				},
-				"norm_first": {
-					"label": "先归一化",
-					"type": "bool",
-					"value": false
-				}
-			},
-			"description": "批优先的标准 Transformer 编码器层"
-		},
-		"transformer_decoder_layer": {
-			"opcode": "transformer_decoder_layer",
-			"label": "Transformer解码层",
-			"ports": {
-				"input": {
-					"x": "目标序列",
-					"memory": "编码记忆"
-				},
-				"output": {
-					"out": "输出"
-				}
-			},
-			"params": {
-				"d_model": {
-					"label": "特征维度",
-					"type": "int",
-					"value": 8,
-					"range": [
-						1,
-						65536
-					]
-				},
-				"nhead": {
-					"label": "注意力头数",
-					"type": "int",
-					"value": 2,
-					"range": [
-						1,
-						256
-					]
-				},
-				"dim_feedforward": {
-					"label": "前馈维度",
-					"type": "int",
-					"value": 8,
-					"range": [
-						1,
-						262144
-					]
-				},
-				"dropout": {
-					"label": "失活率",
-					"type": "float",
-					"value": 0.1,
-					"range": [
-						0,
-						1
-					]
-				},
-				"activation": {
-					"label": "激活函数",
-					"type": "enum",
-					"value": "relu",
-					"options": {
-						"relu": "ReLU",
-						"gelu": "GELU"
-					}
-				},
-				"norm_first": {
-					"label": "先归一化",
-					"type": "bool",
-					"value": false
-				}
-			},
-			"description": "批优先的标准 Transformer 解码器层"
-		},
 		"bilinear": {
 			"opcode": "bilinear",
-			"label": "双线性层",
+			"label": "双输入线性层",
 			"ports": {
 				"input": {
 					"x": "输入1",
@@ -1613,7 +1274,7 @@
 		},
 		"channel_shuffle": {
 			"opcode": "channel_shuffle",
-			"label": "通道洗牌",
+			"label": "通道重排",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -1635,9 +1296,9 @@
 			},
 			"description": "在分组之间重新排列通道"
 		},
-		"pixel_shuffle": {
-			"opcode": "pixel_shuffle",
-			"label": "像素上采样",
+		"pixel_rearrange": {
+			"opcode": "pixel_rearrange",
+			"label": "像素重排",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -1647,32 +1308,17 @@
 				}
 			},
 			"params": {
-				"upscale_factor": {
-					"label": "放大倍数",
-					"type": "int",
-					"value": 2,
-					"range": [
-						1,
-						64
-					]
-				}
-			},
-			"description": "把通道信息重排为空间分辨率"
-		},
-		"pixel_unshuffle": {
-			"opcode": "pixel_unshuffle",
-			"label": "像素下采样",
-			"ports": {
-				"input": {
-					"x": "输入"
+				"mode": {
+					"label": "模式",
+					"type": "enum",
+					"value": "up",
+					"options": {
+						"up": "通道变空间",
+						"down": "空间变通道"
+					}
 				},
-				"output": {
-					"out": "输出"
-				}
-			},
-			"params": {
-				"downscale_factor": {
-					"label": "缩小倍数",
+				"factor": {
+					"label": "倍数",
 					"type": "int",
 					"value": 2,
 					"range": [
@@ -1681,11 +1327,11 @@
 					]
 				}
 			},
-			"description": "把空间邻域重排到通道维"
+			"description": "重新排列通道和空间位置，可在属性中选择上采样或下采样"
 		},
 		"reflection_pad1d": {
 			"opcode": "reflection_pad1d",
-			"label": "反射填充1D",
+			"label": "反射填充",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -1708,7 +1354,7 @@
 		},
 		"local_response_norm": {
 			"opcode": "local_response_norm",
-			"label": "局部响应归一化",
+			"label": "局部归一化",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -1756,92 +1402,6 @@
 				}
 			},
 			"description": "相邻通道之间进行竞争性归一化"
-		},
-		"dropout1d": {
-			"opcode": "dropout1d",
-			"label": "通道随机失活",
-			"ports": {
-				"input": {
-					"x": "输入"
-				},
-				"output": {
-					"out": "输出"
-				}
-			},
-			"params": {
-				"p": {
-					"label": "失活率",
-					"type": "float",
-					"value": 0.1,
-					"range": [
-						0,
-						1
-					]
-				}
-			},
-			"description": "按一维特征通道整体随机置零"
-		},
-		"alpha_dropout": {
-			"opcode": "alpha_dropout",
-			"label": "Alpha随机失活",
-			"ports": {
-				"input": {
-					"x": "输入"
-				},
-				"output": {
-					"out": "输出"
-				}
-			},
-			"params": {
-				"p": {
-					"label": "失活率",
-					"type": "float",
-					"value": 0.1,
-					"range": [
-						0,
-						1
-					]
-				}
-			},
-			"description": "为SELU网络保持均值和方差的随机失活"
-		},
-		"feature_alpha_dropout": {
-			"opcode": "feature_alpha_dropout",
-			"label": "特征Alpha失活",
-			"ports": {
-				"input": {
-					"x": "输入"
-				},
-				"output": {
-					"out": "输出"
-				}
-			},
-			"params": {
-				"p": {
-					"label": "失活率",
-					"type": "float",
-					"value": 0.1,
-					"range": [
-						0,
-						1
-					]
-				}
-			},
-			"description": "按特征通道执行Alpha随机失活"
-		},
-		"identity": {
-			"opcode": "identity",
-			"label": "恒等层",
-			"ports": {
-				"input": {
-					"x": "输入"
-				},
-				"output": {
-					"out": "输出"
-				}
-			},
-			"params": {},
-			"description": "原样转发输入，用于占位和搭建分支"
 		},
 		"cosine_similarity": {
 			"opcode": "cosine_similarity",
@@ -1910,155 +1470,6 @@
 				}
 			},
 			"description": "计算两个向量之间的p范数距离"
-		},
-		"transformer_encoder": {
-			"opcode": "transformer_encoder",
-			"label": "Transformer编码器",
-			"ports": {
-				"input": {
-					"x": "输入"
-				},
-				"output": {
-					"out": "输出"
-				}
-			},
-			"params": {
-				"d_model": {
-					"label": "特征维度",
-					"type": "int",
-					"value": 8,
-					"range": [
-						1,
-						65536
-					]
-				},
-				"nhead": {
-					"label": "注意力头数",
-					"type": "int",
-					"value": 2,
-					"range": [
-						1,
-						256
-					]
-				},
-				"num_layers": {
-					"label": "堆叠层数",
-					"type": "int",
-					"value": 2,
-					"range": [
-						1,
-						64
-					]
-				},
-				"dim_feedforward": {
-					"label": "前馈维度",
-					"type": "int",
-					"value": 16,
-					"range": [
-						1,
-						262144
-					]
-				},
-				"dropout": {
-					"label": "失活率",
-					"type": "float",
-					"value": 0.1,
-					"range": [
-						0,
-						1
-					]
-				},
-				"activation": {
-					"label": "激活函数",
-					"type": "enum",
-					"value": "relu",
-					"options": {
-						"relu": "ReLU",
-						"gelu": "GELU"
-					}
-				},
-				"norm_first": {
-					"label": "先归一化",
-					"type": "bool",
-					"value": false
-				}
-			},
-			"description": "堆叠多个标准Transformer编码层"
-		},
-		"transformer_decoder": {
-			"opcode": "transformer_decoder",
-			"label": "Transformer解码器",
-			"ports": {
-				"input": {
-					"x": "目标序列",
-					"memory": "编码记忆"
-				},
-				"output": {
-					"out": "输出"
-				}
-			},
-			"params": {
-				"d_model": {
-					"label": "特征维度",
-					"type": "int",
-					"value": 8,
-					"range": [
-						1,
-						65536
-					]
-				},
-				"nhead": {
-					"label": "注意力头数",
-					"type": "int",
-					"value": 2,
-					"range": [
-						1,
-						256
-					]
-				},
-				"num_layers": {
-					"label": "堆叠层数",
-					"type": "int",
-					"value": 2,
-					"range": [
-						1,
-						64
-					]
-				},
-				"dim_feedforward": {
-					"label": "前馈维度",
-					"type": "int",
-					"value": 16,
-					"range": [
-						1,
-						262144
-					]
-				},
-				"dropout": {
-					"label": "失活率",
-					"type": "float",
-					"value": 0.1,
-					"range": [
-						0,
-						1
-					]
-				},
-				"activation": {
-					"label": "激活函数",
-					"type": "enum",
-					"value": "relu",
-					"options": {
-						"relu": "ReLU",
-						"gelu": "GELU"
-					}
-				},
-				"norm_first": {
-					"label": "先归一化",
-					"type": "bool",
-					"value": false
-				}
-			},
-			"description": "堆叠多个标准Transformer解码层"
 		},
 		"mse_loss": {
 			"opcode": "mse_loss",
@@ -2193,7 +1604,7 @@
 		},
 		"smooth_l1_loss": {
 			"opcode": "smooth_l1_loss",
-			"label": "平滑L1损失",
+			"label": "平滑绝对值误差",
 			"ports": {
 				"input": {
 					"input": "预测值",
@@ -2228,7 +1639,7 @@
 		},
 		"huber_loss": {
 			"opcode": "huber_loss",
-			"label": "Huber损失",
+			"label": "Huber误差",
 			"ports": {
 				"input": {
 					"input": "预测值",
@@ -2263,7 +1674,7 @@
 		},
 		"poisson_nll_loss": {
 			"opcode": "poisson_nll_loss",
-			"label": "泊松负对数似然",
+			"label": "泊松误差",
 			"ports": {
 				"input": {
 					"input": "对数率",
@@ -2308,7 +1719,7 @@
 		},
 		"gaussian_nll_loss": {
 			"opcode": "gaussian_nll_loss",
-			"label": "高斯负对数似然",
+			"label": "高斯误差",
 			"ports": {
 				"input": {
 					"input": "预测均值",
@@ -2349,7 +1760,7 @@
 		},
 		"kl_div_loss": {
 			"opcode": "kl_div_loss",
-			"label": "KL散度损失",
+			"label": "分布差异",
 			"ports": {
 				"input": {
 					"input": "输入分布",
@@ -2381,7 +1792,7 @@
 		},
 		"margin_ranking_loss": {
 			"opcode": "margin_ranking_loss",
-			"label": "边际排序损失",
+			"label": "排序误差",
 			"ports": {
 				"input": {
 					"x": "分数1",
@@ -2417,7 +1828,7 @@
 		},
 		"triplet_margin_loss": {
 			"opcode": "triplet_margin_loss",
-			"label": "三元组边际损失",
+			"label": "三元组误差",
 			"ports": {
 				"input": {
 					"anchor": "锚点",
@@ -2476,7 +1887,7 @@
 		},
 		"cosine_embedding_loss": {
 			"opcode": "cosine_embedding_loss",
-			"label": "余弦嵌入损失",
+			"label": "方向相似误差",
 			"ports": {
 				"input": {
 					"x": "嵌入1",
@@ -2629,7 +2040,7 @@
 		},
 		"einsum": {
 			"opcode": "einsum",
-			"label": "按公式计算",
+			"label": "按公式运算",
 			"ports": {
 				"input": {
 					"x": "",
@@ -2812,7 +2223,7 @@
 		},
 		"abs": {
 			"opcode": "abs",
-			"label": "取绝对值",
+			"label": "绝对值",
 			"ports": {
 				"input": {
 					"x": ""
@@ -2826,7 +2237,7 @@
 		},
 		"neg": {
 			"opcode": "neg",
-			"label": "取相反数",
+			"label": "相反数",
 			"ports": {
 				"input": {
 					"x": ""
@@ -2840,7 +2251,7 @@
 		},
 		"mean": {
 			"opcode": "mean",
-			"label": "求平均值",
+			"label": "平均值",
 			"ports": {
 				"input": {
 					"x": ""
@@ -2911,7 +2322,7 @@
 		},
 		"log1p": {
 			"opcode": "log1p",
-			"label": "加一对数",
+			"label": "加一取对数",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -2925,7 +2336,7 @@
 		},
 		"expm1": {
 			"opcode": "expm1",
-			"label": "减一指数",
+			"label": "减一取指数",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -2939,7 +2350,7 @@
 		},
 		"exp2": {
 			"opcode": "exp2",
-			"label": "二进制指数",
+			"label": "二的指数",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -2967,7 +2378,7 @@
 		},
 		"signbit": {
 			"opcode": "signbit",
-			"label": "负号判断",
+			"label": "判断负数",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -2979,23 +2390,9 @@
 			"params": {},
 			"description": "判断每个元素是否为负数"
 		},
-		"trunc": {
-			"opcode": "trunc",
-			"label": "截断取整",
-			"ports": {
-				"input": {
-					"x": "输入"
-				},
-				"output": {
-					"out": "输出"
-				}
-			},
-			"params": {},
-			"description": "去掉每个元素的小数部分"
-		},
 		"maximum": {
 			"opcode": "maximum",
-			"label": "逐元素最大",
+			"label": "逐个取较大值",
 			"ports": {
 				"input": {
 					"x": "输入1",
@@ -3010,7 +2407,7 @@
 		},
 		"minimum": {
 			"opcode": "minimum",
-			"label": "逐元素最小",
+			"label": "逐个取较小值",
 			"ports": {
 				"input": {
 					"x": "输入1",
@@ -3025,7 +2422,7 @@
 		},
 		"remainder": {
 			"opcode": "remainder",
-			"label": "取余",
+			"label": "取余数",
 			"ports": {
 				"input": {
 					"x": "输入1",
@@ -3103,7 +2500,7 @@
 		},
 		"flip": {
 			"opcode": "flip",
-			"label": "反转维度",
+			"label": "翻转顺序",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -3226,7 +2623,7 @@
 		},
 		"adaptive_avg_pool1d": {
 			"opcode": "adaptive_avg_pool1d",
-			"label": "自适应一维平均池化",
+			"label": "一维自适应平均池化",
 			"ports": {
 				"input": {
 					"x": "序列"
@@ -3248,57 +2645,9 @@
 			},
 			"description": "把一维序列池化到指定长度"
 		},
-		"dropout2d": {
-			"opcode": "dropout2d",
-			"label": "二维随机失活",
-			"ports": {
-				"input": {
-					"x": "输入"
-				},
-				"output": {
-					"out": "输出"
-				}
-			},
-			"params": {
-				"p": {
-					"label": "失活概率",
-					"type": "float",
-					"value": 0.5,
-					"range": [
-						0,
-						1
-					]
-				}
-			},
-			"description": "按通道随机丢弃特征，适合图像和特征图"
-		},
-		"dropout3d": {
-			"opcode": "dropout3d",
-			"label": "三维随机失活",
-			"ports": {
-				"input": {
-					"x": "输入"
-				},
-				"output": {
-					"out": "输出"
-				}
-			},
-			"params": {
-				"p": {
-					"label": "失活概率",
-					"type": "float",
-					"value": 0.5,
-					"range": [
-						0,
-						1
-					]
-				}
-			},
-			"description": "按通道随机丢弃三维特征"
-		},
 		"layer_norm": {
 			"opcode": "layer_norm",
-			"label": "按特征归一化",
+			"label": "层归一化",
 			"ports": {
 				"input": {
 					"x": ""
@@ -3334,7 +2683,7 @@
 		},
 		"group_norm": {
 			"opcode": "group_norm",
-			"label": "分组归一化",
+			"label": "组归一化",
 			"ports": {
 				"input": {
 					"x": ""
@@ -3381,7 +2730,7 @@
 		},
 		"batch_norm": {
 			"opcode": "batch_norm",
-			"label": "按批归一化",
+			"label": "批归一化",
 			"ports": {
 				"input": {
 					"x": ""
@@ -3435,7 +2784,7 @@
 		},
 		"instance_norm": {
 			"opcode": "instance_norm",
-			"label": "按样本归一化",
+			"label": "样本归一化",
 			"ports": {
 				"input": {
 					"x": ""
@@ -3552,7 +2901,7 @@
 		},
 		"transpose": {
 			"opcode": "transpose",
-			"label": "交换两个维度",
+			"label": "交换维度",
 			"ports": {
 				"input": {
 					"x": ""
@@ -3585,7 +2934,7 @@
 		},
 		"permute": {
 			"opcode": "permute",
-			"label": "重排列维度",
+			"label": "重排维度",
 			"ports": {
 				"input": {
 					"x": ""
@@ -3657,7 +3006,7 @@
 		},
 		"flatten": {
 			"opcode": "flatten",
-			"label": "压平成一维",
+			"label": "压平维度",
 			"ports": {
 				"input": {
 					"x": ""
@@ -3690,7 +3039,7 @@
 		},
 		"unflatten": {
 			"opcode": "unflatten",
-			"label": "拆开一个维度",
+			"label": "拆开维度",
 			"ports": {
 				"input": {
 					"x": ""
@@ -3722,7 +3071,7 @@
 		},
 		"pad": {
 			"opcode": "pad",
-			"label": "边缘补值",
+			"label": "填充边缘",
 			"ports": {
 				"input": {
 					"x": ""
@@ -3767,7 +3116,7 @@
 		},
 		"slice": {
 			"opcode": "slice",
-			"label": "截取一段",
+			"label": "序列切片",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -3818,7 +3167,7 @@
 		},
 		"select": {
 			"opcode": "select",
-			"label": "选择一个位置",
+			"label": "选择位置",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -3876,7 +3225,7 @@
 		},
 		"stack": {
 			"opcode": "stack",
-			"label": "叠起张量",
+			"label": "堆叠张量",
 			"ports": {
 				"input": {
 					"x": "张量1",
@@ -3923,7 +3272,7 @@
 		},
 		"time_shift": {
 			"opcode": "time_shift",
-			"label": "向前移位",
+			"label": "时间移位",
 			"ports": {
 				"input": {
 					"x": "序列"
@@ -3965,7 +3314,7 @@
 		},
 		"detach": {
 			"opcode": "detach",
-			"label": "切断梯度",
+			"label": "断梯度",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -3979,7 +3328,7 @@
 		},
 		"clone": {
 			"opcode": "clone",
-			"label": "复制张量",
+			"label": "克隆",
 			"ports": {
 				"input": {
 					"x": ""
@@ -4030,9 +3379,9 @@
 			"params": {},
 			"description": "把每个元素变成负一、零或正一"
 		},
-		"floor": {
-			"opcode": "floor",
-			"label": "向下取整",
+		"rounding": {
+			"opcode": "rounding",
+			"label": "取整",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -4041,36 +3390,20 @@
 					"out": "输出"
 				}
 			},
-			"params": {},
-			"description": "每个元素向负无穷取整"
-		},
-		"ceil": {
-			"opcode": "ceil",
-			"label": "向上取整",
-			"ports": {
-				"input": {
-					"x": "输入"
-				},
-				"output": {
-					"out": "输出"
+			"params": {
+				"mode": {
+					"label": "模式",
+					"type": "enum",
+					"value": "round",
+					"options": {
+						"round": "四舍五入",
+						"floor": "向下取整",
+						"ceil": "向上取整",
+						"trunc": "直接去掉小数"
+					}
 				}
 			},
-			"params": {},
-			"description": "每个元素向正无穷取整"
-		},
-		"round": {
-			"opcode": "round",
-			"label": "四舍五入",
-			"ports": {
-				"input": {
-					"x": "输入"
-				},
-				"output": {
-					"out": "输出"
-				}
-			},
-			"params": {},
-			"description": "每个元素四舍五入到最近整数"
+			"description": "把小数变成整数，可在属性中选择四舍五入、向下、向上或直接截断"
 		},
 		"frac": {
 			"opcode": "frac",
@@ -4088,7 +3421,7 @@
 		},
 		"reciprocal": {
 			"opcode": "reciprocal",
-			"label": "倒数",
+			"label": "取倒数",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -4214,7 +3547,7 @@
 		},
 		"amax": {
 			"opcode": "amax",
-			"label": "最大值归约",
+			"label": "最大值",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -4243,7 +3576,7 @@
 		},
 		"amin": {
 			"opcode": "amin",
-			"label": "最小值归约",
+			"label": "最小值",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -4272,7 +3605,7 @@
 		},
 		"prod": {
 			"opcode": "prod",
-			"label": "乘积归约",
+			"label": "乘积",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -4458,7 +3791,7 @@
 		},
 		"chunk": {
 			"opcode": "chunk",
-			"label": "均分序列",
+			"label": "分成几块",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -4490,143 +3823,30 @@
 			},
 			"description": "把序列均分成两段，适合构造前后位置分支"
 		},
-		"scan": {
-			"opcode": "scan",
-			"label": "序列扫描",
-			"ports": {
-				"input": {
-					"x": "序列"
-				},
-				"output": {
-					"out": "扫描结果"
-				}
-			},
-			"params": {
-				"dim": {
-					"label": "扫描维度",
-					"type": "int",
-					"value": 1,
-					"range": [
-						-10,
-						10
-					]
-				}
-			},
-			"description": "沿序列累计求和，每个位置都保留到当前位置的累计结果"
-		},
-		"fold": {
-			"opcode": "fold",
-			"label": "序列折叠",
-			"ports": {
-				"input": {
-					"x": "序列"
-				},
-				"output": {
-					"out": "折叠结果"
-				}
-			},
-			"params": {
-				"dim": {
-					"label": "折叠维度",
-					"type": "int",
-					"value": 1,
-					"range": [
-						-10,
-						10
-					]
-				}
-			},
-			"description": "沿序列累计求积，把序列折叠成一个最终结果"
-		},
-		"cumulative_max": {
-			"opcode": "cumulative_max",
-			"label": "累计最大值",
-			"ports": {
-				"input": {
-					"x": "序列"
-				},
-				"output": {
-					"out": "最大值"
-				}
-			},
-			"params": {
-				"dim": {
-					"label": "累计维度",
-					"type": "int",
-					"value": 1,
-					"range": [
-						-10,
-						10
-					]
-				}
-			},
-			"description": "沿序列保留截至当前位置的最大值"
-		},
-		"cumulative_min": {
-			"opcode": "cumulative_min",
-			"label": "累计最小值",
-			"ports": {
-				"input": {
-					"x": "序列"
-				},
-				"output": {
-					"out": "最小值"
-				}
-			},
-			"params": {
-				"dim": {
-					"label": "累计维度",
-					"type": "int",
-					"value": 1,
-					"range": [
-						-10,
-						10
-					]
-				}
-			},
-			"description": "沿序列保留截至当前位置的最小值"
-		},
-		"zeros_like": {
-			"opcode": "zeros_like",
-			"label": "同形全零",
+		"tensor_like": {
+			"opcode": "tensor_like",
+			"label": "同形创建",
 			"ports": {
 				"input": {
 					"x": "参考张量"
 				},
 				"output": {
-					"out": "全零张量"
+					"out": "新张量"
 				}
 			},
-			"params": {},
-			"description": "创建一个与输入形状和类型相同的全零张量"
-		},
-		"ones_like": {
-			"opcode": "ones_like",
-			"label": "同形全一",
-			"ports": {
-				"input": {
-					"x": "参考张量"
-				},
-				"output": {
-					"out": "全一张量"
+			"params": {
+				"mode": {
+					"label": "内容",
+					"type": "enum",
+					"value": "zeros",
+					"options": {
+						"zeros": "全部为零",
+						"ones": "全部为一",
+						"random": "随机数"
+					}
 				}
 			},
-			"params": {},
-			"description": "创建一个与输入形状和类型相同的全一张量"
-		},
-		"rand_like": {
-			"opcode": "rand_like",
-			"label": "同形随机",
-			"ports": {
-				"input": {
-					"x": "参考张量"
-				},
-				"output": {
-					"out": "随机张量"
-				}
-			},
-			"params": {},
-			"description": "创建一个与输入形状和类型相同的随机张量"
+			"description": "创建与输入形状和类型相同的新张量，可在属性中选择全零、全一或随机"
 		},
 		"linear": {
 			"opcode": "linear",
