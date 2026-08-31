@@ -108,8 +108,9 @@ body,
 }
 
 .vue-flow__background {
-	background: #e2e9fa;
-	/* 工作区蓝灰背景 */
+	background-color: #202329;
+	background-image: radial-gradient(#3a404a 1px, transparent 1px);
+	background-size: 24px 24px;
 }
 
 /* ========== 通用过渡动画 ========== */

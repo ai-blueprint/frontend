@@ -141,6 +141,10 @@ watch(isRenaming, (newVal) => {
 			@contextmenu="onContextMenu"
 			@dblclick="onDoubleClick">
 		<!-- 节点主容器 -->
+		<div class="node-header" :style="{ backgroundColor: nodeColor }">
+			<span class="header-dot"></span>
+			<span class="header-type">{{ data.technicalLabel || data.opcode }}</span>
+		</div>
 
 		<!-- 警告图标（节点有error时显示在正上方）-->
 		<div v-if="hasError" class="warning-icon" :title="nodeData.error">
@@ -247,11 +251,11 @@ watch(isRenaming, (newVal) => {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	width: 270px;
-	min-height: 146px;
+	width: 300px;
+	min-height: 174px;
 	flex-wrap: nowrap;
-	padding: 0;
-	gap: 10px;
+	padding: 30px 10px 10px;
+	gap: 8px;
 	cursor: grab;
 	outline: none;
 	transition:
@@ -262,6 +266,10 @@ watch(isRenaming, (newVal) => {
 	position: relative;
 	user-select: none;
 	transform-origin: center center;
+	background: #292d35;
+	border: 1px solid #464c59;
+	border-radius: 8px;
+	box-shadow: 0 7px 18px rgba(0, 0, 0, 0.24);
 }
 
 .custom-node:active {
@@ -280,6 +288,34 @@ watch(isRenaming, (newVal) => {
 
 .custom-node.selected {
 	filter: drop-shadow(0 0 4px color-mix(in srgb, var(--node-color) 80%, transparent)) drop-shadow(0 0 14px color-mix(in srgb, var(--node-color) 45%, transparent)) brightness(1.08);
+}
+
+.node-header {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	display: flex;
+	align-items: center;
+	gap: 7px;
+	height: 25px;
+	padding: 0 10px;
+	border-radius: 7px 7px 0 0;
+	color: #fff;
+}
+
+.header-dot {
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.85);
+}
+
+.header-type {
+	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+	font-size: 10px;
+	letter-spacing: 0;
+	opacity: 0.9;
 }
 
 .ports {
@@ -317,7 +353,7 @@ watch(isRenaming, (newVal) => {
 .label-text {
 	font-size: 18px;
 	/* 名称字号 */
-	color: #26344d;
+	color: #f1f3f7;
 	word-break: keep-all;
 	/* 保持单词完整 */
 	white-space: nowrap;
@@ -329,11 +365,11 @@ watch(isRenaming, (newVal) => {
 	/* 宽度自动，根据内容长度而变化 */
 	padding: 2px 4px;
 	/* 内边距 */
-	background: rgba(255, 255, 255, 0.86);
+	background: #202329;
 	border: 1px solid var(--node-color, #8992eb);
 	border-radius: 6px;
 	/* 圆角 */
-	color: #26344d;
+	color: #f1f3f7;
 	font-size: 16px;
 	/* 字号 */
 	outline: none;

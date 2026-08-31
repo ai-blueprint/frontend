@@ -82,7 +82,7 @@ const previewCaption = computed(() => ({
 	gap: 9px;
 	width: 178px;
 	min-height: 92px;
-	color: var(--node-color, #5672b8);
+	color: color-mix(in srgb, var(--node-color, #5672b8) 88%, white);
 	flex-wrap: wrap;
 	align-content: center;
 }
@@ -139,7 +139,7 @@ const previewCaption = computed(() => ({
 }
 
 .pool-flow { display: flex; flex-direction: column; align-items: center; gap: 3px; }
-.flow-word { font-size: 9px; color: #52627c; white-space: nowrap; }
+.flow-word { font-size: 9px; color: #b7c0cf; white-space: nowrap; }
 
 .merge-flow,
 .loss-flow { position: relative; width: 52px; height: 52px; }
@@ -169,5 +169,5 @@ const previewCaption = computed(() => ({
 .preview-line { width: 38px; height: 6px; border-radius: 6px; }
 .output-line { width: 23px; opacity: 0.62; }
 
-.preview-caption { flex-basis: 100%; font-size: 11px; line-height: 1.2; text-align: center; color: #52627c; }
+.preview-caption { flex-basis: 100%; font-size: 11px; line-height: 1.2; text-align: center; color: #b7c0cf; }
 </style>
