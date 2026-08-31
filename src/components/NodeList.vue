@@ -110,11 +110,9 @@ onMounted(() => {
 			<!-- 分类标题 -->
 
 			<!-- 遍历分类下的节点 -->
-			<var-tooltip v-for="node in groupNodes(key)" :key="node.opcode" class="node-tooltip" :content="node.description" placement="right" :disabled="!node.description">
-				<div class="node-item" draggable="true" @dragstart="onDragStart($event, node.opcode)" :style="{ '--node-color': category.color }">
+			<var-tooltip v-for="node in groupNodes(key)" :key="node.opcode" class="node-tooltip" :content="`技术名：${node.technicalLabel}｜${node.description}`" placement="right" :disabled="!node.description">
+				<div class="node-item" draggable="true" @dragstart="onDragStart($event, node.opcode)" :style="{ '--node-color': category.color }" :title="`${node.label}（${node.technicalLabel}）`">
 					<span class="node-name">{{ node.label }}</span>
-					<span class="node-technical-name">{{ node.technicalLabel }}</span>
-					<!-- 节点名称 -->
 				</div>
 			</var-tooltip>
 		</div>
@@ -177,11 +175,9 @@ onMounted(() => {
 /* 节点卡片 */
 .node-item {
 	display: flex;
-		flex-direction: column;
-		align-items: center;
-	justify-content: center;
+	align-items: center;
 	width: fit-content;
-	padding: 12px 18px;
+	padding: 10px 16px;
 	border-radius: 12px;
 	background-color: var(--node-color);
 	cursor: grab;
@@ -203,14 +199,6 @@ onMounted(() => {
 .node-name {
 	font-size: 16px;
 	color: #fff;
-	white-space: nowrap;
-}
-
-/* 标准技术名称，帮助学习者把白话名称对应到 PyTorch API */
-.node-technical-name {
-	font-size: 11px;
-	line-height: 1.2;
-	color: rgba(255, 255, 255, 0.82);
 	white-space: nowrap;
 }
 </style>
