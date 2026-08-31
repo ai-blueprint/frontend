@@ -67,8 +67,8 @@ const onMouseDown = (event) => {
 
 .port-label {
 	font-size: 11px; /* 标签字号 */
-	color: #52627c; /* 浅色卡片上的端口说明 */
-	padding: 0 8px; /* 左右内边距 */
+	color: #52627c;
+	padding: 0 6px;
 	white-space: nowrap; /* 不换行 */
 }
 
@@ -81,7 +81,7 @@ const onMouseDown = (event) => {
 	width: 8px !important; /* 端口圆点宽度 */
 	height: 8px !important; /* 端口圆点高度 */
 	background: var(--node-color, #8992eb) !important; /* 端口使用节点分类色 */
-	border: 2px solid #ffffff !important; /* 用白边保证端口在卡片边缘清晰可见 */
+	border: 2px solid #f5f7fb !important;
 	border-radius: 50% !important; /* 圆形 */
 	transition: 0.1s ease-in-out; /* 过渡动画 */
 }

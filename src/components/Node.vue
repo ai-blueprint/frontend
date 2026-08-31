@@ -245,40 +245,23 @@ watch(isRenaming, (newVal) => {
 
 .custom-node {
 	display: flex;
-	/* 横向排列：输入端口 | 名称 | 输出端口 */
 	flex-direction: row;
-	/* 横向布局 */
 	align-items: center;
-	/* 垂直居中 */
-	width: 230px;
-	min-height: 112px;
-	/* 自适应宽度 */
+	width: 270px;
+	min-height: 146px;
 	flex-wrap: nowrap;
-	/* 不换行 */
-	border-radius: 10px;
-	/* 圆角 */
-	background-color: #ffffff;
-	border: 2px solid var(--node-color, #8992eb);
-	/* 节点背景色：优先分类色，回退默认色 */
-	padding: 8px;
-	/* 内边距 */
-	gap: 18px;
-	/* 端口组与名称间距 */
+	padding: 0;
+	gap: 10px;
 	cursor: grab;
-	/* 抓取光标 */
 	outline: none;
-	/* 白色描边预设 */
 	transition:
 		opacity 0.2s,
 		filter 0.2s,
 		outline 0.2s,
 		scale 0.2s;
-	/* 过渡动画 */
 	position: relative;
-	/* 相对定位，用于悬浮元素 */
 	user-select: none;
-	/* 禁止文字选中 */
-	transform-origin: center center; /* 变换原点 */
+	transform-origin: center center;
 }
 
 .custom-node:active {
@@ -287,8 +270,7 @@ watch(isRenaming, (newVal) => {
 }
 
 .custom-node:hover {
-	filter: brightness(1.02);
-	/* 悬停时提亮 */
+	filter: brightness(1.08);
 }
 
 .custom-node:hover:active {
@@ -297,10 +279,7 @@ watch(isRenaming, (newVal) => {
 }
 
 .custom-node.selected {
-	outline: 3px solid var(--node-color);
-	/* 选中时白色描边 */
-	filter: drop-shadow(0 0 3px var(--node-color)) drop-shadow(0 0 15px var(--node-color)) brightness(1.1);
-	/* 选中发光效果 */
+	filter: drop-shadow(0 0 4px color-mix(in srgb, var(--node-color) 80%, transparent)) drop-shadow(0 0 14px color-mix(in srgb, var(--node-color) 45%, transparent)) brightness(1.08);
 }
 
 .ports {
@@ -310,8 +289,7 @@ watch(isRenaming, (newVal) => {
 	/* 垂直布局 */
 	align-items: center;
 	/* 水平居中 */
-	gap: 16px;
-	/* 端口间距 */
+	gap: 18px;
 }
 
 .input-ports {
@@ -327,31 +305,23 @@ watch(isRenaming, (newVal) => {
 .node-label {
 	display: flex;
 	flex-direction: column;
-	gap: 4px;
-	/* 图形在上、名称在下，先看懂数据怎么流 */
+	gap: 5px;
 	align-items: center;
 	/* 垂直居中 */
 	justify-content: center;
 	/* 水平居中 */
 	width: 100%;
-	/* 自适应宽度 */
+	min-width: 0;
 }
 
 .label-text {
 	font-size: 18px;
 	/* 名称字号 */
 	color: #26344d;
-	/* 白色文字 */
 	word-break: keep-all;
 	/* 保持单词完整 */
 	white-space: nowrap;
 	/* 不换行 */
-}
-
-.node-label::after {
-	content: "拖动端口连接数据";
-	font-size: 10px;
-	color: #7b879b;
 }
 
 .rename-input {
@@ -359,14 +329,11 @@ watch(isRenaming, (newVal) => {
 	/* 宽度自动，根据内容长度而变化 */
 	padding: 2px 4px;
 	/* 内边距 */
-	background: rgba(255, 255, 255, 0.2);
-	/* 半透明白色背景 */
-	border: 1px solid #ffffff;
-	/* 白色边框 */
+	background: rgba(255, 255, 255, 0.86);
+	border: 1px solid var(--node-color, #8992eb);
 	border-radius: 6px;
 	/* 圆角 */
-	color: #ffffff;
-	/* 白色文字 */
+	color: #26344d;
 	font-size: 16px;
 	/* 字号 */
 	outline: none;
