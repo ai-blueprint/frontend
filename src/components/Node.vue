@@ -3,6 +3,7 @@ import { ref, computed, nextTick, watch } from "vue"; // 引入Vue组合式API
 import store from "@/store.js"; // 引入全局状态
 import Node from "@/commands/Node.js"; // 引入节点命令
 import Port from "@/components/Port.vue"; // 引入端口组件
+import NodePreview from "@/components/NodePreview.vue"; // 引入节点数据流图形
 import TensorResult from "@/components/TensorResult.vue"; // 引入节点下方张量热力图
 
 const props = defineProps({
@@ -159,6 +160,7 @@ watch(isRenaming, (newVal) => {
 		<!-- 节点名称 -->
 		<div class="node-label">
 			<!-- 节点名称区域 -->
+			<NodePreview :opcode="data.opcode" :style="{ '--node-color': nodeColor }" />
 			<input
 				v-if="isRenaming"
 				ref="renameInput"
@@ -322,7 +324,9 @@ watch(isRenaming, (newVal) => {
 
 .node-label {
 	display: flex;
-	/* 居中对齐 */
+	flex-direction: column;
+	gap: 4px;
+	/* 图形在上、名称在下，先看懂数据怎么流 */
 	align-items: center;
 	/* 垂直居中 */
 	justify-content: center;
