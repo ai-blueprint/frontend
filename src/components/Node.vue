@@ -99,10 +99,6 @@ const onDoubleClick = () => {
 	store.renaming.original = props.data.label; // 记录原始名称
 };
 
-const onPreviewParamChange = (paramKey, value) => {
-	Node.updateParam(props.id, paramKey, value);
-};
-
 // --- 确认重命名 ---
 const confirmRename = () => {
 	const value = renameValue.value.trim(); // 获取并去除空格
@@ -147,7 +143,16 @@ watch(isRenaming, (newVal) => {
 		<!-- 节点主容器 -->
 		<div class="node-header" :style="{ backgroundColor: nodeColor }">
 			<span class="header-dot"></span>
-			<span class="header-type">{{ data.technicalLabel || data.opcode }}</span>
+			<input
+				v-if="isRenaming"
+				ref="renameInput"
+				class="rename-input nodrag"
+				:value="renameValue"
+				@input="renameValue = $event.target.value"
+				@blur="confirmRename"
+				@keydown="onRenameKeydown" />
+			<span v-else class="header-name">{{ data.label }}</span>
+			<span v-if="data.technicalLabel && data.technicalLabel !== data.label" class="header-type">{{ data.technicalLabel }}</span>
 		</div>
 
 		<!-- 警告图标（节点有error时显示在正上方）-->
@@ -168,18 +173,7 @@ watch(isRenaming, (newVal) => {
 		<!-- 节点名称 -->
 		<div class="node-label">
 			<!-- 节点名称区域 -->
-			<NodePreview :opcode="data.opcode" :params="data.params" :style="{ '--node-color': nodeColor }" @update-param="onPreviewParamChange" />
-			<input
-				v-if="isRenaming"
-				ref="renameInput"
-				class="rename-input nodrag"
-				:value="renameValue"
-				@input="renameValue = $event.target.value"
-				@blur="confirmRename"
-				@keydown="onRenameKeydown" />
-			<!-- 重命名输入框 -->
-			<span v-else class="label-text">{{ data.label }}</span>
-			<!-- 正常显示名称 -->
+			<NodePreview :opcode="data.opcode" :params="data.params" :style="{ '--node-color': nodeColor }" />
 		</div>
 
 		<!-- 输出端口组 -->
@@ -255,11 +249,11 @@ watch(isRenaming, (newVal) => {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	width: 300px;
-	min-height: 174px;
+	width: 238px;
+	min-height: 120px;
 	flex-wrap: nowrap;
-	padding: 30px 10px 10px;
-	gap: 8px;
+	padding: 31px 8px 8px;
+	gap: 6px;
 	cursor: grab;
 	outline: none;
 	transition:
@@ -316,10 +310,20 @@ watch(isRenaming, (newVal) => {
 }
 
 .header-type {
+	margin-left: auto;
 	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-	font-size: 10px;
+	font-size: 9px;
 	letter-spacing: 0;
 	opacity: 0.9;
+}
+
+.header-name {
+	min-width: 0;
+	font-size: 12px;
+	font-weight: 600;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .ports {
@@ -345,7 +349,7 @@ watch(isRenaming, (newVal) => {
 .node-label {
 	display: flex;
 	flex-direction: column;
-	gap: 5px;
+	gap: 0;
 	align-items: center;
 	/* 垂直居中 */
 	justify-content: center;
@@ -354,32 +358,17 @@ watch(isRenaming, (newVal) => {
 	min-width: 0;
 }
 
-.label-text {
-	font-size: 18px;
-	/* 名称字号 */
-	color: #f1f3f7;
-	word-break: keep-all;
-	/* 保持单词完整 */
-	white-space: nowrap;
-	/* 不换行 */
-}
-
 .rename-input {
-	field-sizing: content;
-	/* 宽度自动，根据内容长度而变化 */
-	padding: 2px 4px;
-	/* 内边距 */
-	background: #202329;
-	border: 1px solid var(--node-color, #8992eb);
-	border-radius: 6px;
-	/* 圆角 */
-	color: #f1f3f7;
-	font-size: 16px;
-	/* 字号 */
+	width: 112px;
+	min-width: 0;
+	padding: 1px 4px;
+	background: rgba(32, 35, 41, 0.6);
+	border: 1px solid rgba(255, 255, 255, 0.7);
+	border-radius: 3px;
+	color: #fff;
+	font-size: 11px;
 	outline: none;
-	/* 去除聚焦边框 */
-	text-align: center;
-	/* 文字居中 */
+	text-align: left;
 }
 
 .warning-icon {
