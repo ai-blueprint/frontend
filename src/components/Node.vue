@@ -99,6 +99,10 @@ const onDoubleClick = () => {
 	store.renaming.original = props.data.label; // 记录原始名称
 };
 
+const onPreviewParamChange = (paramKey, value) => {
+	Node.updateParam(props.id, paramKey, value);
+};
+
 // --- 确认重命名 ---
 const confirmRename = () => {
 	const value = renameValue.value.trim(); // 获取并去除空格
@@ -164,7 +168,7 @@ watch(isRenaming, (newVal) => {
 		<!-- 节点名称 -->
 		<div class="node-label">
 			<!-- 节点名称区域 -->
-			<NodePreview :opcode="data.opcode" :style="{ '--node-color': nodeColor }" />
+			<NodePreview :opcode="data.opcode" :params="data.params" :style="{ '--node-color': nodeColor }" @update-param="onPreviewParamChange" />
 			<input
 				v-if="isRenaming"
 				ref="renameInput"
