@@ -304,7 +304,7 @@
 		"leaky_relu": {
 			"opcode": "leaky_relu",
 			"technicalLabel": "LeakyReLU",
-			"label": "负数保留一点",
+			"label": "泄漏ReLU",
 			"ports": {
 				"input": {
 					"x": ""
@@ -410,7 +410,7 @@
 		"rrelu": {
 			"opcode": "rrelu",
 			"technicalLabel": "RReLU",
-			"label": "随机负数斜率",
+			"label": "随机泄漏",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -444,7 +444,7 @@
 		"selu": {
 			"opcode": "selu",
 			"technicalLabel": "SELU",
-			"label": "自归一化激活",
+			"label": "自归一化",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -459,7 +459,7 @@
 		"celu": {
 			"opcode": "celu",
 			"technicalLabel": "CELU",
-			"label": "连续指数激活",
+			"label": "连续指数",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -484,7 +484,7 @@
 		"silu": {
 			"opcode": "silu",
 			"technicalLabel": "SiLU",
-			"label": "平滑门控激活",
+			"label": "平滑门控",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -514,7 +514,7 @@
 		"hardsigmoid": {
 			"opcode": "hardsigmoid",
 			"technicalLabel": "Hardsigmoid",
-			"label": "快速压到零和一",
+			"label": "快速Sigmoid",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -529,7 +529,7 @@
 		"hardswish": {
 			"opcode": "hardswish",
 			"technicalLabel": "Hardswish",
-			"label": "快速平滑门控",
+			"label": "快速Swish",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -544,7 +544,7 @@
 		"log_sigmoid": {
 			"opcode": "log_sigmoid",
 			"technicalLabel": "LogSigmoid",
-			"label": "对数概率",
+			"label": "对数Sigmoid",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -559,7 +559,7 @@
 		"prelu": {
 			"opcode": "prelu",
 			"technicalLabel": "PReLU",
-			"label": "可学习负数斜率",
+			"label": "参数化ReLU",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -584,7 +584,7 @@
 		"hardshrink": {
 			"opcode": "hardshrink",
 			"technicalLabel": "Hardshrink",
-			"label": "硬收缩小数",
+			"label": "硬收缩",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -609,7 +609,7 @@
 		"softshrink": {
 			"opcode": "softshrink",
 			"technicalLabel": "Softshrink",
-			"label": "软收缩小数",
+			"label": "软收缩",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -634,7 +634,7 @@
 		"tanhshrink": {
 			"opcode": "tanhshrink",
 			"technicalLabel": "Tanhshrink",
-			"label": "减去双曲正切",
+			"label": "Tanh收缩",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -649,7 +649,7 @@
 		"threshold": {
 			"opcode": "threshold",
 			"technicalLabel": "Threshold",
-			"label": "低于阈值替换",
+			"label": "阈值替换",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -683,7 +683,7 @@
 		"glu": {
 			"opcode": "glu",
 			"technicalLabel": "GLU",
-			"label": "门控分成两半",
+			"label": "门控单元",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -708,7 +708,7 @@
 		"softmin": {
 			"opcode": "softmin",
 			"technicalLabel": "Softmin",
-			"label": "小值变大概率",
+			"label": "Softmin",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -733,7 +733,7 @@
 		"log_softmax": {
 			"opcode": "log_softmax",
 			"technicalLabel": "LogSoftmax",
-			"label": "对数概率分布",
+			"label": "对数Softmax",
 			"ports": {
 				"input": {
 					"x": "输入"
