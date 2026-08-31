@@ -13,6 +13,18 @@ const previewType = computed(() => {
 	if (["input", "output", "debug", "tensor_like"].includes(props.opcode)) return "base"; // 基础节点展示数据入口或出口
 	return "unary"; // 其余大多数节点都是一进一出的变换
 });
+
+const previewCaption = computed(() => {
+	const captions = {
+		pooling: "每一小块只留一个值",
+		binary: "两个输入合成一个结果",
+		shape: "改变形状，不改内容",
+		loss: "比较预测和目标",
+		base: "数据从这里进出",
+		unary: "输入经过处理后输出",
+	};
+	return captions[previewType.value]; // 用一句短话解释图形表达的动作
+});
 </script>
 
 <template>
@@ -44,6 +56,7 @@ const previewType = computed(() => {
 		<template v-else>
 			<div class="preview-line input-line"></div><span class="preview-arrow">→</span><div class="preview-line output-line"></div>
 		</template>
+		<span class="preview-caption">{{ previewCaption }}</span>
 	</div>
 </template>
 
@@ -53,23 +66,28 @@ const previewType = computed(() => {
 	align-items: center;
 	justify-content: center;
 	gap: 5px;
-	height: 28px;
-	margin-bottom: 6px;
-	opacity: 0.92;
+	min-height: 54px;
+	margin-bottom: 2px;
+	padding: 8px 8px 6px;
+	border-radius: 7px;
+	background: #f3f7fc;
+	color: var(--node-color, #5672b8);
+	flex-wrap: wrap;
+	align-content: center;
 }
 
 .preview-arrow {
 	font-size: 15px;
 	font-weight: 700;
 	line-height: 1;
-	color: rgba(255, 255, 255, 0.9);
+	color: var(--node-color, #5672b8);
 }
 
 .preview-grid {
 	display: grid;
 	gap: 2px;
 	padding: 2px;
-	border: 1px solid rgba(255, 255, 255, 0.7);
+	border: 1px solid currentColor;
 	border-radius: 3px;
 }
 
@@ -91,15 +109,15 @@ const previewType = computed(() => {
 .preview-line,
 .preview-pill {
 	display: block;
-	background: rgba(255, 255, 255, 0.7);
+	background: currentColor;
 }
 
 .input-grid span {
-	background: rgba(255, 255, 255, 0.35);
+	background: color-mix(in srgb, currentColor 28%, transparent);
 }
 
 .input-grid span.highlighted {
-	background: #fff;
+	background: currentColor;
 }
 
 .preview-dot,
@@ -120,7 +138,7 @@ const previewType = computed(() => {
 
 .preview-shape {
 	height: 10px;
-	border: 1px solid rgba(255, 255, 255, 0.75);
+	border: 1px solid currentColor;
 	background: transparent;
 }
 
@@ -138,7 +156,7 @@ const previewType = computed(() => {
 	border-radius: 3px;
 	font-size: 8px;
 	line-height: 1;
-	color: var(--node-color);
+	color: #52627c;
 }
 
 .preview-base-block {
@@ -156,5 +174,13 @@ const previewType = computed(() => {
 .output-line {
 	width: 16px;
 	opacity: 0.65;
+}
+
+.preview-caption {
+	flex-basis: 100%;
+	font-size: 10px;
+	line-height: 1.2;
+	text-align: center;
+	color: #52627c;
 }
 </style>
