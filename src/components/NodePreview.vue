@@ -62,7 +62,7 @@ const poolingInputClass = (index) => {
 				<span v-for="index in 16" :key="index" :class="poolingInputClass(index)"></span>
 				<i class="window-mark"></i>
 			</div>
-			<span class="preview-arrow">→</span>
+			<span class="preview-arrow" aria-hidden="true">›</span>
 			<div class="preview-grid output-grid" :style="poolingOutputStyle">
 				<span v-for="(_, index) in poolingSteps" :key="index" :class="poolingCellClass(index)"></span>
 			</div>
@@ -70,23 +70,23 @@ const poolingInputClass = (index) => {
 
 		<template v-else-if="previewType === 'binary'">
 			<div class="merge-flow"><span class="preview-dot"></span><span class="merge-stem stem-top"></span><span class="preview-dot second"></span><span class="merge-stem stem-bottom"></span></div>
-			<span class="preview-arrow">→</span><span class="preview-result"></span>
+			<span class="preview-arrow" aria-hidden="true">›</span><span class="preview-result"></span>
 		</template>
 
 		<template v-else-if="previewType === 'shape'">
-			<div class="preview-shape wide"><span></span><span></span><span></span></div><span class="preview-arrow">→</span><div class="preview-shape narrow"><span></span><span></span><span></span></div>
+			<div class="preview-shape wide"><span></span><span></span><span></span></div><span class="preview-arrow" aria-hidden="true">›</span><div class="preview-shape narrow"><span></span><span></span><span></span></div>
 		</template>
 
 		<template v-else-if="previewType === 'loss'">
-			<div class="loss-flow"><span class="loss-source"></span><span class="loss-source target"></span></div><span class="preview-arrow">→</span><span class="preview-result error-result"></span>
+			<div class="loss-flow"><span class="loss-source"></span><span class="loss-source target"></span></div><span class="preview-arrow" aria-hidden="true">›</span><span class="preview-result error-result"></span>
 		</template>
 
 		<template v-else-if="previewType === 'base'">
-			<div class="preview-base-block source-block"><span></span><span></span><span></span></div><span class="preview-arrow">→</span><div class="preview-base-block"><span></span><span></span><span></span></div>
+			<div class="preview-base-block source-block"><span></span><span></span><span></span></div><span class="preview-arrow" aria-hidden="true">›</span><div class="preview-base-block"><span></span><span></span><span></span></div>
 		</template>
 
 		<template v-else>
-			<div class="preview-line input-line"></div><span class="preview-arrow">→</span><div class="preview-line output-line"></div>
+			<div class="preview-line input-line"></div><span class="preview-arrow" aria-hidden="true">›</span><div class="preview-line output-line"></div>
 		</template>
 	</div>
 </template>
@@ -96,13 +96,13 @@ const poolingInputClass = (index) => {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	gap: 7px;
-	width: 142px;
-	min-height: 68px;
+	gap: 8px;
+	width: 150px;
+	min-height: 64px;
 	color: color-mix(in srgb, var(--node-color, #5672b8) 88%, white);
 }
 
-.preview-arrow { color: var(--node-color, #5672b8); font-size: 19px; line-height: 1; animation: flow-pulse 0.72s ease-in-out infinite alternate; }
+.preview-arrow { color: var(--node-color, #5672b8); font-size: 31px; font-weight: 300; line-height: 0.7; animation: flow-pulse 0.72s ease-in-out infinite alternate; }
 .preview-grid { position: relative; display: grid; gap: 3px; padding: 4px; border: 1.5px solid currentColor; border-radius: 5px; }
 .input-grid { grid-template-columns: repeat(4, 8px); grid-template-rows: repeat(4, 8px); }
 .output-grid { grid-template-columns: repeat(var(--output-cols), 11px); }
@@ -113,7 +113,7 @@ const poolingInputClass = (index) => {
 .preview-shape span,
 .preview-line,
 .loss-source { display: block; background: currentColor; }
-.input-grid span { background: color-mix(in srgb, currentColor 20%, transparent); }
+.input-grid span { background: color-mix(in srgb, currentColor 19%, transparent); }
 .input-grid span.highlighted { background: currentColor; }
 .output-grid span { width: 11px; height: 11px; background: color-mix(in srgb, currentColor 16%, transparent); }
 .output-grid span.active { background: color-mix(in srgb, currentColor 70%, white); }
@@ -138,20 +138,20 @@ const poolingInputClass = (index) => {
 .merge-stem { position: absolute; left: 13px; width: 24px; height: 2px; background: currentColor; transform-origin: left center; }
 .stem-top { top: 9px; transform: rotate(27deg); }
 .stem-bottom { top: 32px; transform: rotate(-27deg); opacity: 0.55; }
-.preview-result { width: 19px; height: 19px; border-radius: 5px; animation: result-pulse 1.4s ease-in-out infinite 0.7s; }
+.preview-result { width: 20px; height: 20px; border-radius: 5px; animation: result-pulse 1.4s ease-in-out infinite 0.7s; }
 
 .preview-shape { display: grid; gap: 3px; padding: 4px; border: 1.5px solid currentColor; border-radius: 4px; }
 .preview-shape span { height: 4px; border-radius: 2px; opacity: 0.7; }
 .preview-shape.wide { width: 38px; grid-template-columns: repeat(3, 1fr); animation: shape-source 1.8s ease-in-out infinite; }
 .preview-shape.narrow { width: 22px; grid-template-columns: 1fr; animation: shape-result 1.8s ease-in-out infinite; }
 
-.loss-source { position: absolute; width: 18px; height: 8px; top: 6px; left: 2px; border-radius: 5px; }
+.loss-source { position: absolute; width: 17px; height: 7px; top: 6px; left: 2px; border-radius: 5px; }
 .loss-source.target { top: 27px; left: 16px; opacity: 0.5; }
 .error-result { border-radius: 50%; background: transparent; border: 3px solid currentColor; }
 .preview-base-block { display: flex; flex-direction: column; gap: 3px; width: 19px; padding: 4px; border-radius: 4px; }
 .preview-base-block span { height: 2px; border-radius: 2px; background: #fff; opacity: 0.7; }
 .source-block { opacity: 0.5; }
-.preview-line { width: 32px; height: 5px; border-radius: 5px; }
+.preview-line { width: 34px; height: 5px; border-radius: 5px; }
 .output-line { width: 19px; opacity: 0.6; }
 
 @keyframes flow-pulse { from { opacity: 0.4; transform: translateX(-2px); } to { opacity: 1; transform: translateX(2px); } }

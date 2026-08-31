@@ -81,7 +81,7 @@ const onMouseDown = (event) => {
 	width: 8px !important; /* 端口圆点宽度 */
 	height: 8px !important; /* 端口圆点高度 */
 	background: var(--node-color, #8992eb) !important; /* 端口使用节点分类色 */
-	border: 2px solid #292d35 !important;
+	border: 2px solid #202329 !important;
 	border-radius: 50% !important; /* 圆形 */
 	transition: 0.1s ease-in-out; /* 过渡动画 */
 }

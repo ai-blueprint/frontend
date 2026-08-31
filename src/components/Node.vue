@@ -250,9 +250,9 @@ watch(isRenaming, (newVal) => {
 	flex-direction: row;
 	align-items: center;
 	width: 238px;
-	min-height: 120px;
+	min-height: 94px;
 	flex-wrap: nowrap;
-	padding: 31px 8px 8px;
+	padding: 25px 8px 8px;
 	gap: 6px;
 	cursor: grab;
 	outline: none;
@@ -264,10 +264,10 @@ watch(isRenaming, (newVal) => {
 	position: relative;
 	user-select: none;
 	transform-origin: center center;
-	background: #292d35;
-	border: 1px solid #464c59;
-	border-radius: 8px;
-	box-shadow: 0 7px 18px rgba(0, 0, 0, 0.24);
+	background: transparent;
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
 }
 
 .custom-node:active {
@@ -291,14 +291,15 @@ watch(isRenaming, (newVal) => {
 .node-header {
 	position: absolute;
 	top: 0;
-	left: 0;
-	right: 0;
+	left: 50%;
+	right: auto;
+	transform: translateX(-50%);
 	display: flex;
 	align-items: center;
 	gap: 7px;
-	height: 25px;
-	padding: 0 10px;
-	border-radius: 7px 7px 0 0;
+	height: 21px;
+	padding: 0 9px;
+	border-radius: 999px;
 	color: #fff;
 }
 
@@ -362,7 +363,7 @@ watch(isRenaming, (newVal) => {
 	width: 112px;
 	min-width: 0;
 	padding: 1px 4px;
-	background: rgba(32, 35, 41, 0.6);
+	background: #292d35;
 	border: 1px solid rgba(255, 255, 255, 0.7);
 	border-radius: 3px;
 	color: #fff;
