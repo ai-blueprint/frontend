@@ -49,8 +49,6 @@ const tensorOutputs = computed(() => {
 	return Object.values(outputs).filter((output) => output?.kind === "tensor"); // 节点下方只显示张量图，不显示其他信息
 });
 
-const nodeResult = computed(() => store.runtime.execution.nodeResults[props.id] || null);
-
 // --- 获取训练模式下当前节点的参数梯度 ---
 const parameterGradients = computed(() => {
 	if (!store.runtime.training.nodes[props.id]) return []; // 没有可学习参数时不显示训练图
@@ -175,7 +173,7 @@ watch(isRenaming, (newVal) => {
 		<!-- 节点名称 -->
 		<div class="node-label">
 			<!-- 节点名称区域 -->
-			<NodePreview :opcode="data.opcode" :params="data.params" :result="nodeResult" :style="{ '--node-color': nodeColor }" />
+			<NodePreview :opcode="data.opcode" :params="data.params" :style="{ '--node-color': nodeColor }" />
 		</div>
 
 		<!-- 输出端口组 -->
