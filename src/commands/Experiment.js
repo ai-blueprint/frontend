@@ -133,7 +133,7 @@ const registerHandlers = () => {
 		const result = envelope.data; // 节点结果包含全部输出端口
 		if (!result?.nodeId) return; // 无节点ID无法关联画布
 		cycleResultIDs.add(result.nodeId); // 标记节点在本轮确实收到了上游值并完成计算
-		execution.nodeResults[result.nodeId] = result; // 节点计算完成后立即覆盖它下方的张量图
+		execution.nodeResults[result.nodeId] = { ...result, _requestId: envelope.id }; // 本地轮次标记确保前端推导输入时不混用旧输出
 		delete execution.nodeErrors[result.nodeId]; // 成功结果清除该节点旧错误
 		const node = store.blueprint.nodes.find((item) => item.id === result.nodeId); // 查找对应画布节点
 		updateNodeError(node, null); // 成功计算移除节点警告

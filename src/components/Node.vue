@@ -5,6 +5,7 @@ import Node from "@/commands/Node.js"; // 引入节点命令
 import Port from "@/components/Port.vue"; // 引入端口组件
 import NodePreview from "@/components/NodePreview.vue"; // 引入节点数据流图形
 import TensorResult from "@/components/TensorResult.vue"; // 引入节点下方张量热力图
+import { deriveNodeInputs } from "@/utils/nodeInputs.js"; // 使用已有输出和蓝图连线在前端还原节点输入
 
 const props = defineProps({
 	// 接收vueflow传入的节点属性
@@ -43,10 +44,12 @@ const hasError = computed(() => {
 	return !!(nodeData.value && nodeData.value.error); // 节点存在且有error字段
 });
 
-// --- 获取当前节点的张量输出 ---
-const tensorOutputs = computed(() => {
-	const outputs = store.runtime.execution.nodeResults[props.id]?.outputs || {}; // 读取当前轮次已经返回的全部端口
-	return Object.values(outputs).filter((output) => output?.kind === "tensor"); // 节点下方只显示张量图，不显示其他信息
+// --- 组合当前节点的真实输入和输出，仅用于前端展示 ---
+const nodeResult = computed(() => {
+	const result = store.runtime.execution.nodeResults[props.id]; // 后端继续只返回当前节点的输出
+	if (!result) return null; // 节点尚未运行时使用静态轮廓
+	const inputs = deriveNodeInputs(props.id, store.blueprint.edges, store.runtime.execution.nodeResults, result._requestId); // 只使用同一轮上游输出推导输入
+	return { ...result, inputs }; // 不修改协议数据和全局运行结果
 });
 
 // --- 获取训练模式下当前节点的参数梯度 ---
@@ -173,7 +176,7 @@ watch(isRenaming, (newVal) => {
 		<!-- 节点名称 -->
 		<div class="node-label">
 			<!-- 节点名称区域 -->
-			<NodePreview :opcode="data.opcode" :params="data.params" :style="{ '--node-color': nodeColor }" />
+			<NodePreview :opcode="data.opcode" :params="data.params" :result="store.experiment.showTensor ? nodeResult : null" :style="{ '--node-color': nodeColor }" />
 		</div>
 
 		<!-- 输出端口组 -->
@@ -183,10 +186,6 @@ watch(isRenaming, (newVal) => {
 			<!-- 渲染每个输出端口 -->
 		</div>
 
-		</div>
-
-		<div v-if="store.experiment.showTensor && tensorOutputs.length" class="node-tensors nodrag nowheel">
-			<TensorResult v-for="(output, index) in tensorOutputs" :key="index" :value="output" :max-width="180" :max-height="130" />
 		</div>
 
 		<div v-if="store.experiment.showTensor && store.runtime.training.status === 'succeeded' && parameterGradients.length" class="node-gradients nodrag nowheel">
@@ -206,14 +205,6 @@ watch(isRenaming, (newVal) => {
 	align-items: center;
 	min-width: 180px;
 	gap: 8px;
-}
-
-.node-tensors {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 4px;
-	pointer-events: none;
 }
 
 .node-gradients {
