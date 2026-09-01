@@ -22,6 +22,6 @@ const handleWorkspaceRightClick = (event) => {
 	display: flex;
 	flex: 1;
 	overflow: hidden;
-	background-color: #202329;
+	background-color: #e2e9fa;
 }
 </style>

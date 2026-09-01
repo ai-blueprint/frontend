@@ -354,10 +354,10 @@ watch(isRenaming, (newVal) => {
 	width: 112px;
 	min-width: 0;
 	padding: 1px 4px;
-	background: #292d35;
-	border: 1px solid rgba(255, 255, 255, 0.7);
+	background: rgba(255, 255, 255, 0.86);
+	border: 1px solid var(--node-color, #8992eb);
 	border-radius: 3px;
-	color: #fff;
+	color: #26344d;
 	font-size: 11px;
 	outline: none;
 	text-align: left;

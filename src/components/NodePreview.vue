@@ -74,7 +74,7 @@ const tensorHeight = (count) => count > 1 ? 24 : 52;
 </template>
 
 <style scoped>
-.node-preview { display: flex; align-items: center; justify-content: center; gap: 8px; width: 164px; min-height: 62px; color: color-mix(in srgb, var(--node-color, #5672b8) 88%, white); }
+.node-preview { display: flex; align-items: center; justify-content: center; gap: 8px; width: 164px; min-height: 62px; color: var(--node-color, #5672b8); }
 .preview-arrow { color: var(--node-color, #5672b8); font-size: 30px; font-weight: 300; line-height: 0.7; }
 .tensor-step { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; width: 62px; height: 52px; overflow: hidden; }
 .empty-tensor { width: 46px; height: 38px; border: 1px dashed color-mix(in srgb, currentColor 65%, transparent); border-radius: 5px; }
