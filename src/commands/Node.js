@@ -52,6 +52,7 @@ const add = (opcode, x, y) => {
         data: {                                                     // 节点数据
             opcode: definition.opcode,                                // 节点操作码
             label: definition.label,                                  // 节点显示名称
+            technicalLabel: definition.technicalLabel || definition.opcode, // 标题栏显示短技术名
             ports: JSON.parse(JSON.stringify(definition.ports)),      // 深拷贝端口定义
             params,                                                   // 参数对象
         },

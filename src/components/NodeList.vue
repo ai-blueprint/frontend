@@ -73,7 +73,7 @@ const groupNodes = (categoryKey) => {
 	return (category.nodes || [])
 		.map((opcode) => {
 			const def = registryList.value.nodes?.[opcode];
-			return def ? { opcode, label: def.label, description: def.description || "" } : null;
+			return def ? { opcode, label: def.label, technicalLabel: def.technicalLabel || opcode, description: def.description || "" } : null;
 		})
 		.filter(Boolean); // 过滤掉无效节点
 };
@@ -110,10 +110,9 @@ onMounted(() => {
 			<!-- 分类标题 -->
 
 			<!-- 遍历分类下的节点 -->
-			<var-tooltip v-for="node in groupNodes(key)" :key="node.opcode" class="node-tooltip" :content="node.description" placement="right" :disabled="!node.description">
-				<div class="node-item" draggable="true" @dragstart="onDragStart($event, node.opcode)" :style="{ '--node-color': category.color }">
+			<var-tooltip v-for="node in groupNodes(key)" :key="node.opcode" class="node-tooltip" :content="`技术名：${node.technicalLabel}｜${node.description}`" placement="right" :disabled="!node.description">
+				<div class="node-item" draggable="true" @dragstart="onDragStart($event, node.opcode)" :style="{ '--node-color': category.color }" :title="`${node.label}（${node.technicalLabel}）`">
 					<span class="node-name">{{ node.label }}</span>
-					<!-- 节点名称 -->
 				</div>
 			</var-tooltip>
 		</div>
@@ -177,9 +176,8 @@ onMounted(() => {
 .node-item {
 	display: flex;
 	align-items: center;
-	justify-content: center;
 	width: fit-content;
-	padding: 12px 18px;
+	padding: 10px 16px;
 	border-radius: 12px;
 	background-color: var(--node-color);
 	cursor: grab;
@@ -199,7 +197,7 @@ onMounted(() => {
 
 /* 节点文字 */
 .node-name {
-	font-size: 18px;
+	font-size: 16px;
 	color: #fff;
 	white-space: nowrap;
 }

@@ -48,7 +48,7 @@
 				"tanh",
 				"softmax",
 				"softplus",
-				"leakyRelu",
+				"leaky_relu",
 				"elu",
 				"gelu",
 				"relu6",
@@ -193,6 +193,7 @@
 	"nodes": {
 		"relu": {
 			"opcode": "relu",
+			"technicalLabel": "ReLU",
 			"label": "负数变零",
 			"ports": {
 				"input": {
@@ -213,6 +214,7 @@
 		},
 		"sigmoid": {
 			"opcode": "sigmoid",
+			"technicalLabel": "Sigmoid",
 			"label": "压到零和一",
 			"ports": {
 				"input": {
@@ -227,6 +229,7 @@
 		},
 		"tanh": {
 			"opcode": "tanh",
+			"technicalLabel": "Tanh",
 			"label": "压到负一和一",
 			"ports": {
 				"input": {
@@ -241,6 +244,7 @@
 		},
 		"softmax": {
 			"opcode": "softmax",
+			"technicalLabel": "Softmax",
 			"label": "变成概率",
 			"ports": {
 				"input": {
@@ -265,6 +269,7 @@
 		},
 		"softplus": {
 			"opcode": "softplus",
+			"technicalLabel": "Softplus",
 			"label": "平滑变正",
 			"ports": {
 				"input": {
@@ -296,9 +301,10 @@
 			},
 			"description": "平滑版负数归零，输出恒为正"
 		},
-		"leakyRelu": {
-			"opcode": "leakyRelu",
-			"label": "负数保留一点",
+		"leaky_relu": {
+			"opcode": "leaky_relu",
+			"technicalLabel": "LeakyReLU",
+			"label": "泄漏ReLU",
 			"ports": {
 				"input": {
 					"x": ""
@@ -327,6 +333,7 @@
 		},
 		"elu": {
 			"opcode": "elu",
+			"technicalLabel": "ELU",
 			"label": "负数平滑变化",
 			"ports": {
 				"input": {
@@ -356,6 +363,7 @@
 		},
 		"gelu": {
 			"opcode": "gelu",
+			"technicalLabel": "GELU",
 			"label": "平滑门控",
 			"ports": {
 				"input": {
@@ -380,6 +388,7 @@
 		},
 		"relu6": {
 			"opcode": "relu6",
+			"technicalLabel": "ReLU6",
 			"label": "限制在零到六",
 			"ports": {
 				"input": {
@@ -400,7 +409,8 @@
 		},
 		"rrelu": {
 			"opcode": "rrelu",
-			"label": "随机负数斜率",
+			"technicalLabel": "RReLU",
+			"label": "随机泄漏",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -433,7 +443,8 @@
 		},
 		"selu": {
 			"opcode": "selu",
-			"label": "自归一化激活",
+			"technicalLabel": "SELU",
+			"label": "自归一化",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -447,7 +458,8 @@
 		},
 		"celu": {
 			"opcode": "celu",
-			"label": "连续指数激活",
+			"technicalLabel": "CELU",
+			"label": "连续指数",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -471,7 +483,8 @@
 		},
 		"silu": {
 			"opcode": "silu",
-			"label": "平滑门控激活",
+			"technicalLabel": "SiLU",
+			"label": "平滑门控",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -485,6 +498,7 @@
 		},
 		"mish": {
 			"opcode": "mish",
+			"technicalLabel": "Mish",
 			"label": "平滑自门控",
 			"ports": {
 				"input": {
@@ -499,7 +513,8 @@
 		},
 		"hardsigmoid": {
 			"opcode": "hardsigmoid",
-			"label": "快速压到零和一",
+			"technicalLabel": "Hardsigmoid",
+			"label": "快速Sigmoid",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -513,7 +528,8 @@
 		},
 		"hardswish": {
 			"opcode": "hardswish",
-			"label": "快速平滑门控",
+			"technicalLabel": "Hardswish",
+			"label": "快速Swish",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -527,7 +543,8 @@
 		},
 		"log_sigmoid": {
 			"opcode": "log_sigmoid",
-			"label": "对数概率",
+			"technicalLabel": "LogSigmoid",
+			"label": "对数Sigmoid",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -541,7 +558,8 @@
 		},
 		"prelu": {
 			"opcode": "prelu",
-			"label": "可学习负数斜率",
+			"technicalLabel": "PReLU",
+			"label": "参数化ReLU",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -565,7 +583,8 @@
 		},
 		"hardshrink": {
 			"opcode": "hardshrink",
-			"label": "硬收缩小数",
+			"technicalLabel": "Hardshrink",
+			"label": "硬收缩",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -589,7 +608,8 @@
 		},
 		"softshrink": {
 			"opcode": "softshrink",
-			"label": "软收缩小数",
+			"technicalLabel": "Softshrink",
+			"label": "软收缩",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -613,7 +633,8 @@
 		},
 		"tanhshrink": {
 			"opcode": "tanhshrink",
-			"label": "减去双曲正切",
+			"technicalLabel": "Tanhshrink",
+			"label": "Tanh收缩",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -627,7 +648,8 @@
 		},
 		"threshold": {
 			"opcode": "threshold",
-			"label": "低于阈值替换",
+			"technicalLabel": "Threshold",
+			"label": "阈值替换",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -660,7 +682,8 @@
 		},
 		"glu": {
 			"opcode": "glu",
-			"label": "门控分成两半",
+			"technicalLabel": "GLU",
+			"label": "门控单元",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -684,7 +707,8 @@
 		},
 		"softmin": {
 			"opcode": "softmin",
-			"label": "小值变大概率",
+			"technicalLabel": "Softmin",
+			"label": "Softmin",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -708,7 +732,8 @@
 		},
 		"log_softmax": {
 			"opcode": "log_softmax",
-			"label": "对数概率分布",
+			"technicalLabel": "LogSoftmax",
+			"label": "对数Softmax",
 			"ports": {
 				"input": {
 					"x": "输入"
@@ -732,6 +757,7 @@
 		},
 		"multihead_attention": {
 			"opcode": "multihead_attention",
+			"technicalLabel": "MultiheadAttention",
 			"label": "多头注意力",
 			"ports": {
 				"input": {
@@ -810,6 +836,7 @@
 		},
 		"scaled_dot_product_attention": {
 			"opcode": "scaled_dot_product_attention",
+			"technicalLabel": "scaled_dot_product_attention",
 			"label": "缩放点积注意力",
 			"ports": {
 				"input": {
@@ -851,6 +878,7 @@
 		},
 		"cross_attention": {
 			"opcode": "cross_attention",
+			"technicalLabel": "交叉注意力",
 			"label": "交叉注意力",
 			"ports": {
 				"input": {
@@ -919,6 +947,7 @@
 		},
 		"input": {
 			"opcode": "input",
+			"technicalLabel": "输入",
 			"label": "输入",
 			"ports": {
 				"input": {},
@@ -941,6 +970,7 @@
 		},
 		"output": {
 			"opcode": "output",
+			"technicalLabel": "输出",
 			"label": "输出",
 			"ports": {
 				"input": {
@@ -954,6 +984,7 @@
 		},
 		"debug": {
 			"opcode": "debug",
+			"technicalLabel": "调试",
 			"label": "调试",
 			"ports": {
 				"input": {
@@ -968,6 +999,7 @@
 		},
 		"pooling": {
 			"opcode": "pooling",
+			"technicalLabel": "池化",
 			"label": "池化",
 			"ports": {
 				"input": {
@@ -1024,6 +1056,7 @@
 		},
 		"dropout": {
 			"opcode": "dropout",
+			"technicalLabel": "Dropout",
 			"label": "随机丢弃",
 			"ports": {
 				"input": {
@@ -1061,6 +1094,7 @@
 		},
 		"embedding": {
 			"opcode": "embedding",
+			"technicalLabel": "Embedding",
 			"label": "嵌入",
 			"ports": {
 				"input": {
@@ -1103,6 +1137,7 @@
 		},
 		"bilinear": {
 			"opcode": "bilinear",
+			"technicalLabel": "Bilinear",
 			"label": "双输入线性层",
 			"ports": {
 				"input": {
@@ -1151,6 +1186,7 @@
 		},
 		"conv_transpose": {
 			"opcode": "conv_transpose",
+			"technicalLabel": "ConvTranspose",
 			"label": "转置卷积",
 			"ports": {
 				"input": {
@@ -1236,6 +1272,7 @@
 		},
 		"upsample": {
 			"opcode": "upsample",
+			"technicalLabel": "Upsample",
 			"label": "上采样",
 			"ports": {
 				"input": {
@@ -1274,6 +1311,7 @@
 		},
 		"channel_shuffle": {
 			"opcode": "channel_shuffle",
+			"technicalLabel": "ChannelShuffle",
 			"label": "通道重排",
 			"ports": {
 				"input": {
@@ -1298,6 +1336,7 @@
 		},
 		"pixel_rearrange": {
 			"opcode": "pixel_rearrange",
+			"technicalLabel": "pixel_rearrange",
 			"label": "像素重排",
 			"ports": {
 				"input": {
@@ -1331,6 +1370,7 @@
 		},
 		"reflection_pad1d": {
 			"opcode": "reflection_pad1d",
+			"technicalLabel": "ReflectionPad1d",
 			"label": "反射填充",
 			"ports": {
 				"input": {
@@ -1354,6 +1394,7 @@
 		},
 		"local_response_norm": {
 			"opcode": "local_response_norm",
+			"technicalLabel": "LocalResponseNorm",
 			"label": "局部归一化",
 			"ports": {
 				"input": {
@@ -1405,6 +1446,7 @@
 		},
 		"cosine_similarity": {
 			"opcode": "cosine_similarity",
+			"technicalLabel": "CosineSimilarity",
 			"label": "余弦相似度",
 			"ports": {
 				"input": {
@@ -1439,6 +1481,7 @@
 		},
 		"pairwise_distance": {
 			"opcode": "pairwise_distance",
+			"technicalLabel": "PairwiseDistance",
 			"label": "成对距离",
 			"ports": {
 				"input": {
@@ -1473,6 +1516,7 @@
 		},
 		"mse_loss": {
 			"opcode": "mse_loss",
+			"technicalLabel": "MSELoss",
 			"label": "平均平方误差",
 			"ports": {
 				"input": {
@@ -1499,6 +1543,7 @@
 		},
 		"cross_entropy_loss": {
 			"opcode": "cross_entropy_loss",
+			"technicalLabel": "CrossEntropyLoss",
 			"label": "分类误差",
 			"ports": {
 				"input": {
@@ -1543,6 +1588,7 @@
 		},
 		"l1_loss": {
 			"opcode": "l1_loss",
+			"technicalLabel": "L1Loss",
 			"label": "绝对值误差",
 			"ports": {
 				"input": {
@@ -1569,6 +1615,7 @@
 		},
 		"bce_loss": {
 			"opcode": "bce_loss",
+			"technicalLabel": "BCEWithLogitsLoss",
 			"label": "二分类误差",
 			"ports": {
 				"input": {
@@ -1604,6 +1651,7 @@
 		},
 		"smooth_l1_loss": {
 			"opcode": "smooth_l1_loss",
+			"technicalLabel": "SmoothL1Loss",
 			"label": "平滑绝对值误差",
 			"ports": {
 				"input": {
@@ -1639,6 +1687,7 @@
 		},
 		"huber_loss": {
 			"opcode": "huber_loss",
+			"technicalLabel": "HuberLoss",
 			"label": "Huber误差",
 			"ports": {
 				"input": {
@@ -1674,6 +1723,7 @@
 		},
 		"poisson_nll_loss": {
 			"opcode": "poisson_nll_loss",
+			"technicalLabel": "PoissonNLLLoss",
 			"label": "泊松误差",
 			"ports": {
 				"input": {
@@ -1719,6 +1769,7 @@
 		},
 		"gaussian_nll_loss": {
 			"opcode": "gaussian_nll_loss",
+			"technicalLabel": "GaussianNLLLoss",
 			"label": "高斯误差",
 			"ports": {
 				"input": {
@@ -1760,6 +1811,7 @@
 		},
 		"kl_div_loss": {
 			"opcode": "kl_div_loss",
+			"technicalLabel": "KLDivLoss",
 			"label": "分布差异",
 			"ports": {
 				"input": {
@@ -1792,6 +1844,7 @@
 		},
 		"margin_ranking_loss": {
 			"opcode": "margin_ranking_loss",
+			"technicalLabel": "MarginRankingLoss",
 			"label": "排序误差",
 			"ports": {
 				"input": {
@@ -1828,6 +1881,7 @@
 		},
 		"triplet_margin_loss": {
 			"opcode": "triplet_margin_loss",
+			"technicalLabel": "TripletMarginLoss",
 			"label": "三元组误差",
 			"ports": {
 				"input": {
@@ -1887,6 +1941,7 @@
 		},
 		"cosine_embedding_loss": {
 			"opcode": "cosine_embedding_loss",
+			"technicalLabel": "CosineEmbeddingLoss",
 			"label": "方向相似误差",
 			"ports": {
 				"input": {
@@ -1923,6 +1978,7 @@
 		},
 		"add": {
 			"opcode": "add",
+			"technicalLabel": "add",
 			"label": "相加",
 			"ports": {
 				"input": {
@@ -1938,6 +1994,7 @@
 		},
 		"sub": {
 			"opcode": "sub",
+			"technicalLabel": "sub",
 			"label": "相减",
 			"ports": {
 				"input": {
@@ -1953,6 +2010,7 @@
 		},
 		"mul": {
 			"opcode": "mul",
+			"technicalLabel": "mul",
 			"label": "相乘",
 			"ports": {
 				"input": {
@@ -1968,6 +2026,7 @@
 		},
 		"div": {
 			"opcode": "div",
+			"technicalLabel": "div",
 			"label": "相除",
 			"ports": {
 				"input": {
@@ -1998,6 +2057,7 @@
 		},
 		"matmul": {
 			"opcode": "matmul",
+			"technicalLabel": "matmul",
 			"label": "矩阵相乘",
 			"ports": {
 				"input": {
@@ -2019,6 +2079,7 @@
 		},
 		"bmm": {
 			"opcode": "bmm",
+			"technicalLabel": "bmm",
 			"label": "批量矩阵相乘",
 			"ports": {
 				"input": {
@@ -2040,6 +2101,7 @@
 		},
 		"einsum": {
 			"opcode": "einsum",
+			"technicalLabel": "einsum",
 			"label": "按公式运算",
 			"ports": {
 				"input": {
@@ -2061,6 +2123,7 @@
 		},
 		"lerp": {
 			"opcode": "lerp",
+			"technicalLabel": "lerp",
 			"label": "线性插值",
 			"ports": {
 				"input": {
@@ -2083,6 +2146,7 @@
 		},
 		"dot": {
 			"opcode": "dot",
+			"technicalLabel": "dot",
 			"label": "点积",
 			"ports": {
 				"input": {
@@ -2098,6 +2162,7 @@
 		},
 		"pow": {
 			"opcode": "pow",
+			"technicalLabel": "pow",
 			"label": "幂运算",
 			"ports": {
 				"input": {
@@ -2122,6 +2187,7 @@
 		},
 		"norm": {
 			"opcode": "norm",
+			"technicalLabel": "norm",
 			"label": "计算长度",
 			"ports": {
 				"input": {
@@ -2160,6 +2226,7 @@
 		},
 		"exp": {
 			"opcode": "exp",
+			"technicalLabel": "exp",
 			"label": "指数",
 			"ports": {
 				"input": {
@@ -2174,6 +2241,7 @@
 		},
 		"sqrt": {
 			"opcode": "sqrt",
+			"technicalLabel": "sqrt",
 			"label": "平方根",
 			"ports": {
 				"input": {
@@ -2194,6 +2262,7 @@
 		},
 		"sum": {
 			"opcode": "sum",
+			"technicalLabel": "sum",
 			"label": "求和",
 			"ports": {
 				"input": {
@@ -2223,6 +2292,7 @@
 		},
 		"abs": {
 			"opcode": "abs",
+			"technicalLabel": "abs",
 			"label": "绝对值",
 			"ports": {
 				"input": {
@@ -2237,6 +2307,7 @@
 		},
 		"neg": {
 			"opcode": "neg",
+			"technicalLabel": "neg",
 			"label": "相反数",
 			"ports": {
 				"input": {
@@ -2251,6 +2322,7 @@
 		},
 		"mean": {
 			"opcode": "mean",
+			"technicalLabel": "mean",
 			"label": "平均值",
 			"ports": {
 				"input": {
@@ -2280,6 +2352,7 @@
 		},
 		"log": {
 			"opcode": "log",
+			"technicalLabel": "log",
 			"label": "自然对数",
 			"ports": {
 				"input": {
@@ -2294,6 +2367,7 @@
 		},
 		"log10": {
 			"opcode": "log10",
+			"technicalLabel": "log10",
 			"label": "常用对数",
 			"ports": {
 				"input": {
@@ -2308,6 +2382,7 @@
 		},
 		"log2": {
 			"opcode": "log2",
+			"technicalLabel": "log2",
 			"label": "二进制对数",
 			"ports": {
 				"input": {
@@ -2322,6 +2397,7 @@
 		},
 		"log1p": {
 			"opcode": "log1p",
+			"technicalLabel": "log1p",
 			"label": "加一取对数",
 			"ports": {
 				"input": {
@@ -2336,6 +2412,7 @@
 		},
 		"expm1": {
 			"opcode": "expm1",
+			"technicalLabel": "expm1",
 			"label": "减一取指数",
 			"ports": {
 				"input": {
@@ -2350,6 +2427,7 @@
 		},
 		"exp2": {
 			"opcode": "exp2",
+			"technicalLabel": "exp2",
 			"label": "二的指数",
 			"ports": {
 				"input": {
@@ -2364,6 +2442,7 @@
 		},
 		"square": {
 			"opcode": "square",
+			"technicalLabel": "square",
 			"label": "平方",
 			"ports": {
 				"input": {
@@ -2378,6 +2457,7 @@
 		},
 		"signbit": {
 			"opcode": "signbit",
+			"technicalLabel": "signbit",
 			"label": "判断负数",
 			"ports": {
 				"input": {
@@ -2392,6 +2472,7 @@
 		},
 		"maximum": {
 			"opcode": "maximum",
+			"technicalLabel": "maximum",
 			"label": "逐个取较大值",
 			"ports": {
 				"input": {
@@ -2407,6 +2488,7 @@
 		},
 		"minimum": {
 			"opcode": "minimum",
+			"technicalLabel": "minimum",
 			"label": "逐个取较小值",
 			"ports": {
 				"input": {
@@ -2422,6 +2504,7 @@
 		},
 		"remainder": {
 			"opcode": "remainder",
+			"technicalLabel": "remainder",
 			"label": "取余数",
 			"ports": {
 				"input": {
@@ -2437,6 +2520,7 @@
 		},
 		"fmod": {
 			"opcode": "fmod",
+			"technicalLabel": "fmod",
 			"label": "浮点取余",
 			"ports": {
 				"input": {
@@ -2452,6 +2536,7 @@
 		},
 		"hypot": {
 			"opcode": "hypot",
+			"technicalLabel": "hypot",
 			"label": "直角距离",
 			"ports": {
 				"input": {
@@ -2467,6 +2552,7 @@
 		},
 		"roll": {
 			"opcode": "roll",
+			"technicalLabel": "roll",
 			"label": "循环移位",
 			"ports": {
 				"input": {
@@ -2500,6 +2586,7 @@
 		},
 		"flip": {
 			"opcode": "flip",
+			"technicalLabel": "flip",
 			"label": "翻转顺序",
 			"ports": {
 				"input": {
@@ -2524,6 +2611,7 @@
 		},
 		"repeat_interleave": {
 			"opcode": "repeat_interleave",
+			"technicalLabel": "repeat_interleave",
 			"label": "重复元素",
 			"ports": {
 				"input": {
@@ -2557,6 +2645,7 @@
 		},
 		"max_pool1d": {
 			"opcode": "max_pool1d",
+			"technicalLabel": "MaxPool1d",
 			"label": "一维最大池化",
 			"ports": {
 				"input": {
@@ -2590,6 +2679,7 @@
 		},
 		"avg_pool1d": {
 			"opcode": "avg_pool1d",
+			"technicalLabel": "AvgPool1d",
 			"label": "一维平均池化",
 			"ports": {
 				"input": {
@@ -2623,6 +2713,7 @@
 		},
 		"adaptive_avg_pool1d": {
 			"opcode": "adaptive_avg_pool1d",
+			"technicalLabel": "AdaptiveAvgPool1d",
 			"label": "一维自适应平均池化",
 			"ports": {
 				"input": {
@@ -2647,6 +2738,7 @@
 		},
 		"layer_norm": {
 			"opcode": "layer_norm",
+			"technicalLabel": "LayerNorm",
 			"label": "层归一化",
 			"ports": {
 				"input": {
@@ -2683,6 +2775,7 @@
 		},
 		"group_norm": {
 			"opcode": "group_norm",
+			"technicalLabel": "GroupNorm",
 			"label": "组归一化",
 			"ports": {
 				"input": {
@@ -2730,6 +2823,7 @@
 		},
 		"batch_norm": {
 			"opcode": "batch_norm",
+			"technicalLabel": "BatchNorm",
 			"label": "批归一化",
 			"ports": {
 				"input": {
@@ -2784,6 +2878,7 @@
 		},
 		"instance_norm": {
 			"opcode": "instance_norm",
+			"technicalLabel": "InstanceNorm",
 			"label": "样本归一化",
 			"ports": {
 				"input": {
@@ -2838,6 +2933,7 @@
 		},
 		"rms_norm": {
 			"opcode": "rms_norm",
+			"technicalLabel": "RMSNorm",
 			"label": "均方根归一化",
 			"ports": {
 				"input": {
@@ -2870,6 +2966,7 @@
 		},
 		"reshape": {
 			"opcode": "reshape",
+			"technicalLabel": "reshape",
 			"label": "改变形状",
 			"ports": {
 				"input": {
@@ -2901,6 +2998,7 @@
 		},
 		"transpose": {
 			"opcode": "transpose",
+			"technicalLabel": "transpose",
 			"label": "交换维度",
 			"ports": {
 				"input": {
@@ -2934,6 +3032,7 @@
 		},
 		"permute": {
 			"opcode": "permute",
+			"technicalLabel": "permute",
 			"label": "重排维度",
 			"ports": {
 				"input": {
@@ -2958,6 +3057,7 @@
 		},
 		"squeeze": {
 			"opcode": "squeeze",
+			"technicalLabel": "squeeze",
 			"label": "去掉单维度",
 			"ports": {
 				"input": {
@@ -2982,6 +3082,7 @@
 		},
 		"unsqueeze": {
 			"opcode": "unsqueeze",
+			"technicalLabel": "unsqueeze",
 			"label": "增加单维度",
 			"ports": {
 				"input": {
@@ -3006,6 +3107,7 @@
 		},
 		"flatten": {
 			"opcode": "flatten",
+			"technicalLabel": "flatten",
 			"label": "压平维度",
 			"ports": {
 				"input": {
@@ -3039,6 +3141,7 @@
 		},
 		"unflatten": {
 			"opcode": "unflatten",
+			"technicalLabel": "unflatten",
 			"label": "拆开维度",
 			"ports": {
 				"input": {
@@ -3071,6 +3174,7 @@
 		},
 		"pad": {
 			"opcode": "pad",
+			"technicalLabel": "pad",
 			"label": "填充边缘",
 			"ports": {
 				"input": {
@@ -3116,6 +3220,7 @@
 		},
 		"slice": {
 			"opcode": "slice",
+			"technicalLabel": "切片",
 			"label": "序列切片",
 			"ports": {
 				"input": {
@@ -3167,6 +3272,7 @@
 		},
 		"select": {
 			"opcode": "select",
+			"technicalLabel": "select",
 			"label": "选择位置",
 			"ports": {
 				"input": {
@@ -3200,6 +3306,7 @@
 		},
 		"cat": {
 			"opcode": "cat",
+			"technicalLabel": "cat",
 			"label": "连接张量",
 			"ports": {
 				"input": {
@@ -3225,6 +3332,7 @@
 		},
 		"stack": {
 			"opcode": "stack",
+			"technicalLabel": "stack",
 			"label": "堆叠张量",
 			"ports": {
 				"input": {
@@ -3250,6 +3358,7 @@
 		},
 		"expand": {
 			"opcode": "expand",
+			"technicalLabel": "expand",
 			"label": "扩大尺寸",
 			"ports": {
 				"input": {
@@ -3272,6 +3381,7 @@
 		},
 		"time_shift": {
 			"opcode": "time_shift",
+			"technicalLabel": "时间移位",
 			"label": "时间移位",
 			"ports": {
 				"input": {
@@ -3314,6 +3424,7 @@
 		},
 		"detach": {
 			"opcode": "detach",
+			"technicalLabel": "detach",
 			"label": "断梯度",
 			"ports": {
 				"input": {
@@ -3328,6 +3439,7 @@
 		},
 		"clone": {
 			"opcode": "clone",
+			"technicalLabel": "clone",
 			"label": "克隆",
 			"ports": {
 				"input": {
@@ -3342,6 +3454,7 @@
 		},
 		"clamp": {
 			"opcode": "clamp",
+			"technicalLabel": "clamp",
 			"label": "限制范围",
 			"ports": {
 				"input": {
@@ -3367,6 +3480,7 @@
 		},
 		"sign": {
 			"opcode": "sign",
+			"technicalLabel": "sign",
 			"label": "取符号",
 			"ports": {
 				"input": {
@@ -3381,6 +3495,7 @@
 		},
 		"rounding": {
 			"opcode": "rounding",
+			"technicalLabel": "rounding",
 			"label": "取整",
 			"ports": {
 				"input": {
@@ -3407,6 +3522,7 @@
 		},
 		"frac": {
 			"opcode": "frac",
+			"technicalLabel": "frac",
 			"label": "取小数",
 			"ports": {
 				"input": {
@@ -3421,6 +3537,7 @@
 		},
 		"reciprocal": {
 			"opcode": "reciprocal",
+			"technicalLabel": "reciprocal",
 			"label": "取倒数",
 			"ports": {
 				"input": {
@@ -3435,6 +3552,7 @@
 		},
 		"rsqrt": {
 			"opcode": "rsqrt",
+			"technicalLabel": "rsqrt",
 			"label": "倒数平方根",
 			"ports": {
 				"input": {
@@ -3449,6 +3567,7 @@
 		},
 		"sin": {
 			"opcode": "sin",
+			"technicalLabel": "sin",
 			"label": "正弦",
 			"ports": {
 				"input": {
@@ -3463,6 +3582,7 @@
 		},
 		"cos": {
 			"opcode": "cos",
+			"technicalLabel": "cos",
 			"label": "余弦",
 			"ports": {
 				"input": {
@@ -3477,6 +3597,7 @@
 		},
 		"tan": {
 			"opcode": "tan",
+			"technicalLabel": "tan",
 			"label": "正切",
 			"ports": {
 				"input": {
@@ -3491,6 +3612,7 @@
 		},
 		"atan": {
 			"opcode": "atan",
+			"technicalLabel": "atan",
 			"label": "反正切",
 			"ports": {
 				"input": {
@@ -3505,6 +3627,7 @@
 		},
 		"sinh": {
 			"opcode": "sinh",
+			"technicalLabel": "sinh",
 			"label": "双曲正弦",
 			"ports": {
 				"input": {
@@ -3519,6 +3642,7 @@
 		},
 		"cosh": {
 			"opcode": "cosh",
+			"technicalLabel": "cosh",
 			"label": "双曲余弦",
 			"ports": {
 				"input": {
@@ -3533,6 +3657,7 @@
 		},
 		"erf": {
 			"opcode": "erf",
+			"technicalLabel": "erf",
 			"label": "误差函数",
 			"ports": {
 				"input": {
@@ -3547,6 +3672,7 @@
 		},
 		"amax": {
 			"opcode": "amax",
+			"technicalLabel": "amax",
 			"label": "最大值",
 			"ports": {
 				"input": {
@@ -3576,6 +3702,7 @@
 		},
 		"amin": {
 			"opcode": "amin",
+			"technicalLabel": "amin",
 			"label": "最小值",
 			"ports": {
 				"input": {
@@ -3605,6 +3732,7 @@
 		},
 		"prod": {
 			"opcode": "prod",
+			"technicalLabel": "prod",
 			"label": "乘积",
 			"ports": {
 				"input": {
@@ -3634,6 +3762,7 @@
 		},
 		"var": {
 			"opcode": "var",
+			"technicalLabel": "var",
 			"label": "方差",
 			"ports": {
 				"input": {
@@ -3663,6 +3792,7 @@
 		},
 		"std": {
 			"opcode": "std",
+			"technicalLabel": "std",
 			"label": "标准差",
 			"ports": {
 				"input": {
@@ -3692,6 +3822,7 @@
 		},
 		"argmax": {
 			"opcode": "argmax",
+			"technicalLabel": "argmax",
 			"label": "最大值位置",
 			"ports": {
 				"input": {
@@ -3716,6 +3847,7 @@
 		},
 		"greater": {
 			"opcode": "greater",
+			"technicalLabel": "gt",
 			"label": "大于",
 			"ports": {
 				"input": {
@@ -3731,6 +3863,7 @@
 		},
 		"greater_equal": {
 			"opcode": "greater_equal",
+			"technicalLabel": "ge",
 			"label": "大于等于",
 			"ports": {
 				"input": {
@@ -3746,6 +3879,7 @@
 		},
 		"less": {
 			"opcode": "less",
+			"technicalLabel": "lt",
 			"label": "小于",
 			"ports": {
 				"input": {
@@ -3761,6 +3895,7 @@
 		},
 		"less_equal": {
 			"opcode": "less_equal",
+			"technicalLabel": "le",
 			"label": "小于等于",
 			"ports": {
 				"input": {
@@ -3776,6 +3911,7 @@
 		},
 		"equal": {
 			"opcode": "equal",
+			"technicalLabel": "eq",
 			"label": "相等",
 			"ports": {
 				"input": {
@@ -3791,6 +3927,7 @@
 		},
 		"chunk": {
 			"opcode": "chunk",
+			"technicalLabel": "chunk",
 			"label": "分成几块",
 			"ports": {
 				"input": {
@@ -3825,6 +3962,7 @@
 		},
 		"tensor_like": {
 			"opcode": "tensor_like",
+			"technicalLabel": "tensor_like",
 			"label": "同形创建",
 			"ports": {
 				"input": {
@@ -3850,6 +3988,7 @@
 		},
 		"linear": {
 			"opcode": "linear",
+			"technicalLabel": "Linear",
 			"label": "线性层",
 			"ports": {
 				"input": {
@@ -3888,6 +4027,7 @@
 		},
 		"conv": {
 			"opcode": "conv",
+			"technicalLabel": "Conv",
 			"label": "卷积层",
 			"ports": {
 				"input": {

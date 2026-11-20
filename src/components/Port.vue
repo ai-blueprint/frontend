@@ -67,8 +67,8 @@ const onMouseDown = (event) => {
 
 .port-label {
 	font-size: 11px; /* 标签字号 */
-	color: rgba(255, 255, 255, 0.7); /* 半透明白色文字 */
-	padding: 0 8px; /* 左右内边距 */
+	color: #52627c;
+	padding: 0 6px;
 	white-space: nowrap; /* 不换行 */
 }
 
@@ -80,8 +80,8 @@ const onMouseDown = (event) => {
 	transform: none !important; /* 清除VueFlow默认的居中偏移 */
 	width: 8px !important; /* 端口圆点宽度 */
 	height: 8px !important; /* 端口圆点高度 */
-	background: #ffffff !important; /* 白色端口 */
-	border: none !important; /* 无边框 */
+	background: var(--node-color, #8992eb) !important; /* 端口使用节点分类色 */
+	border: 2px solid #f5f7fb !important;
 	border-radius: 50% !important; /* 圆形 */
 	transition: 0.1s ease-in-out; /* 过渡动画 */
 }

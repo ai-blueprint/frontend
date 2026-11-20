@@ -3,7 +3,9 @@ import { ref, computed, nextTick, watch } from "vue"; // 引入Vue组合式API
 import store from "@/store.js"; // 引入全局状态
 import Node from "@/commands/Node.js"; // 引入节点命令
 import Port from "@/components/Port.vue"; // 引入端口组件
+import NodePreview from "@/components/NodePreview.vue"; // 引入节点数据流图形
 import TensorResult from "@/components/TensorResult.vue"; // 引入节点下方张量热力图
+import { deriveNodeInputs } from "@/utils/nodeInputs.js"; // 使用已有输出和蓝图连线在前端还原节点输入
 
 const props = defineProps({
 	// 接收vueflow传入的节点属性
@@ -42,10 +44,12 @@ const hasError = computed(() => {
 	return !!(nodeData.value && nodeData.value.error); // 节点存在且有error字段
 });
 
-// --- 获取当前节点的张量输出 ---
-const tensorOutputs = computed(() => {
-	const outputs = store.runtime.execution.nodeResults[props.id]?.outputs || {}; // 读取当前轮次已经返回的全部端口
-	return Object.values(outputs).filter((output) => output?.kind === "tensor"); // 节点下方只显示张量图，不显示其他信息
+// --- 组合当前节点的真实输入和输出，仅用于前端展示 ---
+const nodeResult = computed(() => {
+	const result = store.runtime.execution.nodeResults[props.id]; // 后端继续只返回当前节点的输出
+	if (!result) return null; // 节点尚未运行时使用静态轮廓
+	const inputs = deriveNodeInputs(props.id, store.blueprint.edges, store.runtime.execution.nodeResults, result._requestId); // 只使用同一轮上游输出推导输入
+	return { ...result, inputs }; // 不修改协议数据和全局运行结果
 });
 
 // --- 获取训练模式下当前节点的参数梯度 ---
@@ -140,6 +144,19 @@ watch(isRenaming, (newVal) => {
 			@contextmenu="onContextMenu"
 			@dblclick="onDoubleClick">
 		<!-- 节点主容器 -->
+		<div class="node-header" :style="{ backgroundColor: nodeColor }">
+			<span class="header-dot"></span>
+			<input
+				v-if="isRenaming"
+				ref="renameInput"
+				class="rename-input nodrag"
+				:value="renameValue"
+				@input="renameValue = $event.target.value"
+				@blur="confirmRename"
+				@keydown="onRenameKeydown" />
+			<span v-else class="header-name">{{ data.label }}</span>
+			<span v-if="data.technicalLabel && data.technicalLabel !== data.label" class="header-type">{{ data.technicalLabel }}</span>
+		</div>
 
 		<!-- 警告图标（节点有error时显示在正上方）-->
 		<div v-if="hasError" class="warning-icon" :title="nodeData.error">
@@ -159,17 +176,7 @@ watch(isRenaming, (newVal) => {
 		<!-- 节点名称 -->
 		<div class="node-label">
 			<!-- 节点名称区域 -->
-			<input
-				v-if="isRenaming"
-				ref="renameInput"
-				class="rename-input nodrag"
-				:value="renameValue"
-				@input="renameValue = $event.target.value"
-				@blur="confirmRename"
-				@keydown="onRenameKeydown" />
-			<!-- 重命名输入框 -->
-			<span v-else class="label-text">{{ data.label }}</span>
-			<!-- 正常显示名称 -->
+			<NodePreview :opcode="data.opcode" :params="data.params" :result="store.experiment.showTensor ? nodeResult : null" :style="{ '--node-color': nodeColor }" />
 		</div>
 
 		<!-- 输出端口组 -->
@@ -179,10 +186,6 @@ watch(isRenaming, (newVal) => {
 			<!-- 渲染每个输出端口 -->
 		</div>
 
-		</div>
-
-		<div v-if="store.experiment.showTensor && tensorOutputs.length" class="node-tensors nodrag nowheel">
-			<TensorResult v-for="(output, index) in tensorOutputs" :key="index" :value="output" :max-width="180" :max-height="130" />
 		</div>
 
 		<div v-if="store.experiment.showTensor && store.runtime.training.status === 'succeeded' && parameterGradients.length" class="node-gradients nodrag nowheel">
@@ -202,14 +205,6 @@ watch(isRenaming, (newVal) => {
 	align-items: center;
 	min-width: 180px;
 	gap: 8px;
-}
-
-.node-tensors {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 4px;
-	pointer-events: none;
 }
 
 .node-gradients {
@@ -243,38 +238,27 @@ watch(isRenaming, (newVal) => {
 
 .custom-node {
 	display: flex;
-	/* 横向排列：输入端口 | 名称 | 输出端口 */
 	flex-direction: row;
-	/* 横向布局 */
 	align-items: center;
-	/* 垂直居中 */
-	width: fit-content;
-	/* 自适应宽度 */
+	width: 238px;
+	min-height: 94px;
 	flex-wrap: nowrap;
-	/* 不换行 */
-	border-radius: 12px;
-	/* 圆角 */
-	background-color: var(--node-color, #8992eb);
-	/* 节点背景色：优先分类色，回退默认色 */
-	padding: 12px 10px;
-	/* 内边距 */
-	gap: 40px;
-	/* 端口组与名称间距 */
+	padding: 25px 8px 8px;
+	gap: 6px;
 	cursor: grab;
-	/* 抓取光标 */
-	outline: #ffffff;
-	/* 白色描边预设 */
+	outline: none;
 	transition:
 		opacity 0.2s,
 		filter 0.2s,
 		outline 0.2s,
 		scale 0.2s;
-	/* 过渡动画 */
 	position: relative;
-	/* 相对定位，用于悬浮元素 */
 	user-select: none;
-	/* 禁止文字选中 */
-	transform-origin: center center; /* 变换原点 */
+	transform-origin: center center;
+	background: transparent;
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
 }
 
 .custom-node:active {
@@ -283,8 +267,7 @@ watch(isRenaming, (newVal) => {
 }
 
 .custom-node:hover {
-	filter: brightness(1.1);
-	/* 悬停时提亮 */
+	filter: brightness(1.08);
 }
 
 .custom-node:hover:active {
@@ -293,10 +276,46 @@ watch(isRenaming, (newVal) => {
 }
 
 .custom-node.selected {
-	outline: 3px solid #ffffff;
-	/* 选中时白色描边 */
-	filter: drop-shadow(0 0 3px var(--node-color)) drop-shadow(0 0 15px var(--node-color)) brightness(1.1);
-	/* 选中发光效果 */
+	filter: drop-shadow(0 0 4px color-mix(in srgb, var(--node-color) 80%, transparent)) drop-shadow(0 0 14px color-mix(in srgb, var(--node-color) 45%, transparent)) brightness(1.08);
+}
+
+.node-header {
+	position: absolute;
+	top: 0;
+	left: 50%;
+	right: auto;
+	transform: translateX(-50%);
+	display: flex;
+	align-items: center;
+	gap: 7px;
+	height: 21px;
+	padding: 0 9px;
+	border-radius: 999px;
+	color: #fff;
+}
+
+.header-dot {
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.85);
+}
+
+.header-type {
+	margin-left: auto;
+	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+	font-size: 9px;
+	letter-spacing: 0;
+	opacity: 0.9;
+}
+
+.header-name {
+	min-width: 0;
+	font-size: 12px;
+	font-weight: 600;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .ports {
@@ -306,8 +325,7 @@ watch(isRenaming, (newVal) => {
 	/* 垂直布局 */
 	align-items: center;
 	/* 水平居中 */
-	gap: 16px;
-	/* 端口间距 */
+	gap: 18px;
 }
 
 .input-ports {
@@ -322,45 +340,27 @@ watch(isRenaming, (newVal) => {
 
 .node-label {
 	display: flex;
-	/* 居中对齐 */
+	flex-direction: column;
+	gap: 0;
 	align-items: center;
 	/* 垂直居中 */
 	justify-content: center;
 	/* 水平居中 */
-	width: fit-content;
-	/* 自适应宽度 */
-}
-
-.label-text {
-	font-size: 18px;
-	/* 名称字号 */
-	color: #ffffff;
-	/* 白色文字 */
-	word-break: keep-all;
-	/* 保持单词完整 */
-	white-space: nowrap;
-	/* 不换行 */
+	width: 100%;
+	min-width: 0;
 }
 
 .rename-input {
-	field-sizing: content;
-	/* 宽度自动，根据内容长度而变化 */
-	padding: 2px 4px;
-	/* 内边距 */
-	background: rgba(255, 255, 255, 0.2);
-	/* 半透明白色背景 */
-	border: 1px solid #ffffff;
-	/* 白色边框 */
-	border-radius: 6px;
-	/* 圆角 */
-	color: #ffffff;
-	/* 白色文字 */
-	font-size: 16px;
-	/* 字号 */
+	width: 112px;
+	min-width: 0;
+	padding: 1px 4px;
+	background: rgba(255, 255, 255, 0.86);
+	border: 1px solid var(--node-color, #8992eb);
+	border-radius: 3px;
+	color: #26344d;
+	font-size: 11px;
 	outline: none;
-	/* 去除聚焦边框 */
-	text-align: center;
-	/* 文字居中 */
+	text-align: left;
 }
 
 .warning-icon {
