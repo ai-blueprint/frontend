@@ -9,6 +9,7 @@ import { isEnvelopeCurrent } from "@/utils/protocol.js"; // 引入请求ID匹配
 
 let hasRegisteredHandlers = false; // 防止热更新重复注册响应处理器
 let continuousTimer = null; // 保存连续训练的下一步计时器
+let trainingModelId = null; // 服务端模型身份；旧后端省略时为 null
 
 
 // --- 发起单步训练 ---
@@ -40,7 +41,9 @@ const step = () => {
 const scheduleContinuousStep = () => {
 	clearTimeout(continuousTimer); // 同一时刻只保留一个训练计时器
 	if (!store.runtime.training.continuous) return; // 用户停止后不再发送新训练
-	continuousTimer = setTimeout(() => step(), 80); // 每轮留出时间让曲线和梯度先完成渲染
+	continuousTimer = setTimeout(() => {
+		if (ws.isOpen()) step(); // 关闭事件尚未到达时也不允许自动训练触发重连
+	}, 80); // 每轮留出时间让曲线和梯度先完成渲染
 };
 
 
@@ -52,21 +55,36 @@ const setContinuous = (continuous) => {
 };
 
 
-// --- 重置训练结果和后端模型 ---
-const reset = () => {
+// --- 作废请求并停止连续训练 ---
+const stopTraining = () => {
 	const training = store.runtime.training; // 获取训练状态主体
 	training.requestId = null; // 旧响应立即失效
 	training.status = "idle"; // 回到未训练状态
+	training.error = null; // 清除旧请求的错误
+	training.continuous = false; // 停止连续训练
+	clearTimeout(continuousTimer); // 取消尚未开始的下一步训练
+};
+
+
+// --- 清理当前模型的结果 ---
+const clearTrainingResults = () => {
+	const training = store.runtime.training; // 获取当前训练结果
+	trainingModelId = null; // 下次训练响应重新确立模型身份
 	training.step = 0; // 清除步数
 	training.loss = null; // 清除损失值
 	training.curve = []; // 清除曲线
 	training.nodes = {}; // 清除权重和梯度快照
-	training.error = null; // 清除错误
-	training.continuous = false; // 清除时同时停止连续训练
-	clearTimeout(continuousTimer); // 取消尚未开始的下一步训练
+};
+
+
+// --- 重置训练结果和后端模型 ---
+const reset = () => {
+	stopTraining();
+	clearTrainingResults();
 	const request = ws.request("resetTraining", {}); // 通知后端丢弃权重和优化器状态
 	request.sent.then((isSent) => {
-		if (!isSent) training.error = "训练已清除，但后端未连接"; // 后端未连接时明确告诉用户实际状态
+		const training = store.runtime.training;
+		if (!isSent && training.requestId === null) training.error = "训练已清除，但后端未连接"; // 新一轮训练开始后不回填旧错误
 	});
 };
 
@@ -75,6 +93,10 @@ const reset = () => {
 const registerHandlers = () => {
 	if (hasRegisteredHandlers) return; // 全局处理器只注册一次
 	hasRegisteredHandlers = true; // 注册前锁定避免重复进入
+	ws.onDisconnect(() => {
+		stopTraining(); // 断开后请求和连续训练都不再有效
+		if (trainingModelId !== null) clearTrainingResults(); // 新版后端按连接释放模型；旧版仍保留曲线
+	});
 	ws.registerHandler("trainStep", (envelope) => {
 		const training = store.runtime.training; // 获取训练状态主体
 		if (!isEnvelopeCurrent(training.requestId, envelope)) return; // 旧响应不能覆盖当前训练结果
@@ -85,6 +107,9 @@ const registerHandlers = () => {
 			return;
 		}
 		const result = envelope.data || {}; // 读取单步训练快照
+		const modelId = result.trainingModelId ?? null; // 兼容省略模型代号的旧后端
+		if (modelId !== trainingModelId) clearTrainingResults(); // 模型重建后重新累计曲线
+		trainingModelId = modelId;
 		training.status = "succeeded"; // 标记本轮更新完成
 		training.step += 1; // 完成步数加一
 		training.loss = Number(result.loss); // 保存最近损失

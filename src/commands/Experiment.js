@@ -127,6 +127,13 @@ const registerHandlers = () => {
 	if (hasRegisteredHandlers) return; // 全局处理器只注册一次
 	hasRegisteredHandlers = true; // 注册前锁定避免重复进入
 
+	ws.onDisconnect(() => {
+		cycleToken += 1; // 断开后当前及排队中的传播轮次全部失效
+		clearTimeout(cycleTimer); // 禁止持续运行计时器触发自动重连
+		store.experiment.running = false; // 连接结束时停止持续传播开关
+		clearResults(); // 解除单次运行的running状态并丢弃过期结果
+	});
+
 	ws.registerHandler("nodeResult", (envelope) => {
 		const execution = store.runtime.execution; // 获取当前轮次状态
 		if (execution.status !== "running" || !isEnvelopeCurrent(execution.requestId, envelope) || envelope.error) return; // 单次和持续运行都接收当前轮次结果
