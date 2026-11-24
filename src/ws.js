@@ -11,6 +11,7 @@ let pendingConnectTask = null; // 复用正在进行的连接任务
 let finishPendingConnect = null; // 保存连接任务的结束回调
 let hasStarted = false; // 防止自动启动被重复执行
 const messageHandlers = new Map(); // 按消息类型保存业务处理器集合
+const disconnectHandlers = new Set(); // 业务模块可以订阅当前连接结束
 
 // --- 设置离线注册表 ---
 const setFallbackRegistry = () => {
@@ -30,6 +31,22 @@ const finishConnect = (isReady) => {
 
 // --- 判断连接是否可发送 ---
 const isOpen = () => !!socket && socket.readyState === WebSocket.OPEN; // 只有OPEN状态能够发送消息
+
+
+const onDisconnect = (handler) => {
+	disconnectHandlers.add(handler); // 连接结束时通知订阅方清理自己的请求状态
+	return () => disconnectHandlers.delete(handler); // 返回注销方法，避免订阅者销毁后残留
+};
+
+
+const finishDisconnect = (activeSocket, error) => {
+	if (socket !== activeSocket) return; // 旧连接迟到的事件不能结束新连接
+	socket = null; // 允许后续请求建立新的 WebSocket
+	finishConnect(false); // 收口尚未完成的连接握手
+	store.transport.status = "disconnected"; // 更新顶部连接状态
+	store.transport.error = error; // 显示当前连接的结束原因
+	disconnectHandlers.forEach((handler) => handler()); // 让业务层作废旧连接上的在途状态
+};
 
 
 // --- 更新服务端注册表 ---
@@ -68,14 +85,17 @@ const registerHandler = (type, handler) => {
 
 // --- 发送原始标准信封 ---
 const sendEnvelope = async (envelope) => {
-	if (!isOpen()) await connect(); // 未连接时先完成一次连接尝试
-	if (!isOpen()) {
+	const connected = isOpen() ? null : connect(); // 未连接时发起一次连接尝试
+	const targetSocket = socket; // 请求只属于发起时选定的连接
+	const isReady = connected ? await connected : true;
+	if (!isReady || socket !== targetSocket || !isOpen()) {
+		if (socket !== targetSocket && isOpen()) return false; // 不把旧请求的错误显示在新连接上
 		store.transport.error = "无法连接到后端，当前请求未发送"; // 显示明确的传输错误
 		return false; // 发送方可根据结果标记本地失败
 	}
 
 	try {
-		socket.send(JSON.stringify(envelope)); // 连接可用后发送完整标准信封
+		targetSocket.send(JSON.stringify(envelope)); // 只向原定连接发送完整标准信封
 		return true; // 告知业务命令请求已进入网络
 	} catch (error) {
 		store.transport.error = `请求发送失败：${error.message}`; // 捕获序列化和底层发送异常
@@ -104,23 +124,22 @@ const getAutoSocketAddress = () => {
 // --- 绑定连接生命周期 ---
 const bindSocketEvents = (activeSocket) => {
 	activeSocket.onopen = () => {
+		if (socket !== activeSocket) return; // 旧连接的错误不能覆盖新连接状态
 		store.transport.status = "connected"; // 顶部状态立即反馈连接成功
 		store.transport.error = null; // 新连接清除旧传输错误
 		finishConnect(true); // 连接开放即可发送，不等待注册表响应
 		request("getRegistry", {}); // 连接后同步后端节点注册表
 	};
-	activeSocket.onmessage = (event) => dispatchEnvelope(event.data); // 所有消息统一经过完整信封分发
+	activeSocket.onmessage = (event) => {
+		if (socket === activeSocket && isOpen()) dispatchEnvelope(event.data); // 只消费当前打开连接的响应
+	};
 	activeSocket.onclose = () => {
-		if (socket === activeSocket) socket = null; // 只清理当前有效实例
-		store.transport.status = "disconnected"; // 界面显示连接已断开
-		store.transport.error = "后端连接已断开"; // 断开原因对用户可见
-		finishConnect(false); // 收口尚未完成的连接任务
+		finishDisconnect(activeSocket, "后端连接已断开");
 	};
 	activeSocket.onerror = () => {
-		store.transport.status = "disconnected"; // 错误后进入离线状态
-		store.transport.error = "后端连接失败，已使用本地节点注册表"; // 显示可操作的回退说明
+		if (socket !== activeSocket) return;
 		setFallbackRegistry(); // 连接失败不影响蓝图编辑
-		finishConnect(false); // 通知等待发送的请求失败
+		finishDisconnect(activeSocket, "后端连接失败，已使用本地节点注册表");
 	};
 };
 
@@ -130,19 +149,20 @@ const connect = (address = getAutoSocketAddress()) => {
 	if (isOpen()) return Promise.resolve(true); // 已连接时直接复用
 	if (pendingConnectTask) return pendingConnectTask; // 同时触发的请求共享一次连接
 
+	if (socket) finishDisconnect(socket, "后端连接已断开"); // 新连接可能先于旧连接的关闭事件
 	store.transport.status = "connecting"; // 界面进入连接中状态
+	try {
+		socket = new WebSocket(address); // 先构造连接，失败时不缓存已结束的任务
+	} catch (error) {
+		store.transport.status = "disconnected";
+		store.transport.error = `连接创建失败：${error.message}`;
+		setFallbackRegistry();
+		return Promise.resolve(false);
+	}
 	pendingConnectTask = new Promise((resolve) => {
 		finishPendingConnect = resolve; // 保存本次连接结果回调
-		try {
-			socket = new WebSocket(address); // 创建新连接实例
-			bindSocketEvents(socket); // 立即绑定生命周期避免漏掉事件
-		} catch (error) {
-			store.transport.status = "disconnected"; // 同步构造失败时回到离线
-			store.transport.error = `连接创建失败：${error.message}`; // 暴露浏览器拒绝原因
-			setFallbackRegistry(); // 保证节点列表仍可使用
-			finishConnect(false); // 结束本次连接任务
-		}
 	});
+	bindSocketEvents(socket); // 立即绑定生命周期避免漏掉事件
 	return pendingConnectTask; // 返回共享连接任务
 };
 
@@ -178,4 +198,4 @@ const start = () => {
 start(); // 导入传输模块即开始连接
 
 export { dispatchEnvelope }; // 导出纯分发入口供协议测试验证
-export default { connect, disconnect, request, registerHandler, start }; // 导出连接、请求和订阅能力
+export default { connect, disconnect, isOpen, onDisconnect, request, registerHandler, start }; // 导出连接、请求和订阅能力

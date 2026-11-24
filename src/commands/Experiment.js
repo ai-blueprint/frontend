@@ -127,13 +127,20 @@ const registerHandlers = () => {
 	if (hasRegisteredHandlers) return; // 全局处理器只注册一次
 	hasRegisteredHandlers = true; // 注册前锁定避免重复进入
 
+	ws.onDisconnect(() => {
+		cycleToken += 1; // 断开后当前及排队中的传播轮次全部失效
+		clearTimeout(cycleTimer); // 禁止持续运行计时器触发自动重连
+		store.experiment.running = false; // 连接结束时停止持续传播开关
+		clearResults(); // 解除单次运行的running状态并丢弃过期结果
+	});
+
 	ws.registerHandler("nodeResult", (envelope) => {
 		const execution = store.runtime.execution; // 获取当前轮次状态
 		if (execution.status !== "running" || !isEnvelopeCurrent(execution.requestId, envelope) || envelope.error) return; // 单次和持续运行都接收当前轮次结果
 		const result = envelope.data; // 节点结果包含全部输出端口
 		if (!result?.nodeId) return; // 无节点ID无法关联画布
 		cycleResultIDs.add(result.nodeId); // 标记节点在本轮确实收到了上游值并完成计算
-		execution.nodeResults[result.nodeId] = result; // 节点计算完成后立即覆盖它下方的张量图
+		execution.nodeResults[result.nodeId] = { ...result, _requestId: envelope.id }; // 本地轮次标记确保前端推导输入时不混用旧输出
 		delete execution.nodeErrors[result.nodeId]; // 成功结果清除该节点旧错误
 		const node = store.blueprint.nodes.find((item) => item.id === result.nodeId); // 查找对应画布节点
 		updateNodeError(node, null); // 成功计算移除节点警告
